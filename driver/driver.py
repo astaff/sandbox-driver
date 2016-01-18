@@ -449,7 +449,7 @@ class SmoothieDriver(object):
 
 
 
-class OpenTronsGears(SmoothieDriver):
+class OTOneDriver(SmoothieDriver):
 
 
 	commands_dictionary = {
@@ -572,7 +572,7 @@ class OpenTronsGears(SmoothieDriver):
 
 
 if __name__ == '__main__':
-	smooth = OpenTronsGears()
+	smooth = OTOneDriver()
 	run_called = False
 
 
