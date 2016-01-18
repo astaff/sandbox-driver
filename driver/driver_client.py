@@ -122,7 +122,7 @@ try:
 
     while (crossbar_status == False):
         try:
-            print('trying to make a connection...')
+            print('trying to CROSSBAR make a connection...')
             make_a_connection()
         except KeyboardInterrupt:
             crossbar_status = True
@@ -130,7 +130,7 @@ try:
             #raise
             pass
         finally:
-            print('error while trying to make a connection, sleeping for 5 seconds')
+            print('error while trying to make a CROSSBAR connection, sleeping for 5 seconds')
             time.sleep(5)
 except KeyboardInterrupt:
     pass

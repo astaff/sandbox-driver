@@ -145,6 +145,7 @@ class SmoothieDriver(object):
 
 
 	def connect(self, device=None, port=None):
+		print("driver -> connect called")
 		self.the_loop = asyncio.get_event_loop()
 		#asyncio.async(serial.aio.create_serial_connection(self.the_loop, Output, '/dev/ttyUSB0', baudrate=115200))
 		callbacker = Output(self)
@@ -191,24 +192,24 @@ class SmoothieDriver(object):
 
 
 	def send(self, message):
-		print()
+		#print()
 		print("send called!")
-		print()
+		#print()
 		message = message + self.message_ender
-		print(message)
-		print("...........")
+		#print(message)
+		#print("...........")
 		if self.simulation:
 			self.simulation_queue.append(message)
-			print("simulation queue")
-			print(self.simulation_queue)
+			#print("simulation queue")
+			#print(self.simulation_queue)
 			#self.simulate_response(message)
 		else:
 			if self.smoothie_transport is not None:
 				if self.lock_check() == False:
 					self.ack_received = False
-					print("smoothie_transport BOOM!!!!")
-					print('encoded message:')
-					print(message.encode())
+					#print("smoothie_transport BOOM!!!!")
+					#print('encoded message:')
+					#print(message.encode())
 					self.smoothie_transport.write(message.encode())
 			else:
 				print("smoothie_transport is None????")
@@ -217,14 +218,14 @@ class SmoothieDriver(object):
 # flow control 
 
 	def lock_check(self):
-		print("lock check called")
+		#print("lock check called")
 		if self.ack_received and self.ack_ready:
 			self.locked = False
-			print("unlocked")
+			#print("unlocked")
 			return False
 		else:
 			self.locked = True
-			print("locked")
+			#print("locked")
 			return True
 
 	def _add_to_command_queue(self, command):
@@ -249,39 +250,40 @@ class SmoothieDriver(object):
 		remainder_data = text_data
 		while remainder_data.find(',')>=0:
 			stupid_dict = self._format_group( remainder_data[:remainder_data.find(',')] ) 
-			print(1)
-			print("_format_text_data --> stupid_dict1")
-			print(stupid_dict)
-			print(2)
+			#print(1)
+			#print("_format_text_data --> stupid_dict1")
+			#print(stupid_dict)
+			#print(2)
 			return_list.append(stupid_dict)
 			remainder_data = remainder_data[remainder_data.find(',')+1:]
 		stupid_dict = self._format_group( remainder_data )
 		return_list.append(stupid_dict)
-		print(3)
-		print("_format_text_data --> stupid_dict2")
-		print(stupid_dict)
-		print(4)
-		print("_format_text_data --> return_list")
-		print(return_list)
+		#print(3)
+		#print("_format_text_data --> stupid_dict2")
+		#print(stupid_dict)
+		#print(4)
+		#print("_format_text_data --> return_list")
+		#print(return_list)
 		return return_list
 
 
 	def _format_group(self, group_data):
+		print("_format_group called")
 		return_dict = dict()
 		remainder_data = group_data
 		if remainder_data.find(':')>=0:
-			print(5)
-			print("_format_group --> 1")
-			print(6)
+			#print(5)
+			#print("_format_group --> 1")
+			#print(6)
 			while remainder_data.find(':')>=0:
 				message = remainder_data[:remainder_data.find(':')].replace('\n','').replace('\r','')
-				print(7)
-				print("message before:")
-				print(message)
-				print(8)
-				print("message after:")
-				print(message.replace(" ",""))
-				print(9)
+				#print(7)
+				#print("message before:")
+				#print(message)
+				#print(8)
+				#print("message after:")
+				#print(message.replace(" ",""))
+				#print(9)
 				remainder_data = remainder_data[remainder_data.find(':')+1:]
 				if remainder_data.find(' ')>=0:
 					parameter = remainder_data[:remainder_data.find(' ')].replace('\n','').replace('\r','')
@@ -290,11 +292,11 @@ class SmoothieDriver(object):
 					parameter = remainder_data.replace('\r','').replace('\n','')
 					return_dict[message] = parameter
 		else:
-			print(10)
-			print("_format_group --> 2")
-			print(group_data)
-			print(11)
-			print(12)
+			#print(10)
+			#print("_format_group --> 2")
+			#print(group_data)
+			#print(11)
+			#print(12)
 			return_dict[group_data.strip()] = ''
 			#("\n", "")] = ''
 		return return_dict
@@ -320,11 +322,11 @@ class SmoothieDriver(object):
 
 
 	def _process_message_dict(self, message_dict):
-
+		print("_process_message_dict called")
 		# first, check if ack_recieved confirmation
 		if self.ack_received_message in list(message_dict):
-			print("ack_received checking...")
-			print(list(message_dict))
+			#print("ack_received checking...")
+			#print(list(message_dict))
 			value = message_dict.get(self.ack_received_message)
 			if isinstance(value, dict):
 				if self.ack_receieved_parameter is None:
@@ -342,8 +344,8 @@ class SmoothieDriver(object):
 
 		# second, check if ack_recieved confirmation
 		if self.ack_ready_message in list(self.ack_ready_message):
-			print("ack_ready checking...")
-			print(list(message_dict))
+			#print("ack_ready checking...")
+			#print(list(message_dict))
 			value = message_dict.get(self.ack_ready_message)
 			if isinstance(value, dict):
 				if self.ack_ready_parameter is None:
@@ -358,17 +360,17 @@ class SmoothieDriver(object):
 			else:
 				if self.ack_ready_parameter is None:
 					if self.ack_ready_value is None or value == self.ack_ready_value:
-						print("111111")
+						#print("111111")
 						self.ack_ready = True
 					else:
-						print("222222")
+						#print("222222")
 						self.ack_ready = False
 
 
 		# finally, pass messages to their respective callbacks based on callbacks and messages they're registered to receive
-		print("message_dict:")
-		print(message_dict)
-		print(13)
+		#print("message_dict:")
+		#print(message_dict)
+		#print(13)
 
 		for name_message, value in message_dict.items():
 
