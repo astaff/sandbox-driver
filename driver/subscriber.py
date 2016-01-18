@@ -9,9 +9,9 @@ driver = None
 
 class Subscriber():
     def __init__(self, driver_=None):
-        driver = driver_
+        self.driver = driver_
 
-        in_dispatcher = {
+        self.in_dispatcher = {
             '1': lambda data: a(),
             '2': lambda data: b(),
             '3': lambda data: c(),
@@ -21,7 +21,7 @@ class Subscriber():
 
     def set_driver(self, driver):
         print("set_driver called")
-        driver = driver
+        self.driver = driver
 
 
     def dispatch_message(self, message):
