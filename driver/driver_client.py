@@ -49,7 +49,7 @@ class WampComponent(wamp.ApplicationSession):
             }
             self.publish('com.opentrons.driver_to_frontend',json.dumps(msg))
         
-        print'about to publish com.opentrons.driver_client_ready TRUE')
+        print('about to publish com.opentrons.driver_client_ready TRUE')
         self.publish('com.opentrons.driver_client_ready',True)
         msg = {
             'type':'dummy data',
