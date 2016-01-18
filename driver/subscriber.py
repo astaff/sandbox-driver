@@ -27,9 +27,9 @@ class Subscriber():
         try:
             dictum = collections.OrderedDict(json.loads(message.strip(), object_pairs_hook=collections.OrderedDict))
             if 'data' in dictum:
-                in_dispatch(dictum['type'],dictum['data'])
+                self.in_dispatch(dictum['type'],dictum['data'])
             else:
-                in_dispatch(dictum['type'],None)
+                self.in_dispatch(dictum['type'],None)
         except:
             print('*** error in subscriber.dispatch_message ***')
             raise
@@ -38,9 +38,9 @@ class Subscriber():
     def dispatch(self, data):
         print("dispatch called")
         if data is not None:
-            in_dispatcher[type_](self,data)
+            self.in_dispatcher[type_](self,data)
         else:
-            in_dispatcher[type_](self)
+            self.in_dispatcher[type_](self)
 
 
 
