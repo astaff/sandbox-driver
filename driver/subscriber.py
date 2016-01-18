@@ -35,7 +35,7 @@ class Subscriber():
             raise
 
 
-    def dispatch(self, data):
+    def dispatch(self, type_, data):
         print("dispatch called")
         if data is not None:
             global in_dispatcher[type_](self,data)
