@@ -38,9 +38,9 @@ class Subscriber():
     def dispatch(self, type_, data):
         print("dispatch called")
         if data is not None:
-            global in_dispatcher[type_](self,data)
+            global in_dispatcher.get(type_)(self,data)
         else:
-            global in_dispatcher[type_](self)
+            global in_dispatcher.get(type_)(self)
 
 
 
