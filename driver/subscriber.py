@@ -40,7 +40,7 @@ def dispatch(data):
 
 
 class Subscriber():
-	def __init__(self, driver=None):
-		driver = driver
+    def __init__(self, driver=None):
+        driver = driver
 
 
