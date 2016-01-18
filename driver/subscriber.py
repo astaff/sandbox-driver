@@ -27,9 +27,9 @@ class Subscriber():
         try:
             dictum = collections.OrderedDict(json.loads(message.strip(), object_pairs_hook=collections.OrderedDict))
             if 'data' in dictum:
-                global in_dispatch(dictum['type'],dictum['data'])
+                self.dispatch(dictum['type'],dictum['data'])
             else:
-                global in_dispatch(dictum['type'],None)
+                self.dispatch(dictum['type'],None)
         except:
             print('*** error in subscriber.dispatch_message ***')
             raise
