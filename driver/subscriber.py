@@ -33,7 +33,7 @@ def dispatch_message(message):
 
 def dispatch(data):
     print("dispatch called")
-	if data is not None:
+    if data is not None:
         in_dispatcher[type_](self,data)
     else:
         in_dispatcher[type_](self)
