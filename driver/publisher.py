@@ -23,7 +23,7 @@ class Publisher:
 
 
 	def dispatch_message(self, message):
-    	try:
+		try:
     		dictum = collections.OrderedDict(json.loads(message.strip(), object_pairs_hook=collections.OrderedDict))
     		if 'data' in dictum:
     			dispatch(dictum['type'],dictum['data'])
