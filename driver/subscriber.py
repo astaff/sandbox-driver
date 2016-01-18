@@ -4,11 +4,11 @@ import json, collections
 
 
 in_dispatcher = {
-	'': lambda data: a(),
-	'': lambda data: b(),
-	'': lambda data: c(),
-	'': lambda data: d(),
-	'': lambda data: e()
+	'1': lambda data: a(),
+	'2': lambda data: b(),
+	'3': lambda data: c(),
+	'4': lambda data: d(),
+	'5': lambda data: e()
 }
 
 driver = None
