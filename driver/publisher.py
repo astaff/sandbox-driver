@@ -38,7 +38,7 @@ def dispatch(data):
 
 def send_message(self,type_,data_):
 	if caller is not None and type_ is not None:
-		if data_ is not:
+		if data_ is not None:
 			msg = {
 				'type':type_,
 				'data':damsg
