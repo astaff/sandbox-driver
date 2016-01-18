@@ -3,8 +3,8 @@
 
 import driver
 import asyncio
-import subscriber from Subscriber
-import publisher from Publisher
+from subscriber import Subscriber
+from publisher import Publisher
 
 from autobahn.asyncio import wamp, websocket
 
