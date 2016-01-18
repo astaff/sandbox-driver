@@ -60,17 +60,16 @@ class WampComponent(wamp.ApplicationSession):
         yield from self.subscribe(subscriber.dispatch_message, 'com.opentrons.browser_to_robot')
 
 
-	def onLeave(self, details):
-	        """Callback fired when WAMP session has been closed.
-	        
-	        :param details: Close information.
-	        """
-	        if self.factory._myAppSession == self:
-	            self.factory._myAppSession = None
-	        try:
-	            self.disconnect()
-	        except:
-	            pass
+    def onLeave(self, details):
+        """Callback fired when WAMP session has been closed.
+        :param details: Close information.
+        """
+        if self.factory._myAppSession == self:
+            self.factory._myAppSession = None
+        try:
+            self.disconnect()
+        except:
+            pass
 	        
     def onDisconnect(self):
         """Callback fired when underlying transport has been closed.
