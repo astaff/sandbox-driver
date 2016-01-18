@@ -27,11 +27,11 @@ class Publisher:
 			dictum = collections.OrderedDict(json.loads(message.strip(), object_pairs_hook=collections.OrderedDict))
 			if 'data' in dictum:
     			dispatch(dictum['type'],dictum['data'])
-    		else:
-    			dispatch(dictum['type'],None)
-    	except:
-    		print('*** error in publisher.dispatch_message ***')
-    		raise
+			else:
+				dispatch(dictum['type'],None)
+		except:
+			print('*** error in publisher.dispatch_message ***')
+			raise
 
 
 	def dispatch(self, data):
