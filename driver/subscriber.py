@@ -20,7 +20,7 @@ def set_driver(driver):
 
 def dispatch_message(message):
     print("dispatch_message called")
-	try:
+    try:
         dictum = collections.OrderedDict(json.loads(message.strip(), object_pairs_hook=collections.OrderedDict))
         if 'data' in dictum:
             in_dispatch(dictum['type'],dictum['data'])
