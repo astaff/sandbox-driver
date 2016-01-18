@@ -3,19 +3,21 @@
 import json, collections
 
 
-in_dispatcher = {
-	'1': lambda data: a(),
-	'2': lambda data: b(),
-	'3': lambda data: c(),
-	'4': lambda data: d(),
-	'5': lambda data: e()
-}
+
 
 driver = None
 
 class Subscriber():
     def __init__(self, driver_=None):
         driver = driver_
+
+        in_dispatcher = {
+            '1': lambda data: a(),
+            '2': lambda data: b(),
+            '3': lambda data: c(),
+            '4': lambda data: d(),
+            '5': lambda data: e()
+        }
 
     def set_driver(self, driver):
         print("set_driver called")
@@ -38,9 +40,9 @@ class Subscriber():
     def dispatch(self, type_, data):
         print("dispatch called")
         if data is not None:
-            global in_dispatcher[type_](self,data)
+            self.in_dispatcher[type_](self,data)
         else:
-            global in_dispatcher[type_](self)
+            self.in_dispatcher[type_](self)
 
 
 
