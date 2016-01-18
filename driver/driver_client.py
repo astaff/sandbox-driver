@@ -4,6 +4,7 @@
 import driver
 import asyncio
 import time
+import json
 from subscriber import Subscriber
 from publisher import Publisher
 
@@ -12,6 +13,7 @@ from autobahn.asyncio import wamp, websocket
 subscriber = None
 publisher = None
 crossbar_status = False
+
 
 
 class WampComponent(wamp.ApplicationSession):
