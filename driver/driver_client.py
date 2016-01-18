@@ -10,6 +10,7 @@ from autobahn.asyncio import wamp, websocket
 
 subscriber = None
 publisher = None
+crossbar_status = False
 
 
 class WampComponent(wamp.ApplicationSession):
