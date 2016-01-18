@@ -61,7 +61,7 @@ class WampComponent(wamp.ApplicationSession):
         }
         self.publish('com.opentrons.driver_to_frontend',json.dumps(msg))
         yield from self.subscribe(set_client_status, 'com.opentrons.frontend_client_ready')
-        yield from self.subscribe(subscriber.dispatch_message, 'com.opentrons.browser_to_robot')
+        yield from self.subscribe(subscriber.dispatch_message, 'com.opentrons.frontend_to_driver')
 
 
     def onLeave(self, details):
