@@ -230,7 +230,7 @@ class SmoothieDriver(object):
 		callbacks_dict = {}
 		for cb_name, cb_value in self.callbacks_name_callback_messages.items():
 			callbacks_dict.update({cb_name:cb_value['messages']})
-		return_dict.update({'callbacks':cb_dict})
+		return_dict.update({'callbacks':callbacks_dict})
 		return return_dict
 
 
