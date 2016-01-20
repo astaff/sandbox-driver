@@ -624,8 +624,8 @@ class OTOneDriver(SmoothieDriver):
 					self.send(command_text)
 					break
 
-		else:
-			print("command is NOT in list!")
+		#else:
+		#	print("command is NOT in list!")
 
 
 
