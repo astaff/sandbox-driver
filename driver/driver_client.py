@@ -2,6 +2,7 @@
 
 
 import driver
+import driver_harness
 import asyncio
 import time
 import json
@@ -13,6 +14,7 @@ from autobahn.asyncio import wamp, websocket
 subscriber = None
 publisher = None
 crossbar_status = False
+#driver_harness = None
 
 
 
