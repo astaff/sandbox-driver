@@ -15,6 +15,9 @@ class Harness(object):
 		self.driver_dict['otone'].register_callback(none_callback, 'None')
 
 
+	def set_publisher(publisher):
+		self._publisher = publisher
+
 
 	def register_callback_with_driver(self, driver_name, callback, messages):
 		pass
