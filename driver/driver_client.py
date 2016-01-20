@@ -97,9 +97,11 @@ def instantiate_objects():
     """
     #otdriver = driver.OTOneDriver()
     #subscriber.set_driver(otdriver)
-
-
-
+    otdriver_harness = driver_harness.Harness()
+    subscriber = Subscriber(otdriver_harness)
+    publisher = Publisher(session_factory)
+    otdriver_harness.set_publisher(publisher)
+    otdriver_harness.connect()
 
 
 try:
@@ -116,11 +118,6 @@ try:
                                         debug_wamp=False)
     loop = asyncio.get_event_loop()
 
-    otdriver = driver.OTOneDriver()
-    otdriver.connect()
-    subscriber = Subscriber(otdriver)
-    publisher = Publisher(session_factory)
-    
 
     while (crossbar_status == False):
         try:

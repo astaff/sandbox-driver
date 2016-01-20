@@ -26,22 +26,15 @@ class Publisher:
         try:
             dictum = collections.OrderedDict(json.loads(message.strip(), object_pairs_hook=collections.OrderedDict))
             if 'data' in dictum:
-                dispatch(dictum['type'],dictum['data'])
+                self.out_dispatch[dictum['type']](self,dictum['data'])
             else:
-                dispatch(dictum['type'],None)
+                self.out_dispatch[dictum['type']](self,None)
         except:
             print('*** error in publisher.dispatch_message ***')
             raise
 
 
-    def dispatch(self, data):
-        if data is not None:
-            out_dispatcher[type_](self,data)
-        else:
-            out_dispatcher[type_](self)
-
-
-    def send_message(self,type_,data_):
+    def publish(self,type_,data_):
         if caller is not None and type_ is not None:
             if data_ is not None:
                 msg = {

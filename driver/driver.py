@@ -15,6 +15,7 @@ class Output(asyncio.Protocol):
 
 
 	def connection_made(self, transport):
+		print("Output.connection_made called")
 		self.transport = transport
 		self.outer.smoothie_transport = transport
 		transport.write("M114\r\n".encode())
@@ -23,6 +24,7 @@ class Output(asyncio.Protocol):
 
 
 	def data_received(self, data):
+		print("Output.data_received called")
 		self.data_buffer = self.data_buffer + data.decode()
 		delimiter_index = self.data_buffer.rfind("\n")
 		if delimiter_index >= 0:
@@ -35,6 +37,7 @@ class Output(asyncio.Protocol):
 
 
 	def connection_lost(self, exc):
+		print("Output.connection_lost called")
 		self.transport = None
 		self.outer.smoothie_transport = None
 		self.data_buffer = ""
@@ -106,7 +109,7 @@ class SmoothieDriver(object):
 
 	# flow control variables
 	awaiting_ack = False
-	lock = False
+	locked = False
 	ack_received = False
 	ack_ready = True
 
@@ -121,14 +124,14 @@ class SmoothieDriver(object):
 	on_empty_queue_callback = None
 
 
-	callbacks_name_callback_messages = []
+	callbacks_name_callback_messages = {}
 	# dict:
 	#
 	#  {
-	#    <CALLBACK_NAME>:
+	#    <callback_name>:
 	#    {
 	#      callback: <CALLBACK OBJECT>,
-	#      messages: [ LIST OF MESSAGES... ]
+	#      messages: [ <messages>... ]
 	#    }
 	#  }
 
@@ -165,12 +168,17 @@ class SmoothieDriver(object):
 			self.on_empty_queue_callback()
 
 
-	def register_callback(self, callback, message):
-		if callback.__name__ not in list(self.callbacks):
-			new_dict = {'callback':callback, 'messages':[message]}
-			self.callbacks_name_callback_messages[callback.__name__] = new_dict
+	def register_callback(self, callback, messages):
+		if callback.__name__ not in list(self.callbacks_names_callback_messages):
+			if isinstance(messages, list):
+				self.callbacks_name_callback_messages[callback.__name__] = {'callback':callback, 'messages':messages}
+			else:
+				self.callbacks_name_callback_messages[callback.__name__] = {'callback':callback, 'messages':[messages]}
 		elif message not in self.callbacks_name_callback_messages[callback.__name__]['messages']:
-			self.callbacks_name_callback_messages[callback.__name__]['messages'].append(message)
+			if isinstance(messages, list):
+				self.callbacks_name_callback_messages[callback.__name__]['messages'].extend(messages)
+			else:
+				self.callbacks_name_callback_messages[callback.__name__]['messages'].append(messages)
 
 
 	def remove_callback(self, callback_name):
@@ -192,33 +200,45 @@ class SmoothieDriver(object):
 
 
 	def send(self, message):
-		#print()
-		print("send called!")
-		#print()
+		print("SmoothieDriver.send called")
 		message = message + self.message_ender
-		#print(message)
-		#print("...........")
 		if self.simulation:
 			self.simulation_queue.append(message)
-			#print("simulation queue")
-			#print(self.simulation_queue)
-			#self.simulate_response(message)
 		else:
 			if self.smoothie_transport is not None:
 				if self.lock_check() == False:
 					self.ack_received = False
-					#print("smoothie_transport BOOM!!!!")
-					#print('encoded message:')
-					#print(message.encode())
 					self.smoothie_transport.write(message.encode())
 			else:
 				print("smoothie_transport is None????")
 
 
+	def get_state(self):
+		return_dict = {
+			"connected":self.connected,
+			"transport":self.transport ? 1 or 0,
+			"locked":self.locked,
+			"ack_received":self.ack_received,
+			"ack_ready":self.ack_ready,
+			"queue_size":len(self.command_queue)
+		}
+		return return_dict
+
+
+	def get_info(self):
+		return_dict = {'state':self.get_state()}
+		callbacks_dict = {}
+		for cb_name, cb_value in self.callbacks_names_callback_messages.items():
+			callbacks_dict.append({cb_name:cb_value['messages']})
+		return_dict.append({'callbacks':cb_dict})
+		return return_dict
+
+
+
 # flow control 
 
 	def lock_check(self):
-		#print("lock check called")
+		print("SmoothieDriver.lock check called")
 		if self.ack_received and self.ack_ready:
 			self.locked = False
 			#print("unlocked")
@@ -250,40 +270,20 @@ class SmoothieDriver(object):
 		remainder_data = text_data
 		while remainder_data.find(',')>=0:
 			stupid_dict = self._format_group( remainder_data[:remainder_data.find(',')] ) 
-			#print(1)
-			#print("_format_text_data --> stupid_dict1")
-			#print(stupid_dict)
-			#print(2)
 			return_list.append(stupid_dict)
 			remainder_data = remainder_data[remainder_data.find(',')+1:]
 		stupid_dict = self._format_group( remainder_data )
 		return_list.append(stupid_dict)
-		#print(3)
-		#print("_format_text_data --> stupid_dict2")
-		#print(stupid_dict)
-		#print(4)
-		#print("_format_text_data --> return_list")
-		#print(return_list)
 		return return_list
 
 
 	def _format_group(self, group_data):
-		print("_format_group called")
+		print("SmoothieDriver._format_group called")
 		return_dict = dict()
 		remainder_data = group_data
 		if remainder_data.find(':')>=0:
-			#print(5)
-			#print("_format_group --> 1")
-			#print(6)
 			while remainder_data.find(':')>=0:
 				message = remainder_data[:remainder_data.find(':')].replace('\n','').replace('\r','')
-				#print(7)
-				#print("message before:")
-				#print(message)
-				#print(8)
-				#print("message after:")
-				#print(message.replace(" ",""))
-				#print(9)
 				remainder_data = remainder_data[remainder_data.find(':')+1:]
 				if remainder_data.find(' ')>=0:
 					parameter = remainder_data[:remainder_data.find(' ')].replace('\n','').replace('\r','')
@@ -292,21 +292,25 @@ class SmoothieDriver(object):
 					parameter = remainder_data.replace('\r','').replace('\n','')
 					return_dict[message] = parameter
 		else:
-			#print(10)
-			#print("_format_group --> 2")
-			#print(group_data)
-			#print(11)
-			#print(12)
 			return_dict[group_data.strip()] = ''
-			#("\n", "")] = ''
 		return return_dict
 
 
 	def _format_json_data(self, json_data):
+
+		#
+		#	{ 
+		#		name : value,
+		#		... ,
+		#		name : { ... }???
+		#	}
+		#
+		#
+
 		return_list = []
 		for name, value in json_data.items():
-			message = name
 			if isinstance(value, dict):
+				message = name
 				for value_name, value_value in value.items():
 					parameter = value_name
 					this_dict = {}
@@ -314,19 +318,35 @@ class SmoothieDriver(object):
 					this_dict[message][parameter] = value_value
 					return_list.append(this_dict)
 			else:
+				message = 'None'
+				parameter = name
 				this_dict = {}
-				this_dict[message] = value
+				this_dict[message] = {}
+				this_dict[message][parameter] = value
 				return_list.append(this_dict)
+
+
+		#
+		#	so, if json_data looks like:
+		#	{ X:<f>, Y:<f>, Z:<f>, A:<f>, B:<f> }
+		#
+		#	it gets turned into:
+		#	[ 
+		#	  {  'None':
+		#			{ X:<f>, Y:<f>, Z:<f>, A:<f>, B:<f> } 
+		#	  } 
+		#	]
+		#
+
 
 		return return_list
 
 
 	def _process_message_dict(self, message_dict):
-		print("_process_message_dict called")
+		print("SmoothieDriver._process_message_dict called")
+
 		# first, check if ack_recieved confirmation
 		if self.ack_received_message in list(message_dict):
-			#print("ack_received checking...")
-			#print(list(message_dict))
 			value = message_dict.get(self.ack_received_message)
 			if isinstance(value, dict):
 				if self.ack_receieved_parameter is None:
@@ -344,8 +364,6 @@ class SmoothieDriver(object):
 
 		# second, check if ack_recieved confirmation
 		if self.ack_ready_message in list(self.ack_ready_message):
-			#print("ack_ready checking...")
-			#print(list(message_dict))
 			value = message_dict.get(self.ack_ready_message)
 			if isinstance(value, dict):
 				if self.ack_ready_parameter is None:
@@ -360,31 +378,32 @@ class SmoothieDriver(object):
 			else:
 				if self.ack_ready_parameter is None:
 					if self.ack_ready_value is None or value == self.ack_ready_value:
-						#print("111111")
 						self.ack_ready = True
 					else:
-						#print("222222")
 						self.ack_ready = False
 
 
 		# finally, pass messages to their respective callbacks based on callbacks and messages they're registered to receive
-		#print("message_dict:")
-		#print(message_dict)
-		#print(13)
+
+		# eg:
+		#
+		#	message dict:
+		#	{ 'None':
+		#		{ X:<f>, Y:<f>, Z:<f>, A:<f>, B:<f> } 
+		#	}
+		#
+		#	---->  name_message = 'None'
+		#	---->  value = { X:<f>, Y:<f>, Z:<f>, A:<f>, B:<f> } 
+		#
+		#
 
 		for name_message, value in message_dict.items():
 
 			for callback in self.callbacks_name_callback_messages:
 				if name_message in callback['messages']:
-					callback['callback'](message_dict)
+					callback['callback'](value)
 
 		self._step_command_queue()
-
-
-
-
-
-
 
 
 # Device callbacks
@@ -415,17 +434,17 @@ class SmoothieDriver(object):
 			json_data = datum[datum.find('{'):].replace('\n','').replace('\r','')
 			text_data = datum[:datum.index('{')]
 		
-		print()
+		print("*"*15)
 		print("json_data:")
 		print(json_data)
 		print()
 		print("text_data:")
 		print(text_data)
-		print()
+		print("*"*15)
 
 		if text_data != "":
 			text_message_list = self._format_text_data(text_data)
-			print()
+			print()s
 			print("_smoothie_data_handler --> text_message_list")
 			print(text_message_list)
 			print()
@@ -548,25 +567,63 @@ class OTOneDriver(SmoothieDriver):
 		return paramters
 	
 
-	def send_command(self, command, arg=None,**kwargs):
+	def send_command(self, command, data):
+		#	all entries should be of the form:
+		#	1. command
+		#
+		#	2. data
+		#	
+		#	value 	
+		#
+		#	- or -
+		#
+		#	{
+		#		'parameter':value,
+		#		...
+		#	}
+		#
+
+		#, arg=None,**kwargs):
 		print('send_command called!')
 		command_text = ""
+		# check if command is in commands dictionary
 		if command in list(self.commands_dictionary):
 			print("command is in list!")
 			command_text = self.commands_dictionary[command]["code"]
 
-			if arg is not None:
-				command_text.append("%s" % arg.upper())
-
-			for key in kwargs:
-				if key in commands_dictionary.get(command).parameters:
-					command_text.append(" ")
-					command_text.append("%s%s" % (key.upper(),kwargs[key]))
+			if isinstance(data, dict):
+				for param, val in data.items():
+					if param in commands_dictionary.get(command).parameters:
+						command_text.append(" ")
+						command_text.append("%s%s" % (param,val))
+			else:
+				command_text.append(data)
 
 			print("command_text:")
 			print(command_text)
 			print()
 			self.send(command_text)
+
+		elif:	#check whether command is actually a code in commands dictionary
+			for cmd, dat in self.commands_dictionary.items():
+				if command == dat.get("code"):
+					print("command is a code in command list!")
+					command_text = command
+
+					if isinstance(data, dict):			
+						for param, val in data.items():
+							if param in val.parameters:
+								command_text.append(" ")
+								command_text.append("%s%s" % (param,val))
+					else:
+						command_text.append(data)
+
+					print("command_text:")
+					print(command_text)
+					print()
+					self.send(command_text)
+					break
+
 		else:
 			print("command is NOT in list!")
 

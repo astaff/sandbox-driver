@@ -3,25 +3,26 @@
 import json, collections
 
 
-
-
 driver = None
 
 class Subscriber():
-    def __init__(self, driver_=None):
-        self.driver = driver_
+    def __init__(self, driver_harness=None):
+        self._driver_harness = driver_harness
 
         self.in_dispatcher = {
-            '1': lambda data: a(),
-            '2': lambda data: b(),
-            '3': lambda data: c(),
-            '4': lambda data: d(),
-            '5': lambda data: e()
+            'move': lambda data: self._driver_harness.send_command("rapid_move",data),
+            'home': lambda data: self._driver_harness.send_command("home",data),
+            'get_state': lambda data: self._driver_harness.get_state(data),
+            'clear_queue': lambda data: self._driver_harness.clear_queue(data),
+            'connect': lambda data: self._driver_harness.connect(data),
+            'disconnect': lambda data: self._driver_harness.disconnect(data),
+            'get_commands': lambda data: self._driver_harness.get_commands(data),
+            'get_drivers': lambda data: self._driver_harness.get_drivers(data)
         }
 
-    def set_driver(self, driver):
+    def set_driver(self, driver_harness):
         print("set_driver called")
-        self.driver = driver
+        self._driver_harness = driver_harness
 
 
     def dispatch_message(self, message):
@@ -29,20 +30,12 @@ class Subscriber():
         try:
             dictum = collections.OrderedDict(json.loads(message.strip(), object_pairs_hook=collections.OrderedDict))
             if 'data' in dictum:
-                self.dispatch(dictum['type'],dictum['data'])
+                self.in_dispatcher[dictum['type']](self,dictum['data'])
             else:
-                self.dispatch(dictum['type'],None)
+                self.in_dispatcher[dictum['type']](self,None)
         except:
             print('*** error in subscriber.dispatch_message ***')
             raise
-
-
-    def dispatch(self, type_, data):
-        print("dispatch called")
-        if data is not None:
-            self.in_dispatcher[type_](self,data)
-        else:
-            self.in_dispatcher[type_](self)
 
 
 
