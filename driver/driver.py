@@ -24,7 +24,7 @@ class Output(asyncio.Protocol):
 
 
 	def data_received(self, data):
-		print("Output.data_received called")
+		#print("Output.data_received called")
 		self.data_buffer = self.data_buffer + data.decode()
 		delimiter_index = self.data_buffer.rfind("\n")
 		if delimiter_index >= 0:
@@ -238,7 +238,7 @@ class SmoothieDriver(object):
 # flow control 
 
 	def lock_check(self):
-		print("SmoothieDriver.lock check called")
+		#print("SmoothieDriver.lock check called")
 		if self.ack_received and self.ack_ready:
 			self.locked = False
 			#print("unlocked")
@@ -343,7 +343,7 @@ class SmoothieDriver(object):
 
 
 	def _process_message_dict(self, message_dict):
-		print("SmoothieDriver._process_message_dict called")
+		#print("SmoothieDriver._process_message_dict called")
 
 		# first, check if ack_recieved confirmation
 		if self.ack_received_message in list(message_dict):
