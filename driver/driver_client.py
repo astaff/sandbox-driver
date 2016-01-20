@@ -95,8 +95,6 @@ def make_a_connection():
 def instantiate_objects():
 	"""After connection has been made, instatiate the various robot objects
     """
-    #otdriver = driver.OTOneDriver()
-    #subscriber.set_driver(otdriver)
     otdriver_harness = driver_harness.Harness()
     subscriber = Subscriber(otdriver_harness)
     publisher = Publisher(session_factory)
