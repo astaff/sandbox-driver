@@ -40,7 +40,7 @@ class Publisher:
             if data_ is not None:
                 msg = {
                     'type':type_,
-                    'data':damsg
+                    'data':data_
                 }
             else:
                 msg = {
