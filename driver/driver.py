@@ -604,7 +604,7 @@ class OTOneDriver(SmoothieDriver):
 			print()
 			self.send(command_text)
 
-		elif:	#check whether command is actually a code in commands dictionary
+		else:	#check whether command is actually a code in commands dictionary
 			for cmd, dat in self.commands_dictionary.items():
 				if command == dat.get("code"):
 					print("command is a code in command list!")
