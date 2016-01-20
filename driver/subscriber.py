@@ -10,8 +10,8 @@ class Subscriber():
         self._driver_harness = driver_harness
 
         self.in_dispatcher = {
-            'move': lambda data: self._driver_harness.send_command("rapid_move",data),
-            'home': lambda data: self._driver_harness.send_command("home",data),
+            'rapid_move': lambda data: self._driver_harness.send_command(data),
+            'home': lambda data: self._driver_harness.send_command(data),
             'get_state': lambda data: self._driver_harness.get_state(data),
             'clear_queue': lambda data: self._driver_harness.clear_queue(data),
             'connect': lambda data: self._driver_harness.connect(data),
@@ -30,9 +30,9 @@ class Subscriber():
         try:
             dictum = collections.OrderedDict(json.loads(message.strip(), object_pairs_hook=collections.OrderedDict))
             if 'data' in dictum:
-                self.in_dispatcher[dictum['type']](self,dictum['data'])
+                self.in_dispatcher[dictum['type']](dictum['data'])
             else:
-                self.in_dispatcher[dictum['type']](self,None)
+                self.in_dispatcher[dictum['type']](None)
         except:
             print('*** error in subscriber.dispatch_message ***')
             raise

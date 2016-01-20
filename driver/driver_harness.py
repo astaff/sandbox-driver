@@ -90,13 +90,17 @@ class Harness(object):
 
 
 	def send_command(self, data=None):
-		#TODO publish driver_state, dict
+		print("driver_harness.send_command called")
+		print("data: ")
+		print(data)
 		if isinstance(data, dict):
+			print("A...")
 			if 'command' in list(data):
 				if 'params' in list(data):
 					self.driver_dict.get('otone').send_command(data.get('command'),data.get('params'))
 				else:
 					self.driver_dict.get('otone').send_command(data.get('command'),None)
+		print("B...")
 		return self.publish_state(None)
 
 
