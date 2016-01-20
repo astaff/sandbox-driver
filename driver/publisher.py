@@ -14,12 +14,13 @@ out_dispatcher = {
 
 class Publisher:
     def __init__(self, session=None):
+        self.caller = None
         if session is not None:
-            caller = session
+            self.caller = session
 
 
     def set_caller(self, session):
-        caller = session
+        self.caller = session
 
 
     def dispatch_message(self, message):
@@ -35,7 +36,7 @@ class Publisher:
 
 
     def publish(self,type_,data_):
-        if caller is not None and type_ is not None:
+        if self.caller is not None and type_ is not None:
             if data_ is not None:
                 msg = {
                     'type':type_,
