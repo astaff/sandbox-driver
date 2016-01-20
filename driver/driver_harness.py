@@ -115,7 +115,7 @@ class Harness(object):
 	def get_state(self, data=None):
 		return_dict = {}
 		return_dict.update(self.driver_dict.get('otone').get_state())
-		return_date['drivers'] = self.get_drivers_info(None)
+		return_dict['drivers'] = self.get_drivers_info(None)
 		return return_dict
 
 
