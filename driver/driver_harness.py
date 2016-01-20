@@ -70,7 +70,7 @@ class Harness(object):
 
 	def publish_drivers(self, data=None):
 		return_list = self.get_drivers(None)
-		self.publisher.publish('drivers',return_list)
+		self._publisher.publish('drivers',return_list)
 		return return_list
 
 
@@ -108,7 +108,7 @@ class Harness(object):
 
 	def publish_commands(self, data=None):
 		return_dict = self.get_commands(None)
-		self.publisher.publish('commands', return_dict)
+		self._publisher.publish('commands', return_dict)
 		return return_dict
 
 
@@ -121,7 +121,7 @@ class Harness(object):
 
 	def publish_state(self, data=None):
 		return_dict = self.get_state(None)
-		self.publisher.publish('state', return_dict)
+		self._publisher.publish('state', return_dict)
 		return return_dict
 
 
