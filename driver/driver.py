@@ -444,7 +444,7 @@ class SmoothieDriver(object):
 
 		if text_data != "":
 			text_message_list = self._format_text_data(text_data)
-			print()s
+			print()
 			print("_smoothie_data_handler --> text_message_list")
 			print(text_message_list)
 			print()
