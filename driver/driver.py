@@ -413,10 +413,11 @@ class SmoothieDriver(object):
 
 
 	def _raw_data_handler(self, data):
-		print()
-		print('raw data:')
-		print(data)
-		print()
+		pass
+		#print()
+		#print('raw data:')
+		#print(data)
+		#print()
 
 
 
