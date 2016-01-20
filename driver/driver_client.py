@@ -93,11 +93,11 @@ def make_a_connection():
 
 
 def instantiate_objects():
-	"""After connection has been made, instatiate the various robot objects
+    """After connection has been made, instatiate the various robot objects
     """
-    otdriver_harness = driver_harness.Harness()
-    subscriber = Subscriber(otdriver_harness)
     publisher = Publisher(session_factory)
+    otdriver_harness = driver_harness.Harness(publisher)
+    subscriber = Subscriber(otdriver_harness)
     otdriver_harness.set_publisher(publisher)
     otdriver_harness.connect()
 
