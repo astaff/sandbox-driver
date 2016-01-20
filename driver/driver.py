@@ -216,7 +216,7 @@ class SmoothieDriver(object):
 	def get_state(self):
 		return_dict = {
 			"connected":self.connected,
-			"transport":self.transport ? 1 or 0,
+			"transport":1 if self.transport else 0,
 			"locked":self.locked,
 			"ack_received":self.ack_received,
 			"ack_ready":self.ack_ready,
