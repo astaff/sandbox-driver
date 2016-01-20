@@ -399,7 +399,7 @@ class SmoothieDriver(object):
 
 		for name_message, value in message_dict.items():
 
-			for callback in self.callbacks_name_callback_messages:
+			for callback_name, callback in self.callbacks_name_callback_messages.items():
 				if name_message in callback['messages']:
 					callback['callback'](value)
 

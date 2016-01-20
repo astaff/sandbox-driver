@@ -97,11 +97,11 @@ def make_a_connection():
 def instantiate_objects():
     """After connection has been made, instatiate the various robot objects
     """
-    publisher = Publisher(session_factory)
-    otdriver_harness = driver_harness.Harness(publisher)
-    subscriber = Subscriber(otdriver_harness)
-    otdriver_harness.set_publisher(publisher)
-    otdriver_harness.connect()
+    #publisher = Publisher(session_factory)
+    #otdriver_harness = driver_harness.Harness(publisher)
+    #subscriber = Subscriber(otdriver_harness)
+    #otdriver_harness.set_publisher(publisher)
+    #otdriver_harness.connect()
 
 
 try:
@@ -118,6 +118,11 @@ try:
                                         debug_wamp=False)
     loop = asyncio.get_event_loop()
 
+    publisher = Publisher(session_factory)
+    otdriver_harness = driver_harness.Harness(publisher)
+    subscriber = Subscriber(otdriver_harness)
+    otdriver_harness.set_publisher(publisher)
+    otdriver_harness.connect()
 
     while (crossbar_status == False):
         try:
