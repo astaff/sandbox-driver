@@ -434,24 +434,24 @@ class SmoothieDriver(object):
 			json_data = datum[datum.find('{'):].replace('\n','').replace('\r','')
 			text_data = datum[:datum.index('{')]
 		
-		print("*"*15)
-		print("json_data:")
-		print(json_data)
-		print()
-		print("text_data:")
-		print(text_data)
-		print("*"*15)
+		#print("*"*15)
+		#print("json_data:")
+		#print(json_data)
+		#print()
+		#print("text_data:")
+		#print(text_data)
+		#print("*"*15)
 
 		if text_data != "":
 			text_message_list = self._format_text_data(text_data)
-			print()
-			print("_smoothie_data_handler --> text_message_list")
-			print(text_message_list)
-			print()
+			#print()
+			#print("_smoothie_data_handler --> text_message_list")
+			#print(text_message_list)
+			#print()
 			for message in text_message_list:
-				print("_smoothie_data_handler --> message")
-				print(message)
-				print()
+				#print("_smoothie_data_handler --> message")
+				#print(message)
+				#print()
 				self._process_message_dict(message)
 
 		if json_data != "":
