@@ -4,7 +4,7 @@ import driver
 
 class Harness(object):
 
-	def __init__(self, publisher):
+	def __init__(self, publisher=None):
 		self._publisher = publisher
 		self.driver_dict = {}
 
