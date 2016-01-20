@@ -169,7 +169,7 @@ class SmoothieDriver(object):
 
 
 	def register_callback(self, callback, messages):
-		if callback.__name__ not in list(self.callbacks_names_callback_messages):
+		if callback.__name__ not in list(self.callbacks_name_callback_messages):
 			if isinstance(messages, list):
 				self.callbacks_name_callback_messages[callback.__name__] = {'callback':callback, 'messages':messages}
 			else:
