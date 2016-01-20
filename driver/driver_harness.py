@@ -60,7 +60,7 @@ class Harness(object):
 
 
 	def publish_drives_info(self, data):
-		return_dict = self.get_drivers_info(None):
+		return_dict = self.get_drivers_info(None)
 		self._publisher.publish('drivers_info',return_dict)
 		return return_dict
 
