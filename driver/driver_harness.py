@@ -41,7 +41,7 @@ class Harness(object):
 			print(driver_name + " not in drivers")
 
 
-	def get_drivers_info(self, data):		
+	def get_drivers_info(self, data=None):		
 		#	eg:
 		#	{
 		#		'otone':
@@ -62,34 +62,34 @@ class Harness(object):
 		return return_dict
 
 
-	def publish_drives_info(self, data):
+	def publish_drives_info(self, data=None):
 		return_dict = self.get_drivers_info(None)
 		self._publisher.publish('drivers_info',return_dict)
 		return return_dict
 
 
-	def publish_drivers(self, data):
+	def publish_drivers(self, data=None):
 		return_list = self.get_drivers(None)
 		self.publisher.publish('drivers',return_list)
 		return return_list
 
 
-	def connect(self, data):
+	def connect(self, data=None):
 		self.driver_dict.get('otone').connect()
 		return self.publish_state(None)
 
 
-	def disconnect(self, data):
+	def disconnect(self, data=None):
 		self.driver_dict.get('otone').disconnect()
 		return self.publish_state(None)
 
 
-	def clear_queue(self, data):
+	def clear_queue(self, data=None):
 		self.driver_dict.get('otone').clear_queue()
 		return self.publish_state(None)
 
 
-	def send_command(self, data):
+	def send_command(self, data=None):
 		#TODO publish driver_state, dict
 		if isinstance(data, dict):
 			if 'command' in list(data):
@@ -100,26 +100,26 @@ class Harness(object):
 		return self.publish_state(None)
 
 
-	def get_commands(self, data):
+	def get_commands(self, data=None):
 		return_dict = {}
 		return_dict.update(self.driver_dict.get('otone').get_commands())
 		return return_dict
 
 
-	def publish_commands(self, data):
+	def publish_commands(self, data=None):
 		return_dict = self.get_commands(None)
 		self.publisher.publish('commands', return_dict)
 		return return_dict
 
 
-	def get_state(self, data):
+	def get_state(self, data=None):
 		return_dict = {}
 		return_dict.update(self.driver_dict.get('otone').get_state())
 		return_date['drivers'] = self.get_drivers(None)
 		return return_dict
 
 
-	def publish_state(self, data):
+	def publish_state(self, data=None):
 		return_dict = self.get_state(None)
 		self.publisher.publish('state', return_dict)
 		return return_dict
