@@ -125,10 +125,12 @@ try:
     loop = asyncio.get_event_loop()
 
     publisher = Publisher(session_factory)
+    otdriver = driver.SmoothieDriver()
     otdriver_harness = driver_harness.Harness(publisher)
     subscriber = Subscriber(otdriver_harness)
     otdriver_harness.set_publisher(publisher)
-    otdriver_harness.connect()
+    otdriver_harness.add_driver('smoothie',otdriver)
+    otdriver_harness.connect('smoothie',None)
 
     while (crossbar_status == False):
         try:
