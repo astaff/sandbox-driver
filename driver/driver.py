@@ -318,7 +318,7 @@ class SmoothieDriver(object):
 
 
 	def send(self, message):
-		print("SmoothieDriver.send called")
+		print('driver.send called')
 		message = message + self.config_dict['message_ender']
 		if self.simulation:
 			self.simulation_queue.append(message)
@@ -335,6 +335,7 @@ class SmoothieDriver(object):
 # flow control 
 
 	def lock_check(self):
+		print('driver.lock_check called')
 		#print("SmoothieDriver.lock check called")
 		if self.state_dict['ack_received'] and self.state_dict['ack_ready']:
 			self.state_dict['locked'] = False
@@ -347,12 +348,14 @@ class SmoothieDriver(object):
 
 
 	def _add_to_command_queue(self, command):
+		print('driver._add_to_command_queue called')
 		self.command_queue.append(command)
 		self.state_dict['queue_size'] = len(self.command_queue)
 		self._step_command_queue()
 
 
 	def _step_command_queue(self):
+		print('driver._step_command_queue called')
 		self.lock_check()
 		if self.state_dict['locked'] == False:
 			if len(self.command_queue) == 0:
@@ -366,6 +369,7 @@ class SmoothieDriver(object):
 
 
 	def _format_text_data(self, text_data):
+		print('driver._format_text_data called')
 		return_list = []
 		remainder_data = text_data
 		while remainder_data.find(',')>=0:
@@ -378,7 +382,7 @@ class SmoothieDriver(object):
 
 
 	def _format_group(self, group_data):
-		print("SmoothieDriver._format_group called")
+		print('driver._format_group called')
 		return_dict = dict()
 		remainder_data = group_data
 		if remainder_data.find(':')>=0:
@@ -406,7 +410,7 @@ class SmoothieDriver(object):
 		#	}
 		#
 		#
-
+		print('driver._format_json_data called')
 		return_list = []
 		for name, value in json_data.items():
 			if isinstance(value, dict):
@@ -443,6 +447,7 @@ class SmoothieDriver(object):
 
 
 	def _process_message_dict(self, message_dict):
+		print('driver._process_message_dict called')
 		#print("SmoothieDriver._process_message_dict called")
 
 		# first, check if ack_recieved confirmation
@@ -508,6 +513,7 @@ class SmoothieDriver(object):
 
 # Device callbacks
 	def _on_connection_made(self):
+		print('driver._on_connection_made called')
 		self.connected = True
 		self.state_dict['transport'] = True if self.smoothie_transport else False
 		print('connected!')
@@ -516,6 +522,7 @@ class SmoothieDriver(object):
 
 
 	def _on_raw_data(self, data):
+		print('driver._on_raw_data called')
 		if isinstance(self.meta_callbacks_dict['on_raw_data'],Callable):
 			self.meta_callbacks_dict['on_raw_data']()
 
@@ -524,6 +531,7 @@ class SmoothieDriver(object):
 		"""Handles incoming data from Smoothieboard that has already been split by delimiter
 
 		"""
+		print('driver._smoothie_data_handler called')
 		json_data = ""
 		text_data = datum
 
@@ -565,6 +573,7 @@ class SmoothieDriver(object):
 				raise
 
 	def _on_connection_lost(self):
+		print('driver._on_connection_lost called')
 		self.connected = False
 		self.state_dict['transport'] = True if self.smoothie_transport else False
 		print('not connected!')
@@ -589,7 +598,7 @@ class SmoothieDriver(object):
 		#
 
 		#, arg=None,**kwargs):
-		print('send_command called!')
+		print('driver.send_command called!')
 		command_text = ""
 		# check if command is in commands dictionary
 		if command in list(self.commands_dict):
