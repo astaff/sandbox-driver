@@ -517,7 +517,7 @@ class SmoothieDriver(object):
 
 	def _on_raw_data(self, data):
 		if isinstance(self.meta_callbacks_dict['on_raw_data'],Callable):
-			self.meta_callbacks_dict['on_raw_data',Callable]()
+			self.meta_callbacks_dict['on_raw_data']()
 
 
 	def _smoothie_data_handler(self, datum):
