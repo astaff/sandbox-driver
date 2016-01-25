@@ -112,7 +112,7 @@ class SmoothieDriver(object):
 
 	config_dict = {
 		'delimiter':"\n",
-		'message_ender':"\r\n".
+		'message_ender':"\r\n",
 		'ack_received_message':"ok",
 		'ack_received_parameter':None,
 		'ack_received_value':None,
