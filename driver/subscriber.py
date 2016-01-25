@@ -10,7 +10,7 @@ class Subscriber():
         self._driver_harness = driver_harness
 
         self.in_dispatcher = {
-            'command': lambda data: self._driver_harness.send_command(data)
+            'command': lambda data: self._driver_harness.send_command(data),
             'meta': lambda data: self._driver_harness.meta_command(data)
             #'move': lambda data: self._driver_harness.send_command(data),
             #'move_to': lambda data: self._driver_harness.send_command(data),
