@@ -214,16 +214,19 @@ class SmoothieDriver(object):
 
 
 	def __init__(self, simulate=False, on_empty_queue=None):
+		print('driver.__init__ called')
 		self.simulation = simulate
 		self.the_loop = asyncio.get_event_loop()
 		self.on_empty_queue_callback = on_empty_queue
 
 
 	def callbacks(self):
+		print('driver.callbakcs called')
 		return copy.deepcopy(self.callbacks_dict)
 
 
 	def meta_callbacks(self):
+		print('driver.meta_callbacks called')
 		return_dict = dict()
 		for name, value in self.meta_callbacks_dict.items():
 			if value is not None and isinstance(value, Callable):
@@ -235,12 +238,14 @@ class SmoothieDriver(object):
 
 
 	def set_meta_callback(self, name, callback):
+		print('driver.set_meta_callback called')
 		if name in self.meta_callbacks_dict and isinstance(callback, Callable):
 			self.meta_callbacks_dict[name] = callback
 		return self.meta_callbacks()
 
 
 	def add_callback(self, callback, messages):
+		print('driver.add_callback called')
 		if callback.__name__ not in list(self.callbacks_dict):
 			if isinstance(messages, list):
 				self.callbacks_dict[callback.__name__] = {'callback':callback, 'messages':messages}
@@ -254,14 +259,17 @@ class SmoothieDriver(object):
 
 
 	def remove_callback(self, callback_name):
+		print('driver.remove_callback called')
 		del self.callbacks_dict[callback_name]
 
 
 	def flow(self):
+		print('driver.flow called')
 		return copy.deepcopy(self.state_dict)
 
 
 	def clear_queue(self):
+		print('driver.clear_queue called')
 		self.command_queue = []
 		self.state_dict['queue_size'] = len(self.command_queue)
 		self.state_dict['ack_received'] = True
@@ -269,7 +277,9 @@ class SmoothieDriver(object):
 
 
 	def connect(self, device=None, port=None):
-		print("driver -> connect called")
+		"""
+		"""
+		print('driver.connect called')
 		self.the_loop = asyncio.get_event_loop()
 		#asyncio.async(serial.aio.create_serial_connection(self.the_loop, Output, '/dev/ttyUSB0', baudrate=115200))
 		callbacker = Output(self)
@@ -277,18 +287,31 @@ class SmoothieDriver(object):
 
 
 	def disconnect(self):
+		"""
+		"""
+		print('driver.disconnect called')
 		pass
 
 
 	def commands(self):
+		"""
+		"""
+		print('driver.commands called')
 		return copy.deepcopy(self.commands_dict)
 
 
 	def on_empty_queue(self):
-		self.meta_callbacks_dict['on_empty_queue']()
+		"""
+		"""
+		print('driver.on_empty_queue called')
+		if isinstance(self.meta_callbacks_dict['on_empty_queue'],Callable):
+			self.meta_callbacks_dict['on_empty_queue']()
 
 
 	def unlock(self):
+		"""
+		"""
+		print('driver.unlock called')
 		self.state_dict['ack_received'] = True
 		self.state_dict['ack_ready'] = True
 		self.lock_check()
