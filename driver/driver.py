@@ -213,11 +213,10 @@ class SmoothieDriver(object):
 
 
 
-	def __init__(self, simulate=False, on_empty_queue=None):
+	def __init__(self, simulate=False):
 		print('driver.__init__ called')
 		self.simulation = simulate
 		self.the_loop = asyncio.get_event_loop()
-		self.on_empty_queue_callback = on_empty_queue
 
 
 	def callbacks(self):
@@ -300,14 +299,6 @@ class SmoothieDriver(object):
 		return copy.deepcopy(self.commands_dict)
 
 
-	def on_empty_queue(self):
-		"""
-		"""
-		print('driver.on_empty_queue called')
-		if isinstance(self.meta_callbacks_dict['on_empty_queue'],Callable):
-			self.meta_callbacks_dict['on_empty_queue']()
-
-
 	def unlock(self):
 		"""
 		"""
@@ -359,7 +350,8 @@ class SmoothieDriver(object):
 		self.lock_check()
 		if self.state_dict['locked'] == False:
 			if len(self.command_queue) == 0:
-				self.on_empty_queue()
+				if isinstance(self.meta_callbacks_dict['on_empty_queue'],Callable):
+					self.meta_callbacks_dict['on_empty_queue']()
 			else:
 				self._send(self.command_queue.pop(0))
 				self.state_dict['queue_size'] = len(self.command_queue)
@@ -448,7 +440,6 @@ class SmoothieDriver(object):
 
 	def _process_message_dict(self, message_dict):
 		print('driver._process_message_dict called')
-		#print("SmoothieDriver._process_message_dict called")
 
 		# first, check if ack_recieved confirmation
 		if self.config_dict['ack_received_message'] in list(message_dict):
