@@ -10,14 +10,17 @@ class Subscriber():
         self._driver_harness = driver_harness
 
         self.in_dispatcher = {
-            'rapid_move': lambda data: self._driver_harness.send_command(data),
-            'home': lambda data: self._driver_harness.send_command(data),
-            'get_state': lambda data: self._driver_harness.get_state(data),
-            'clear_queue': lambda data: self._driver_harness.clear_queue(data),
-            'connect': lambda data: self._driver_harness.connect(data),
-            'disconnect': lambda data: self._driver_harness.disconnect(data),
-            'get_commands': lambda data: self._driver_harness.get_commands(data),
-            'get_drivers': lambda data: self._driver_harness.get_drivers(data)
+            'command': lambda data: self._driver_harness.send_command(data)
+            'meta': lambda data: self._driver_harness.meta_command(data)
+            #'move': lambda data: self._driver_harness.send_command(data),
+            #'move_to': lambda data: self._driver_harness.send_command(data),
+            #'home': lambda data: self._driver_harness.send_command(data),
+            #'get_state': lambda data: self._driver_harness.get_state(data),
+            #'clear_queue': lambda data: self._driver_harness.clear_queue(data),
+            #'connect': lambda data: self._driver_harness.connect(data),
+            #'disconnect': lambda data: self._driver_harness.disconnect(data),
+            #'get_commands': lambda data: self._driver_harness.get_commands(data),
+            #'get_drivers': lambda data: self._driver_harness.get_drivers(data)
         }
 
     def set_driver(self, driver_harness):

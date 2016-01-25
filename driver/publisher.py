@@ -3,51 +3,39 @@
 
 import json, collections
 
-out_dispatcher = {
-    '': lambda data: a(),
-    '': lambda data: b(),
-    '': lambda data: c(),
-    '': lambda data: d(),
-    '': lambda data: e()
-}
-
 
 class Publisher:
     def __init__(self, session=None):
+        """
+        """
+        print('publisher.__init__ called')
         self.caller = None
         if session is not None:
             self.caller = session
 
+        self.topics = {
+            'frontend':'com.opentrons.frontend',
+            'bootloader':'com.opentrons.bootloader',
+            'labware':'com.opentrons.labware',
+            'driver':'com.opentrons.driver'
+        }
+
 
     def set_caller(self, session):
+        """
+        """
+        print('publisher.set_caler called')
         self.caller = session
 
 
-    def dispatch_message(self, message):
-        try:
-            dictum = collections.OrderedDict(json.loads(message.strip(), object_pairs_hook=collections.OrderedDict))
-            if 'data' in dictum:
-                self.out_dispatch[dictum['type']](self,dictum['data'])
-            else:
-                self.out_dispatch[dictum['type']](self,None)
-        except:
-            print('*** error in publisher.dispatch_message ***')
-            raise
-
-
-    def publish(self,type_,data_):
-        if self.caller is not None and type_ is not None:
-            if data_ is not None:
-                msg = {
-                    'type':type_,
-                    'data':data_
-                }
-            else:
-                msg = {
-                    'type':type_
-                }
+    def publish(self,topic,name,message,param):
+        """
+        """
+        print('publisher.publish called')
+        if self.caller is not None and topic is not None and name is not None and message is not None and param is not None:
+            msg = {name:{message:param}}
             try:
-                self.caller._myAppSession.publish('com.opentrons.driver_to_frontend',json.dumps(msg))
+                self.caller._myAppSession.publish(self.topic.get(topic),json.dumps(msg))
             except:
                 print("error trying to send_message")
 

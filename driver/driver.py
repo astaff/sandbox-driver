@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 #import serial
-import asyncio, json
+import asyncio, json, copy
 
 
 class Output(asyncio.Protocol):
@@ -33,7 +33,7 @@ class Output(asyncio.Protocol):
 			data_list = [e+self._delimiter for e in current_data.split(self._delimiter)]
 			for datum in data_list:
 				self.outer._smoothie_data_handler(datum)
-		self.outer._raw_data_handler(data)
+		self.outer._data_received(data)
 
 
 	def connection_lost(self, exc):
@@ -94,37 +94,34 @@ class SmoothieDriver(object):
 
 	"""
 
-	simulation = False
 	command_queue = []
 	simulation_queue = []
-
-	connected = False
 	
 	smoothie_transport = None
+	the_loop = None
 
+	state_dict = {
+		'simulation':False,
+		'connected':False,
+		'transport':False,
+		'locked':False,
+		'ack_received':True,
+		'ack_ready':True,
+		'queue_size':0
+	}
 
-	delimeter = "\n"
-	message_ender = "\r\n"
+	config_dict = {
+		'delimiter':"\n",
+		'message_ender':"\r\n".
+		'ack_received_message':"ok",
+		'ack_received_parameter':None,
+		'ack_received_value':None,
+		'ack_ready_message':"stat",
+		'ack_ready_parameter':None,
+		'ack_ready_value':"0",
+	}
 
-
-	# flow control variables
-	awaiting_ack = False
-	locked = False
-	ack_received = False
-	ack_ready = True
-
-	ack_received_message = "ok"
-	ack_received_parameter = None # not used in this case
-	ack_received_value = None # not used in this case
-
-	ack_ready_message = "stat"
-	ack_received_parameter = None # not used in this case
-	ack_ready_value = "0"
-
-	on_empty_queue_callback = None
-
-
-	callbacks_name_callback_messages = {}
+	callbacks_dict = {}
 	# dict:
 	#
 	#  {
@@ -132,12 +129,86 @@ class SmoothieDriver(object):
 	#    {
 	#      callback: <CALLBACK OBJECT>,
 	#      messages: [ <messages>... ]
-	#    }
+	#    },
+	#    ...
 	#  }
+	meta_callbacks_dict = {
+		'on_connect' : None,
+		'on_disconnect' : None,
+		'on_empty_queue' : None,
+		'on_raw_data' : None
+	}
 
-
-	the_loop = None
-
+	commands_dict = {
+		"rapid_move":{
+			"code":"G0",
+			"parameters":["","X","Y","Z","A","B"]
+		},
+		"linear_move":{
+			"code":"G1",
+			"parameters":["","X","Y","Z","A","B"]
+		},
+		"home":{
+			"code":"G28",
+			"parameters":["","X","Y","Z","A","B"]
+		},
+		"absolute":{
+			"code":"G90",
+			"parameters":[]
+		},
+		"relative":{
+			"code":"G91",
+			"parameters":[]
+		},
+		"feedrate":{
+			"code":"F",
+			"parameters":[]
+		},
+		"feedrate_a":{
+			"code":"a",
+			"parameters":[]
+		},
+		"feedrate_b":{
+			"code":"b",
+			"parameters":[]
+		},
+		"feedrate_c":{
+			"code":"c",
+			"parameters":[]
+		},
+		"reset":{
+			"code":"ls sd",
+			"parameters":[]
+		},
+		"enable_motors":{
+			"code":"M17",
+			"parameters":[]
+		},
+		"disable_motors":{
+			"code":"M18",
+			"parameters":[]
+		},
+		"start_feedback":{
+			"code":"M62",
+			"parameters":[]
+		},
+		"stop_feedback":{
+			"code":"M63",
+			"parameters":[]
+		},
+		"limit_switches":{
+			"code":"M119",
+			"parameters":[]
+		},
+		"halt":{
+			"code":"M112",
+			"parameters":[]
+		},
+		"reset_from_halt":{
+			"code":"M999",
+			"parameters":[]
+		}
+	}
 
 
 
@@ -145,6 +216,55 @@ class SmoothieDriver(object):
 		self.simulation = simulate
 		self.the_loop = asyncio.get_event_loop()
 		self.on_empty_queue_callback = on_empty_queue
+
+
+	def callbacks(self):
+		return copy.deepcopy(self.callbacks_dict)
+
+
+	def meta_callbacks(self):
+		return_dict = dict()
+		for name, value in self.meta_callbacks_dict.items():
+			if value is not None and hasattr(value, '__call__'):
+				return_dict[name] = value.__name__
+			else:
+				return_dict[name] = 'None'
+		#return copy.deepcopy(self.meta_callbacks_dict)
+		return return_dict
+
+
+	def set_meta_callback(self, name, callback):
+		if name in self.meta_callbacks_dict and hasattr(callback, '__call__'):
+			self.meta_callbacks_dict[name] = callback
+		return self.meta_callbacks()
+
+
+	def add_callback(self, callback, messages):
+		if callback.__name__ not in list(self.callbacks_dict):
+			if isinstance(messages, list):
+				self.callbacks_dict[callback.__name__] = {'callback':callback, 'messages':messages}
+			else:
+				self.callbacks_dict[callback.__name__] = {'callback':callback, 'messages':[messages]}
+		elif message not in self.callbacks_dict[callback.__name__]['messages']:
+			if isinstance(messages, list):
+				self.callbacks_dict[callback.__name__]['messages'].extend(messages)
+			else:
+				self.callbacks_dict[callback.__name__]['messages'].append(messages)
+
+
+	def remove_callback(self, callback_name):
+		del self.callbacks_dict[callback_name]
+
+
+	def flow(self):
+		return copy.deepcopy(self.state_dict)
+
+
+	def clear_queue(self):
+		self.command_queue = []
+		self.state_dict['queue_size'] = len(self.command_queue)
+		self.state_dict['ack_received'] = True
+		self.state_dict['ack_ready'] = True
 
 
 	def connect(self, device=None, port=None):
@@ -159,79 +279,32 @@ class SmoothieDriver(object):
 		pass
 
 
-	def set_on_empty_queue_callback(self, on_empty_queue):
-		self.on_empty_queue_callback = on_empty_queue
+	def commands(self):
+		return copy.deepcopy(self.commands_dict)
 
 
 	def on_empty_queue(self):
-		if hasattr(self.on_empty_queue_callback, '__call__'):
-			self.on_empty_queue_callback()
-
-
-	def register_callback(self, callback, messages):
-		if callback.__name__ not in list(self.callbacks_name_callback_messages):
-			if isinstance(messages, list):
-				self.callbacks_name_callback_messages[callback.__name__] = {'callback':callback, 'messages':messages}
-			else:
-				self.callbacks_name_callback_messages[callback.__name__] = {'callback':callback, 'messages':[messages]}
-		elif message not in self.callbacks_name_callback_messages[callback.__name__]['messages']:
-			if isinstance(messages, list):
-				self.callbacks_name_callback_messages[callback.__name__]['messages'].extend(messages)
-			else:
-				self.callbacks_name_callback_messages[callback.__name__]['messages'].append(messages)
-
-
-	def remove_callback(self, callback_name):
-		del self.callbacks_name_callback_messages[callback_name]
-
-
-	def remove_callback_message(self, callback_name, message):
-		self.callbacks_name_callback_messages[callback_name]['messages'].remove(message)
+		self.meta_callbacks_dict['on_empty_queue']()
 
 
 	def unlock(self):
-		self.ack_received = True
-		self.ack_ready = True
+		self.state_dict['ack_received'] = True
+		self.state_dict['ack_ready'] = True
 		self.lock_check()
-
-
-	def clear_queue(self):
-		self.command_queue = []
 
 
 	def send(self, message):
 		print("SmoothieDriver.send called")
-		message = message + self.message_ender
+		message = message + self.config_dict['message_ender']
 		if self.simulation:
 			self.simulation_queue.append(message)
 		else:
 			if self.smoothie_transport is not None:
 				if self.lock_check() == False:
-					self.ack_received = False
+					self.state_dict['ack_received'] = False
 					self.smoothie_transport.write(message.encode())
 			else:
 				print("smoothie_transport is None????")
-
-
-	def get_state(self):
-		return_dict = {
-			"connected":self.connected,
-			"transport":1 if self.smoothie_transport else 0,
-			"locked":self.locked,
-			"ack_received":self.ack_received,
-			"ack_ready":self.ack_ready,
-			"queue_size":len(self.command_queue)
-		}
-		return return_dict
-
-
-	def get_info(self):
-		return_dict = {'state':self.get_state()}
-		callbacks_dict = {}
-		for cb_name, cb_value in self.callbacks_name_callback_messages.items():
-			callbacks_dict.update({cb_name:cb_value['messages']})
-		return_dict.update({'callbacks':callbacks_dict})
-		return return_dict
 
 
 
@@ -239,27 +312,30 @@ class SmoothieDriver(object):
 
 	def lock_check(self):
 		#print("SmoothieDriver.lock check called")
-		if self.ack_received and self.ack_ready:
-			self.locked = False
+		if self.state_dict['ack_received'] and self.state_dict['ack_ready']:
+			self.state_dict['locked'] = False
 			#print("unlocked")
 			return False
 		else:
-			self.locked = True
+			self.state_dict['locked'] = True
 			#print("locked")
 			return True
 
+
 	def _add_to_command_queue(self, command):
 		self.command_queue.append(command)
+		self.state_dict['queue_size'] = len(self.command_queue)
 		self._step_command_queue()
 
 
 	def _step_command_queue(self):
 		self.lock_check()
-		if self.locked == False:
+		if self.state_dict['locked'] == False:
 			if len(self.command_queue) == 0:
 				self.on_empty_queue()
 			else:
 				self._send(self.command_queue.pop(0))
+				self.state_dict['queue_size'] = len(self.command_queue)
 
 
 
@@ -346,41 +422,41 @@ class SmoothieDriver(object):
 		#print("SmoothieDriver._process_message_dict called")
 
 		# first, check if ack_recieved confirmation
-		if self.ack_received_message in list(message_dict):
-			value = message_dict.get(self.ack_received_message)
+		if self.config_dict['ack_received_message'] in list(message_dict):
+			value = message_dict.get(self.config_dict['ack_received_message'])
 			if isinstance(value, dict):
-				if self.ack_receieved_parameter is None:
-					self.ack_received = True
+				if self.config_dict['ack_receieved_parameter'] is None:
+					self.state_dict['ack_received'] = True
 				else:
 					for value_name, value_value in value.items():
-						if value_name == self.ack_received_parameter:
-							if self.ack_received_value is None or value_value == self.ack_receieved_value:
-								self.ack_received = True
+						if value_name == self.config_dict['ack_received_parameter']:
+							if self.config_dict['ack_received_value'] is None or value_value == self.config_dict['ack_receieved_value']:
+								self.state_dict['ack_received'] = True
 			else:
-				if self.ack_received_parameter is None:
-					if self.ack_received_value is None or value == self.ack_received_value:
-						self.ack_received = True
+				if self.config_dict['ack_received_parameter'] is None:
+					if self.config_dict['ack_received_value'] is None or value == self.config_dict['ack_received_value']:
+						self.state_dict['ack_received'] = True
 
 
 		# second, check if ack_recieved confirmation
-		if self.ack_ready_message in list(self.ack_ready_message):
-			value = message_dict.get(self.ack_ready_message)
+		if self.config_dict['ack_ready_message'] in list(self.config_dict['ack_ready_message']):
+			value = message_dict.get(self.config_dict['ack_ready_message'])
 			if isinstance(value, dict):
-				if self.ack_ready_parameter is None:
-					self.ack_ready = True
+				if self.config_dict['ack_ready_parameter'] is None:
+					self.state_dict['ack_ready'] = True
 				else:
 					for value_name, value_value in value.items():
-						if value_name == self.ack_ready_parameter:
-							if self.ack_ready_value is None or value_value == self.ack_ready_value:
-								self.ack_ready = True
+						if value_name == self.config_dict['ack_ready_parameter']:
+							if self.config_dict['ack_ready_value'] is None or value_value == self.config_dict['ack_ready_value']:
+								self.state_dict['ack_ready'] = True
 							else:
-								self.ack_ready = False
+								self.state_dict['ack_ready'] = False
 			else:
-				if self.ack_ready_parameter is None:
-					if self.ack_ready_value is None or value == self.ack_ready_value:
-						self.ack_ready = True
+				if self.config_dict['ack_ready_parameter'] is None:
+					if self.config_dict['ack_ready_value'] is None or value == self.config_dict['ack_ready_value']:
+						self.state_dict['ack_ready'] = True
 					else:
-						self.ack_ready = False
+						self.state_dict['ack_ready'] = False
 
 
 		# finally, pass messages to their respective callbacks based on callbacks and messages they're registered to receive
@@ -399,7 +475,7 @@ class SmoothieDriver(object):
 
 		for name_message, value in message_dict.items():
 
-			for callback_name, callback in self.callbacks_name_callback_messages.items():
+			for callback_name, callback in self.callbacks_dict.items():
 				if name_message in callback['messages']:
 					callback['callback'](value)
 
@@ -409,16 +485,13 @@ class SmoothieDriver(object):
 # Device callbacks
 	def _on_connection_made(self):
 		self.connected = True
+		self.state_dict['transport'] = True if self.smoothie_transport else False
 		print('connected!')
+		self.meta_callbacks_dict['on_connect']()
 
 
-	def _raw_data_handler(self, data):
-		pass
-		#print()
-		#print('raw data:')
-		#print(data)
-		#print()
-
+	def _raw_data(self, data):
+		self.meta_callbacks_dict['on_raw_data']()
 
 
 	def _smoothie_data_handler(self, datum):
@@ -428,7 +501,7 @@ class SmoothieDriver(object):
 		json_data = ""
 		text_data = datum
 
-		if self.ack_received_message in datum:
+		if self.config_dict['ack_received_message'] in datum:
 			self.ack_received = True
 
 		if datum.find('{')>=0:
@@ -467,108 +540,12 @@ class SmoothieDriver(object):
 
 	def _on_connection_lost(self):
 		self.connected = False
+		self.state_dict['transport'] = True if self.smoothie_transport else False
 		print('not connected!')
+		self.meta_callbacks_dict['on_disconnect']()
 
 
-
-class OTOneDriver(SmoothieDriver):
-
-
-	commands_dictionary = {
-		"rapid_move":{
-			"code":"G0",
-			"parameters":["","X","Y","Z","A","B"]
-		},
-		"linear_move":{
-			"code":"G1",
-			"parameters":["","X","Y","Z","A","B"]
-		},
-		"home":{
-			"code":"G28",
-			"parameters":["","X","Y","Z","A","B"]
-		},
-		"absolute":{
-			"code":"G90",
-			"parameters":[]
-		},
-		"relative":{
-			"code":"G91",
-			"parameters":[]
-		},
-		"feedrate":{
-			"code":"F",
-			"parameters":[]
-		},
-		"feedrate_a":{
-			"code":"a",
-			"parameters":[]
-		},
-		"feedrate_b":{
-			"code":"b",
-			"parameters":[]
-		},
-		"feedrate_c":{
-			"code":"c",
-			"parameters":[]
-		},
-		"reset":{
-			"code":"ls sd",
-			"parameters":[]
-		},
-		"enable_motors":{
-			"code":"M17",
-			"parameters":[]
-		},
-		"disable_motors":{
-			"code":"M18",
-			"parameters":[]
-		},
-		"start_feedback":{
-			"code":"M62",
-			"parameters":[]
-		},
-		"stop_feedback":{
-			"code":"M63",
-			"parameters":[]
-		},
-		"limit_switches":{
-			"code":"M119",
-			"parameters":[]
-		},
-		"halt":{
-			"code":"M112",
-			"parameters":[]
-		},
-		"reset_from_halt":{
-			"code":"M999",
-			"parameters":[]
-		}
-	}
-
-	def __init__(self, *args, **kwargs):
-		super(self.__class__, self).__init__(*args, **kwargs)
-
-
-	def get_commands(self):
-		return_dict = {}
-		return_dict.update(self.commands_dictionary)
-		return return_dict
-
-
-	def get_just_commands(self):
-		return_list = []
-		return_list.extend(list(self.commands_dictionary))
-		return list(return_list)
-
-
-	def get_command_parameters(self, command):
-		parameters = []
-		if command in list(self.commands_dictionary):
-			parameters = self.commands_dictionary.get(command).parameters
-		return paramters
-	
-
-	def send_command(self, command, data):
+	def send_command(self, data):
 		#	all entries should be of the form:
 		#	1. command
 		#
@@ -588,13 +565,13 @@ class OTOneDriver(SmoothieDriver):
 		print('send_command called!')
 		command_text = ""
 		# check if command is in commands dictionary
-		if command in list(self.commands_dictionary):
+		if command in list(self.commands_dict):
 			print("command is in list!")
-			command_text = self.commands_dictionary[command]["code"]
+			command_text = self.commands_dict[command]["code"]
 
 			if isinstance(data, dict):
 				for param, val in data.items():
-					if param in commands_dictionary.get(command).parameters:
+					if param in commands_dict.get(command).parameters:
 						command_text.append(" ")
 						command_text.append("%s%s" % (param,val))
 			else:
@@ -606,7 +583,7 @@ class OTOneDriver(SmoothieDriver):
 			self.send(command_text)
 
 		else:	#check whether command is actually a code in commands dictionary
-			for cmd, dat in self.commands_dictionary.items():
+			for cmd, dat in self.commands_dict.items():
 				if command == dat.get("code"):
 					print("command is a code in command list!")
 					command_text = command

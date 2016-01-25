@@ -35,7 +35,7 @@ class WampComponent(wamp.ApplicationSession):
 
         Starts instatiation of robot objects by calling :meth:`otone_client.instantiate_objects`.
         """
-        print('otone_client : WampComponent.onJoin called')
+        print('driver_client : WampComponent.onJoin called')
         if not self.factory._myAppSession:
             self.factory._myAppSession = self
         
@@ -44,6 +44,8 @@ class WampComponent(wamp.ApplicationSession):
         
         
         def set_client_status(status):
+            """
+            """
             #if debug == True: 
             print('otone_client : WampComponent.set_client_status called')
             global client_status
@@ -53,7 +55,7 @@ class WampComponent(wamp.ApplicationSession):
                 'type':'dummy data',
                 'data':"dummy"
             }
-            self.publish('com.opentrons.driver_to_frontend',json.dumps(msg))
+            self.publish('com.opentrons.frontend',json.dumps(msg))
         
         print('about to publish com.opentrons.driver_client_ready TRUE')
         self.publish('com.opentrons.driver_client_ready',True)
@@ -61,15 +63,16 @@ class WampComponent(wamp.ApplicationSession):
             'type':'dummy data',
             'data':"dummy"
         }
-        self.publish('com.opentrons.driver_to_frontend',json.dumps(msg))
+        self.publish('com.opentrons.frontend',json.dumps(msg))
         yield from self.subscribe(set_client_status, 'com.opentrons.frontend_client_ready')
-        yield from self.subscribe(subscriber.dispatch_message, 'com.opentrons.frontend_to_driver')
+        yield from self.subscribe(subscriber.dispatch_message, 'com.opentrons.driver')
 
 
     def onLeave(self, details):
         """Callback fired when WAMP session has been closed.
         :param details: Close information.
         """
+        print('WampComponent.onLeave called')
         if self.factory._myAppSession == self:
             self.factory._myAppSession = None
         try:
@@ -80,12 +83,14 @@ class WampComponent(wamp.ApplicationSession):
     def onDisconnect(self):
         """Callback fired when underlying transport has been closed.
         """
+        print('WampComponent.onDisconnect called')
         asyncio.get_event_loop().stop()
 
 
 def make_a_connection():
     """Attempt to create streaming transport connection and run event loop
     """
+    print('driver_client.make_a_connection called')
     coro = loop.create_connection(transport_factory, '10.10.1.2', 8080)
 
     transporter, protocoler = loop.run_until_complete(coro)
@@ -97,6 +102,7 @@ def make_a_connection():
 def instantiate_objects():
     """After connection has been made, instatiate the various robot objects
     """
+    print('driver_client.instantiate_objects called')
     #publisher = Publisher(session_factory)
     #otdriver_harness = driver_harness.Harness(publisher)
     #subscriber = Subscriber(otdriver_harness)

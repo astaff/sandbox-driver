@@ -1,132 +1,193 @@
 #!/usr/bin/env python3
 
+"""
+TODO: 
+1. publish error reports to Bootloader
+"""
+
+
 import driver
 
 class Harness(object):
 
 	def __init__(self, publisher=None):
+		"""
+		"""
+		print('driver_harness.__init__ called')
 		self._publisher = publisher
 		self.driver_dict = {}
+		self.meta_dict = {
+			'drivers' : lambda name,param: self.drivers(name,param),
+			'add_driver' : lambda name,param: self.add_driver(name,param),
+			'remove_driver' : lambda name,param: self.remove_driver(name,param),
+			'callbacks' : lambda name,param: self.callbacks(name,param),
+			'meta_callbacks' : lambda name, param: self.meta_callbacks(name,param),
+			'set_meta_callback' : lambda name,param: self.set_meta_callback(name,param),
+			'add_callback' : lambda name,param: self.add_callback(name,param),
+			'remove_callback' : lambda name,param: self.remove_callback(name,param),
+			'flow' : lambda name,param: self.flow(name,param),
+			'clear_queue' : lambda name,param: self.clear_queue(name,param),
+			'connect' : lambda name,param: self.connect(name,param),
+			'disconnect' : lambda name,param: self.disconnect(name,param),
+			'commands' : lambda name,param: self.commands(name,param)
+		}
 
-		self.driver_dict['otone'] = driver.OTOneDriver()
-		def none_callback(message_value):
-			self._publisher.publish('None',message_value)
 
-		self.driver_dict['otone'].register_callback(none_callback, 'None')
+	def set_publisher(self, publisher):
+		"""
 
-
-	def set_publisher(self,publisher):
+		"""
+		print('driver_harness.set_publisher called')
 		self._publisher = publisher
 
 
-	def register_callback_with_driver(self, driver_name, callback, messages):
-		pass
+	def drivers(self, name, param):
+		"""
+
+		"""
+		print('driver_harness.drivers called')
+		self._publisher.publish('frontend',name,'drivers',list(self.driver_dict))
 
 
-	def add_driver(self, driver_name, driver):
-		if driver_name not in list(self.driver_dict):
-			self.driver_dict[driver_name] = driver
-			print(driver_name + " added to drivers")
-			self.publish_state(None)
-		else:
-			print(driver_name + " already in drivers")
-			self.publish_state(None)	
+	def add_driver(self, name, param):
+		"""
+
+		"""
+		print('driver_harness.add_driver called')
+		self.driver_dict[name] = param
 
 
-	def remove_driver(self, driver_name):
-		if driver_name in list(self.driver_dict):
-			del self.driver_dict[driver_name]
-			print(driver_name + " removed")
-		else:
-			print(driver_name + " not in drivers")
+	def remove_driver(self, name, param):
+		"""
+		
+		"""
+		print('driver_harness.remove_driver called')
+		del self.driver_dict[name]
 
 
-	def get_drivers_info(self, data=None):		
-		#	eg:
-		#	{
-		#		'otone':
-		#		{
-		#			'state' : { ... },
-		#			'callbacks' : {
-		#				<callback_name> : [ <messages>... ],
-		#				...
-		#			}
-		#		},
-		#		...
-		#	}
-		#
-		#
-		return_dict = {}
-		for driver in list(self.driver_dict):
-			return_dict.update(self.driver_dict[driver].get_info())
-		return return_dict
+	def callbacks(self, name, param):
+		"""
+		
+		"""
+		print('driver_harness.callbacks called')
+		self._publisher.publish('frontend',name,'callbacks',driver_dict[name].callbacks())
 
 
-	def publish_drives_info(self, data=None):
-		return_dict = self.get_drivers_info(None)
-		self._publisher.publish('drivers_info',return_dict)
-		return return_dict
+	def meta_callbacks(self, name, param):
+		"""
+
+		"""
+		print('driver_harness.meta_callbacks called')
+		self._publisher.publish('frontend',name,'meta_callbacks',driver_dict[name].meta_callbacks())
 
 
-	def publish_drivers(self, data=None):
-		return_list = self.get_drivers(None)
-		self._publisher.publish('drivers',return_list)
-		return return_list
+	def set_meta_callback(self, name, param):
+		"""
+
+		"""
+		print('driver_harness.set_meta_callback called')
+		if isinstance(param,dict):
+			self.driver_dict.get(name).set_meta_callback(list(param)[0],list(param.values)[0]))
+		self._publisher.publish('frontend',name,'meta_callback',driver_dict.get(name).meta_callbacks())
 
 
-	def connect(self, data=None):
-		self.driver_dict.get('otone').connect()
-		return self.publish_state(None)
+	def add_callback(self, name, param):
+		"""
+
+		"""
+		print('driver_harness.add_callback called')
+		self.driver_dict[name].add_callback(list(param)[0],list(param.values())[0])
+		self._publisher.publish('frontend',name,'callbacks',self.driver_dict.get(name).callbacks())
 
 
-	def disconnect(self, data=None):
-		self.driver_dict.get('otone').disconnect()
-		return self.publish_state(None)
+	def remove_callback(self, name, param):
+		"""
+
+		"""
+		print('driver_harness.remove_callback called')
+		self.driver_dict[name].remove_callback(param)
+		self._publisher.publish('frontend',name,'callbacks',self.driver_dict.get(name).callbacks())
 
 
-	def clear_queue(self, data=None):
-		self.driver_dict.get('otone').clear_queue()
-		return self.publish_state(None)
+	def flow(self, name, param):
+		"""
+		
+		"""
+		print('driver_harness.flow called')
+		self._publisher.publish('frontend',name,'flow',self.driver_dict.get(name).flow())
 
 
-	def send_command(self, data=None):
-		print("driver_harness.send_command called")
-		print("data: ")
+	def clear_queue(self, name, param):
+		"""
+
+		"""
+		print('driver_harness.clear_queue called')
+		self.driver_dict.get(name).clear_queue()
+		self.flow(name, None)
+
+
+	def connect(self, name, param):
+		"""
+		
+		"""
+		print('driver_harness.connect called')
+		self.driver_dict[name].connect()
+
+
+	def disconnect(self, name, param):
+		"""
+		
+		"""
+		print('driver_harness.disconnect called')
+		self.driver_dict.get(name).disconnect()
+
+
+	def commands(self, name, param):
+		"""
+
+		"""
+		print('driver_harness.commands called')
+		self._publisher.publish('frontend',name,'commands',self.driver_dict.get(name).commands())
+
+
+	def meta_command(self, data):
+		"""
+
+		"""
+		print('driver_harness.meta_command called')
+		print('data: ')
 		print(data)
+		print()
 		if isinstance(data, dict):
-			print("A...")
-			if 'command' in list(data):
-				if 'params' in list(data):
-					self.driver_dict.get('otone').send_command(data.get('command'),data.get('params'))
+			name, value = data.items()[0]
+			if name in self.driver_dict:
+				if isinstance(value, dict):
+					message, param = value.items()[0]
+					self.meta_dict[message](name,value)
 				else:
-					self.driver_dict.get('otone').send_command(data.get('command'),None)
-		print("B...")
-		return self.publish_state(None)
+					self.meta_dict[value](name, None)
 
 
-	def get_commands(self, data=None):
-		return_dict = {}
-		return_dict.update(self.driver_dict.get('otone').get_commands())
-		return return_dict
+	def send_command(self, data):
+		"""
+
+		"""
+		print('driver_harness.send_command called')
+		print('name: '+name)
+		print('data: ')
+		print(data)
+		print()
+		if isinstance(data, dict):
+			name, value = data.items()[0]:
+			if name in self.driver_dict:
+				self.driver_dict[name].send_command(value)
 
 
-	def publish_commands(self, data=None):
-		return_dict = self.get_commands(None)
-		self._publisher.publish('commands', return_dict)
-		return return_dict
 
 
-	def get_state(self, data=None):
-		return_dict = {}
-		return_dict.update(self.driver_dict.get('otone').get_state())
-		return_dict['drivers'] = self.get_drivers_info(None)
-		return return_dict
 
 
-	def publish_state(self, data=None):
-		return_dict = self.get_state(None)
-		self._publisher.publish('state', return_dict)
-		return return_dict
+
 
 
 
