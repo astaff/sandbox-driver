@@ -2,6 +2,7 @@
 
 #import serial
 import asyncio, json, copy
+from collections import Callable
 
 
 class Output(asyncio.Protocol):
@@ -225,7 +226,7 @@ class SmoothieDriver(object):
 	def meta_callbacks(self):
 		return_dict = dict()
 		for name, value in self.meta_callbacks_dict.items():
-			if value is not None and hasattr(value, '__call__'):
+			if value is not None and isinstance(value, Callable):
 				return_dict[name] = value.__name__
 			else:
 				return_dict[name] = 'None'
@@ -234,7 +235,7 @@ class SmoothieDriver(object):
 
 
 	def set_meta_callback(self, name, callback):
-		if name in self.meta_callbacks_dict and hasattr(callback, '__call__'):
+		if name in self.meta_callbacks_dict and isinstance(callback, Callable):
 			self.meta_callbacks_dict[name] = callback
 		return self.meta_callbacks()
 
@@ -487,7 +488,7 @@ class SmoothieDriver(object):
 		self.connected = True
 		self.state_dict['transport'] = True if self.smoothie_transport else False
 		print('connected!')
-		if hasattr(self.meta_callbacks_dict['on_connect'],__call__):
+		if isinstance(self.meta_callbacks_dict['on_connect'],Callable):
 			self.meta_callbacks_dict['on_connect']()
 
 
@@ -543,7 +544,7 @@ class SmoothieDriver(object):
 		self.connected = False
 		self.state_dict['transport'] = True if self.smoothie_transport else False
 		print('not connected!')
-		if hasattr(self.meta_callbacks_dict['on_disconnect'],'__call__'):
+		if isinstance(self.meta_callbacks_dict['on_disconnect'],Callable):
 			self.meta_callbacks_dict['on_disconnect']()
 
 
