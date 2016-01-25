@@ -33,7 +33,7 @@ class Output(asyncio.Protocol):
 			data_list = [e+self._delimiter for e in current_data.split(self._delimiter)]
 			for datum in data_list:
 				self.outer._smoothie_data_handler(datum)
-		self.outer._data_received(data)
+		self.outer._on_raw_data(data)
 
 
 	def connection_lost(self, exc):
@@ -487,10 +487,11 @@ class SmoothieDriver(object):
 		self.connected = True
 		self.state_dict['transport'] = True if self.smoothie_transport else False
 		print('connected!')
-		self.meta_callbacks_dict['on_connect']()
+		if hasattr(self.meta_callbacks_dict['on_connect'],__call__):
+			self.meta_callbacks_dict['on_connect']()
 
 
-	def _raw_data(self, data):
+	def _on_raw_data(self, data):
 		self.meta_callbacks_dict['on_raw_data']()
 
 
@@ -542,7 +543,8 @@ class SmoothieDriver(object):
 		self.connected = False
 		self.state_dict['transport'] = True if self.smoothie_transport else False
 		print('not connected!')
-		self.meta_callbacks_dict['on_disconnect']()
+		if hasattr(self.meta_callbacks_dict['on_disconnect'],'__call__'):
+			self.meta_callbacks_dict['on_disconnect']()
 
 
 	def send_command(self, data):
