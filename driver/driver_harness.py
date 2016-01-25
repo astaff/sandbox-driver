@@ -178,7 +178,7 @@ class Harness(object):
 		print(data)
 		print()
 		if isinstance(data, dict):
-			name, value = data.items()[0]:
+			name, value = data.items()[0]
 			if name in self.driver_dict:
 				self.driver_dict[name].send_command(value)
 
