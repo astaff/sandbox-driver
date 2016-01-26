@@ -138,7 +138,7 @@ try:
         dd_value = data_dict[dd_name]
         publisher.publish('frontend',name,list(data_dict)[0],dd_value)
 
-    otdriver_harness.add_callback('smoothie', {positions:[]})
+    otdriver_harness.add_callback('smoothie', {positions:['None']})
 
     while (crossbar_status == False):
         try:
