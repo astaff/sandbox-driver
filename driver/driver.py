@@ -226,6 +226,7 @@ class SmoothieDriver(object):
 
 	def callbacks(self):
 		print('driver.callbacks called')
+		print(copy.deepcopy(self.callbacks_dict)
 		return copy.deepcopy(self.callbacks_dict)
 
 
@@ -606,8 +607,9 @@ class SmoothieDriver(object):
 			if isinstance(data[command], dict):
 				for param, val in data[command].items():
 					if param in self.commands_dict[command]["parameters"]:
-						command_text.append(" ")
-						command_text.append("%s%s" % (param,val))
+						command_text += " "
+						command_text += str(param)
+						command_text += str(val)
 			else:
 				command_text.append(data)
 
@@ -625,8 +627,9 @@ class SmoothieDriver(object):
 					if isinstance(data[command], dict):			
 						for param, val in data[command].items():
 							if param in val.parameters:
-								command_text.append(" ")
-								command_text.append("%s%s" % (param,val))
+								command_text += " "
+								command_text += str(param)
+								command_text += str(val)
 					else:
 						command_text.append(data)
 
