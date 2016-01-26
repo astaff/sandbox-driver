@@ -131,6 +131,13 @@ try:
     otdriver_harness.set_publisher(publisher)
     otdriver_harness.add_driver('smoothie',otdriver)
     otdriver_harness.connect('smoothie',None)
+    
+    def positions(name, data_dict):
+        dd_name = list(data_dict)[0]
+        dd_value = data_dict[dd_name]
+        publisher.publish('frontend',name,list(data_dict)[0],dd_value)
+
+    otdriver_harness.add_callback('smoothie', {positions:[]})
 
     while (crossbar_status == False):
         try:

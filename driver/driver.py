@@ -102,6 +102,7 @@ class SmoothieDriver(object):
 	the_loop = None
 
 	state_dict = {
+		'name':'otone'
 		'simulation':False,
 		'connected':False,
 		'transport':False,
@@ -501,7 +502,7 @@ class SmoothieDriver(object):
 
 			for callback_name, callback in self.callbacks_dict.items():
 				if name_message in callback['messages']:
-					callback['callback'](value)
+					callback['callback'](self.state_dict['name'], value)
 
 		self._step_command_queue()
 
@@ -604,7 +605,7 @@ class SmoothieDriver(object):
 
 			if isinstance(data[command], dict):
 				for param, val in data[command].items():
-					if param in self.commands_dict.get(command).parameters:
+					if param in self.commands_dict.get(com         mand).parameters:
 						command_text.append(" ")
 						command_text.append("%s%s" % (param,val))
 			else:
