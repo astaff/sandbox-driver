@@ -226,7 +226,9 @@ class SmoothieDriver(object):
 
 	def callbacks(self):
 		print('driver.callbacks called')
-		print(copy.deepcopy(self.callbacks_dict)
+		print()
+		print(copy.deepcopy(self.callbacks_dict))
+		print()
 		return copy.deepcopy(self.callbacks_dict)
 
 
