@@ -33,10 +33,13 @@ class Publisher:
         """
         print('publisher.publish called')
         if self.caller is not None and topic is not None and name is not None and message is not None and param is not None:
-            msg = {name:{message:param}}
-            try:
-                self.caller._myAppSession.publish(self.topic.get(topic),json.dumps(msg))
-            except:
-                print("error trying to send_message")
-                raise
+            if self.caller._myAppSession is not None:
+                msg = {name:{message:param}}
+                try:
+                    self.caller._myAppSession.publish(self.topic.get(topic),json.dumps(msg))
+                except:
+                    print("error trying to publish")
+                    raise
+            else:
+                print("error trying to publish, caller._myAppSession is None")
 
