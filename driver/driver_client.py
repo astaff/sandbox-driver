@@ -133,6 +133,7 @@ try:
     otdriver_harness.connect('smoothie',None)
     
     def positions(name, data_dict):
+        print('driver_client.positions called!')
         dd_name = list(data_dict)[0]
         dd_value = data_dict[dd_name]
         publisher.publish('frontend',name,list(data_dict)[0],dd_value)
