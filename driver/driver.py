@@ -106,7 +106,7 @@ class SmoothieDriver(object):
 	the_loop = None
 
 	state_dict = {
-		'name':'otone',
+		'name':'smoothie',
 		'simulation':False,
 		'connected':False,
 		'transport':False,
