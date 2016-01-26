@@ -5,6 +5,14 @@ import json, collections
 
 
 class Publisher:
+
+    topic = {
+        'frontend' : 'com.opentrons.frontend',
+        'driver' : 'com.opentrons.driver',
+        'labware' : 'com.opentrons.labware',
+        'bootloader' : 'com.opentrons.bootloader'
+    }
+
     def __init__(self, session=None):
         """
         """
