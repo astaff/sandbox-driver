@@ -43,6 +43,12 @@ class Publisher:
         if self.caller is not None and topic is not None and name is not None and message is not None and param is not None:
             if self.caller._myAppSession is not None:
                 msg = {name:{message:param}}
+                print()
+                print('topic:')
+                print(self.topic.get(topic))
+                print('msg:')
+                print(str(msg))
+                print()
                 try:
                     self.caller._myAppSession.publish(self.topic.get(topic),json.dumps(msg))
                 except:
