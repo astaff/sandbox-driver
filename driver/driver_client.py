@@ -136,7 +136,7 @@ try:
         print('driver_client.positions called!')
         dd_name = list(data_dict)[0]
         dd_value = data_dict[dd_name]
-        global publisher.publish('frontend',name,list(data_dict)[0],dd_value)
+        publisher.publish('frontend',name,list(data_dict)[0],dd_value)
 
     otdriver_harness.add_callback('smoothie', {positions:['None']})
 
