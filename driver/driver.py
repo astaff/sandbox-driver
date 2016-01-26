@@ -35,6 +35,10 @@ class Output(asyncio.Protocol):
 			for datum in data_list:
 				self.outer._smoothie_data_handler(datum)
 		self.outer._on_raw_data(data)
+		print()
+		print('data :')
+		print(data)
+		print()
 
 
 	def connection_lost(self, exc):
@@ -504,6 +508,9 @@ class SmoothieDriver(object):
 		for name_message, value in message_dict.items():
 
 			for callback_name, callback in self.callbacks_dict.items():
+				print('callback_name: '+callback_name)
+				print('callback: '+callback)
+				
 				if name_message in callback['messages']:
 					callback['callback'](self.state_dict['name'], value)
 
