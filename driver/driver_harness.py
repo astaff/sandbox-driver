@@ -173,12 +173,15 @@ class Harness(object):
 
 		"""
 		print('driver_harness.send_command called')
-		print('name: '+name)
 		print('data: ')
 		print(data)
 		print()
 		if isinstance(data, dict):
 			name, value = data.items()[0]
+			print('name: ')
+			print(name)
+			print('value: ')
+			print(value)
 			if name in self.driver_dict:
 				self.driver_dict[name].send_command(value)
 
