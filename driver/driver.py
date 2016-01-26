@@ -604,7 +604,7 @@ class SmoothieDriver(object):
 
 			if isinstance(data[command], dict):
 				for param, val in data[command].items():
-					if param in commands_dict.get(command).parameters:
+					if param in self.commands_dict.get(command).parameters:
 						command_text.append(" ")
 						command_text.append("%s%s" % (param,val))
 			else:
@@ -621,8 +621,8 @@ class SmoothieDriver(object):
 					print("command is a code in command list!")
 					command_text = command
 
-					if isinstance(data, dict):			
-						for param, val in data.items():
+					if isinstance(data[command], dict):			
+						for param, val in data[command].items():
 							if param in val.parameters:
 								command_text.append(" ")
 								command_text.append("%s%s" % (param,val))
