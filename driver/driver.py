@@ -605,7 +605,7 @@ class SmoothieDriver(object):
 
 			if isinstance(data[command], dict):
 				for param, val in data[command].items():
-					if param in self.commands_dict.get(com         mand).parameters:
+					if param in self.commands_dict[command]["parameters"]:
 						command_text.append(" ")
 						command_text.append("%s%s" % (param,val))
 			else:
