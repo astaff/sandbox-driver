@@ -148,7 +148,7 @@ class SmoothieDriver(object):
 		"move_to":{
 			"code":"G90 G0",
 			"parameters":["","X","Y","Z","A","B"]
-		}
+		},
 		"linear_move":{
 			"code":"G1",
 			"parameters":["","X","Y","Z","A","B"]
