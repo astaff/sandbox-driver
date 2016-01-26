@@ -24,7 +24,7 @@ class Subscriber():
         }
 
     def set_driver(self, driver_harness):
-        print("set_driver called")
+        print("set_driver_harness called")
         self._driver_harness = driver_harness
 
 
@@ -32,10 +32,13 @@ class Subscriber():
         print("dispatch_message called")
         try:
             dictum = collections.OrderedDict(json.loads(message.strip(), object_pairs_hook=collections.OrderedDict))
-            if 'data' in dictum:
-                self.in_dispatcher[dictum['type']](dictum['data'])
+            if 'type' in dictum and 'data' in dictum:
+                if dictum['type'] in self.in_dispatcher:
+                    self.in_dispatcher[dictum['type']](dictum['data'])
+                else:
+                    print('report error here, malformed message, type not in in_dispatcher')
             else:
-                self.in_dispatcher[dictum['type']](None)
+                print('report error here, malformed message, type or data not in message')
         except:
             print('*** error in subscriber.dispatch_message ***')
             raise
