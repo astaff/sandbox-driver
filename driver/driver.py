@@ -591,13 +591,14 @@ class SmoothieDriver(object):
 		#, arg=None,**kwargs):
 		print('driver.send_command called!')
 		command_text = ""
+		command = list(data)[0]
 		# check if command is in commands dictionary
 		if command in list(self.commands_dict):
 			print("command is in list!")
 			command_text = self.commands_dict[command]["code"]
 
-			if isinstance(data, dict):
-				for param, val in data.items():
+			if isinstance(data[command], dict):
+				for param, val in data[command].items():
 					if param in commands_dict.get(command).parameters:
 						command_text.append(" ")
 						command_text.append("%s%s" % (param,val))
