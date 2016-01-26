@@ -38,5 +38,5 @@ class Publisher:
                 self.caller._myAppSession.publish(self.topic.get(topic),json.dumps(msg))
             except:
                 print("error trying to send_message")
-
+                raise
 
