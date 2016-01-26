@@ -509,8 +509,8 @@ class SmoothieDriver(object):
 
 			for callback_name, callback in self.callbacks_dict.items():
 				print('callback_name: '+callback_name)
-				print('callback: '+callback)
-				
+				print('callback: '+str(callback))
+
 				if name_message in callback['messages']:
 					callback['callback'](self.state_dict['name'], value)
 
