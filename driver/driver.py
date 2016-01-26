@@ -141,10 +141,14 @@ class SmoothieDriver(object):
 	}
 
 	commands_dict = {
-		"rapid_move":{
-			"code":"G0",
+		"move":{
+			"code":"G91 G0",
 			"parameters":["","X","Y","Z","A","B"]
 		},
+		"move_to":{
+			"code":"G90 G0",
+			"parameters":["","X","Y","Z","A","B"]
+		}
 		"linear_move":{
 			"code":"G1",
 			"parameters":["","X","Y","Z","A","B"]
@@ -592,6 +596,7 @@ class SmoothieDriver(object):
 		print('driver.send_command called!')
 		command_text = ""
 		command = list(data)[0]
+		print(command)
 		# check if command is in commands dictionary
 		if command in list(self.commands_dict):
 			print("command is in list!")
