@@ -21,28 +21,21 @@ class Publisher:
         if session is not None:
             self.caller = session
 
-        self.topics = {
-            'frontend':'com.opentrons.frontend',
-            'bootloader':'com.opentrons.bootloader',
-            'labware':'com.opentrons.labware',
-            'driver':'com.opentrons.driver'
-        }
-
 
     def set_caller(self, session):
         """
         """
-        print('publisher.set_caler called')
+        print('publisher.set_caller called')
         self.caller = session
 
 
-    def publish(self,topic,name,message,param):
+    def publish(self,topic,type_,name,message,param):
         """
         """
         print('publisher.publish called')
-        if self.caller is not None and topic is not None and name is not None and message is not None and param is not None:
+        if self.caller is not None and topic is not None and type_ is not None and name is not None and message is not None and param is not None:
             if self.caller._myAppSession is not None:
-                msg = {name:{message:param}}
+                msg = {'type':type_,'data':{name:{message:param}}
                 print()
                 print('topic:')
                 print(self.topic.get(topic))

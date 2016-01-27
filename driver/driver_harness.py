@@ -46,7 +46,7 @@ class Harness(object):
 
 		"""
 		print('driver_harness.drivers called')
-		self._publisher.publish('frontend',name,'drivers',list(self.driver_dict))
+		self._publisher.publish('frontend','driver',name,'drivers',list(self.driver_dict))
 
 
 	def add_driver(self, name, param):
@@ -70,7 +70,7 @@ class Harness(object):
 		
 		"""
 		print('driver_harness.callbacks called')
-		self._publisher.publish('frontend',name,'callbacks',driver_dict[name].callbacks())
+		self._publisher.publish('frontend','driver',name,'callbacks',driver_dict[name].callbacks())
 
 
 	def meta_callbacks(self, name, param):
@@ -78,7 +78,7 @@ class Harness(object):
 
 		"""
 		print('driver_harness.meta_callbacks called')
-		self._publisher.publish('frontend',name,'meta_callbacks',driver_dict[name].meta_callbacks())
+		self._publisher.publish('frontend','driver',name,'meta_callbacks',driver_dict[name].meta_callbacks())
 
 
 	def set_meta_callback(self, name, param):
@@ -88,7 +88,7 @@ class Harness(object):
 		print('driver_harness.set_meta_callback called')
 		if isinstance(param,dict):
 			self.driver_dict.get(name).set_meta_callback(list(param)[0],list(param.values)[0])
-		self._publisher.publish('frontend',name,'meta_callback',driver_dict.get(name).meta_callbacks())
+		self._publisher.publish('frontend','driver',name,'meta_callback',driver_dict.get(name).meta_callbacks())
 
 
 	def add_callback(self, name, param):
@@ -97,7 +97,7 @@ class Harness(object):
 		"""
 		print('driver_harness.add_callback called')
 		self.driver_dict[name].add_callback(list(param)[0],list(param.values())[0])
-		self._publisher.publish('frontend',name,'callbacks',self.driver_dict.get(name).callbacks())
+		self._publisher.publish('frontend','driver',name,'callbacks',self.driver_dict.get(name).callbacks())
 
 
 	def remove_callback(self, name, param):
@@ -106,7 +106,7 @@ class Harness(object):
 		"""
 		print('driver_harness.remove_callback called')
 		self.driver_dict[name].remove_callback(param)
-		self._publisher.publish('frontend',name,'callbacks',self.driver_dict.get(name).callbacks())
+		self._publisher.publish('frontend','driver',name,'callbacks',self.driver_dict.get(name).callbacks())
 
 
 	def flow(self, name, param):
@@ -114,7 +114,7 @@ class Harness(object):
 		
 		"""
 		print('driver_harness.flow called')
-		self._publisher.publish('frontend',name,'flow',self.driver_dict.get(name).flow())
+		self._publisher.publish('frontend','driver',name,'flow',self.driver_dict.get(name).flow())
 
 
 	def clear_queue(self, name, param):
@@ -147,7 +147,7 @@ class Harness(object):
 
 		"""
 		print('driver_harness.commands called')
-		self._publisher.publish('frontend',name,'commands',self.driver_dict.get(name).commands())
+		self._publisher.publish('frontend','driver',name,'commands',self.driver_dict.get(name).commands())
 
 
 	def meta_command(self, data):
