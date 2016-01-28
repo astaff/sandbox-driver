@@ -159,8 +159,8 @@ class Harness(object):
 		print(data)
 		print()
 		if isinstance(data, dict):
-			name = list(data)[0]
-			value = data[name]
+			name = data.name
+			value = data.message
 			if name in self.driver_dict:
 				if isinstance(value, dict):
 					message = list(value)[0]
@@ -179,8 +179,8 @@ class Harness(object):
 		print(data)
 		print()
 		if isinstance(data, dict):
-			name = list(data)[0]
-			value = data[name]
+			name = data.name
+			value = data.message
 			print('name: ')
 			print(name)
 			print('value: ')

@@ -35,7 +35,7 @@ class Publisher:
         print('publisher.publish called')
         if self.caller is not None and topic is not None and type_ is not None and name is not None and message is not None and param is not None:
             if self.caller._myAppSession is not None:
-                msg = {'type':type_,'data':{name:{message:param}}}
+                msg = {'type':type_,'data':{'name':name,'message':{message:param}}}
                 print()
                 print('topic:')
                 print(self.topic.get(topic))
