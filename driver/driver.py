@@ -13,6 +13,8 @@ class Output(asyncio.Protocol):
 		self._delimiter = "\n"
 		self.data_buffer = ""
 		self.transport = None
+		self.data_last = ""
+		self.datum_last = ""
 
 
 	def connection_made(self, transport):
@@ -33,8 +35,12 @@ class Output(asyncio.Protocol):
 			self.data_buffer = self.data_buffer[delimiter_index+1:]
 			data_list = [e+self._delimiter for e in current_data.split(self._delimiter)]
 			for datum in data_list:
-				self.outer._smoothie_data_handler(datum)
-		self.outer._on_raw_data(data)
+				if datum != self.datum_last:
+					self.datum_last = datum
+					self.outer._smoothie_data_handler(datum)
+		if data != self.data_last:
+			self.data_last = data
+			self.outer._on_raw_data(data)
 		print()
 		print('data :')
 		print(data)
