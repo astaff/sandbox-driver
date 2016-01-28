@@ -41,10 +41,10 @@ class Output(asyncio.Protocol):
 		if data != self.data_last:
 			self.data_last = data
 			self.outer._on_raw_data(data)
-		print()
-		print('data :')
-		print(data)
-		print()
+			print()
+			print('data :')
+			print(data)
+			print()
 
 
 	def connection_lost(self, exc):
