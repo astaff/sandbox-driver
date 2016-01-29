@@ -162,12 +162,19 @@ class Harness(object):
 			name = data['name']
 			value = data['message']
 			if name in self.driver_dict:
-				if isinstance(value, dict):
-					message = list(value)[0]
-					param = value[message]
+				try:
 					self.meta_dict[message](name,value)
-				else:
-					self.meta_dict[value](name, None)
+				except:
+					print('meta command for '+message+' failed')
+					print('name: '+str(name))
+					print('value: '+str(value))
+			else:
+				try:
+					self.meta_dict[value](None, value)
+				except:
+					print('name not in drivers, meta command for '+message+' failed')
+					print('name: '+str(name))
+					print('value: '+str(value))
 
 
 	def send_command(self, data):
@@ -186,7 +193,12 @@ class Harness(object):
 			print('value: ')
 			print(value)
 			if name in self.driver_dict:
-				self.driver_dict[name].send_command(value)
+				try:
+					self.driver_dict[name].send_command(value)
+				except:
+					print('driver command failed')
+			else:
+				print('name not in drivers')
 
 
 
