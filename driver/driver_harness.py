@@ -204,7 +204,7 @@ class Harness(object):
 						self.meta_dict[message](None,None)
 					except:
 						print('meta command for '+message+' failed')
-						print('message: '+str(message)
+						print('message: '+str(message))
 						print(sys.exc_info()[0])
 
 
