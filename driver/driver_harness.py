@@ -185,14 +185,14 @@ class Harness(object):
 				if isinstance(value, dict):
 					message = list(value)[0]
 					params = value[message]
-				try:
-					self.meta_dict[message](None, params)
-				except:
-					print('name not in drivers, meta command for '+message+' failed')
-					print('name: '+str(name))
-					print('value: '+str(value))
-					print('message: '+str(message))
-					print('params: '+str(params))
+					try:
+						self.meta_dict[message](None, params)
+					except:
+						print('name not in drivers, meta command for '+message+' failed')
+						print('name: '+str(name))
+						print('value: '+str(value))
+						print('message: '+str(message))
+						print('params: '+str(params))
 				elif isinstance(value, str):
 					message = value
 					try:
