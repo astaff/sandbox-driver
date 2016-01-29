@@ -46,6 +46,8 @@ class Harness(object):
 
 		"""
 		print('driver_harness.drivers called')
+		if name is None:
+			name = ''
 		self._publisher.publish('frontend','driver',name,'drivers',list(self.driver_dict))
 
 
