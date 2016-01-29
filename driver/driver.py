@@ -618,9 +618,9 @@ class SmoothieDriver(object):
 		print('driver.send_command called!')
 		command_text = ""
 		print('data: '+str(data))
-		if isinstance(command, dict):
+		if isinstance(data, dict):
 			command = list(data)[0]
-		elif isinstance(command, str):
+		elif isinstance(data, str):
 			command = data
 		print(command)
 		# check if command is in commands dictionary
