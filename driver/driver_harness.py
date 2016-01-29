@@ -47,7 +47,7 @@ class Harness(object):
 		"""
 		print('driver_harness.drivers called')
 		if name is None:
-			name = ''
+			name = "None"
 		self._publisher.publish('frontend','driver',name,'drivers',list(self.driver_dict))
 
 
@@ -175,6 +175,7 @@ class Harness(object):
 						print('value: '+str(value))
 						print('message: '+str(message))
 						print('params: '+str(params))
+						print(sys.exc_info()[0])
 				elif isinstance(value, str):
 					message = value
 					try:
@@ -183,6 +184,7 @@ class Harness(object):
 						print('meta command for '+message+' failed')
 						print('name: '+str(name))
 						print('value: '+str(value))
+						print(sys.exc_info()[0])
 			else:
 				if isinstance(value, dict):
 					message = list(value)[0]
@@ -195,13 +197,15 @@ class Harness(object):
 						print('value: '+str(value))
 						print('message: '+str(message))
 						print('params: '+str(params))
+						print(sys.exc_info()[0])
 				elif isinstance(value, str):
 					message = value
 					try:
 						self.meta_dict[message](None,None)
 					except:
 						print('meta command for '+message+' failed')
-						print('message: '+str(message))
+						print('message: '+str(message)
+						print(sys.exc_info()[0])
 
 
 	def send_command(self, data):
@@ -223,9 +227,9 @@ class Harness(object):
 				try:
 					self.driver_dict[name].send_command(value)
 				except:
-					print('driver command failed')
+					print('driver command failed: '+sys.exc_info()[0])
 			else:
-				print('name not in drivers')
+				print('name not in drivers: '+sys.exc_info()[0])
 
 
 
