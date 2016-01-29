@@ -227,7 +227,7 @@ class SmoothieDriver(object):
 		"positions":{
 			"code":"M114",
 			"parameters":[]
-		},
+		}
 
 	}
 
@@ -617,7 +617,11 @@ class SmoothieDriver(object):
 		#, arg=None,**kwargs):
 		print('driver.send_command called!')
 		command_text = ""
-		command = list(data)[0]
+		print('data: '+str(data))
+		if isinstance(command, dict):
+			command = list(data)[0]
+		elif isinstance(command, str):
+			command = data
 		print(command)
 		# check if command is in commands dictionary
 		if command in list(self.commands_dict):
@@ -631,7 +635,7 @@ class SmoothieDriver(object):
 						command_text += str(param)
 						command_text += str(val)
 			else:
-				command_text.append(data)
+				command_text += str(data)
 
 			print("command_text:")
 			print(command_text)
