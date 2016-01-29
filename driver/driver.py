@@ -193,7 +193,7 @@ class SmoothieDriver(object):
 			"parameters":[]
 		},
 		"reset":{
-			"code":"ls sd",
+			"code":"reset",
 			"parameters":[]
 		},
 		"enable_motors":{
@@ -223,7 +223,12 @@ class SmoothieDriver(object):
 		"reset_from_halt":{
 			"code":"M999",
 			"parameters":[]
-		}
+		},
+		"positions":{
+			"code":"M114",
+			"parameters":[]
+		},
+
 	}
 
 
@@ -526,7 +531,7 @@ class SmoothieDriver(object):
 # Device callbacks
 	def _on_connection_made(self):
 		print('driver._on_connection_made called')
-		self.connected = True
+		self.state_dict['connected'] = True
 		self.state_dict['transport'] = True if self.smoothie_transport else False
 		print('connected!')
 		if isinstance(self.meta_callbacks_dict['on_connect'],Callable):
@@ -586,7 +591,7 @@ class SmoothieDriver(object):
 
 	def _on_connection_lost(self):
 		print('driver._on_connection_lost called')
-		self.connected = False
+		self.state_dict['connected'] = False
 		self.state_dict['transport'] = True if self.smoothie_transport else False
 		print('not connected!')
 		if isinstance(self.meta_callbacks_dict['on_disconnect'],Callable):
