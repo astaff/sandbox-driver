@@ -78,8 +78,8 @@ class Harness(object):
 		"""
 		"""
 		print(datetime.datetime.now(),' - driver_harness.callbacks:')
-		print('\tname: '+str(name))
-		print('\tparam: '+str(param))
+		print('\tname: ',name)
+		print('\tparam: ',param)
 		self._publisher.publish('frontend','driver',name,'callbacks',driver_dict[name].callbacks())
 
 
@@ -221,7 +221,7 @@ class Harness(object):
 
 		"""
 		print(datetime.datetime.now(),' - driver_harness.meta_command:')
-		print('\tdata: '+str(data))
+		print('\tdata: ',data)
 		if isinstance(data, dict):
 			name = data['name']
 			value = data['message']
@@ -230,6 +230,7 @@ class Harness(object):
 					command = list(value)[0]
 					params = value[command]
 					try:
+						print(' - A - ')
 						self.meta_dict[command](name,params)
 					except:
 						self._publisher.publish('frontend','driver',name,'error',sys.exc_info()[0])
@@ -237,6 +238,7 @@ class Harness(object):
 				elif isinstance(value, str):
 					command = value
 					try:
+						print(' - B - ')
 						self.meta_dict[command](name,None)
 					except:
 						self._publisher.publish('frontend','driver',name,'error',sys.exc_info()[0])
@@ -246,6 +248,7 @@ class Harness(object):
 					command = list(value)[0]
 					params = value[command]
 					try:
+						print(' - C - ')
 						self.meta_dict[command](None, params)
 					except:
 						self._publisher.publish('frontend','driver',name,'error',sys.exc_info()[0])
@@ -253,6 +256,7 @@ class Harness(object):
 				elif isinstance(value, str):
 					command = value
 					try:
+						print(' - D - ')
 						self.meta_dict[command](None,None)
 					except:
 						self._publisher.publish('frontend','driver','None','error',sys.exc_info()[0])
