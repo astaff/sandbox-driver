@@ -80,6 +80,8 @@ class Harness(object):
 		print(datetime.datetime.now(),' - driver_harness.callbacks:')
 		print('\tname: ',name)
 		print('\tparam: ',param)
+		test = driver_dict[name].callbacks()
+		print('test: ',test)
 		self._publisher.publish('frontend','driver',name,'callbacks',driver_dict[name].callbacks())
 
 
@@ -87,8 +89,8 @@ class Harness(object):
 		"""
 		"""
 		print(datetime.datetime.now(),' - driver_harness.meta_callbacks:')
-		print('\tname: '+str(name))
-		print('\tparam: '+str(param))
+		print('\tname: ',name)
+		print('\tparam: ',param)
 		self._publisher.publish('frontend','driver',name,'meta_callbacks',driver_dict[name].meta_callbacks())
 
 
