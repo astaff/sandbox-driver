@@ -82,7 +82,7 @@ class Harness(object):
 		print('\tparam: ',param)
 		test = driver_dict[name].callbacks()
 		print('test: ',test)
-		self._publisher.publish('frontend','driver',name,'callbacks',driver_dict[name].callbacks())
+		#self._publisher.publish('frontend','driver',name,'callbacks',driver_dict[name].callbacks())
 
 
 	def meta_callbacks(self, name, param):
