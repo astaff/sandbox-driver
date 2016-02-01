@@ -41,7 +41,7 @@ class Harness(object):
 		"""
 		"""
 		print(datetime.datetime.now(),' - driver_harness.set_publisher:')
-		print('\tpublisher: ',str(publisher))
+		print('\tpublisher: ',publisher)
 		self._publisher = publisher
 
 
@@ -49,8 +49,8 @@ class Harness(object):
 		"""
 		"""
 		print(datetime.datetime.now(),'- driver_harness.drivers:')
-		print('\tname: '+str(name))
-		print('\tparam: '+str(param))
+		print('\tname: ',name)
+		print('\tparam: ',param)
 		if name is None:
 			name = 'None'
 		self._publisher.publish('frontend','driver',name,'drivers',list(self.driver_dict))
@@ -60,8 +60,8 @@ class Harness(object):
 		"""
 		"""
 		print(datetime.datetime.now(),' - driver_harness.add_driver:')
-		print('\tname: '+str(name))
-		print('\tparam: '+str(param))
+		print('\tname: ',name)
+		print('\tparam: ',param)
 		self.driver_dict[name] = param
 
 
@@ -69,8 +69,8 @@ class Harness(object):
 		"""
 		"""
 		print(datetime.datetime.now(),' - driver_harness.remove_driver:')
-		print('\tname: '+str(name))
-		print('\tparam: '+str(param))
+		print('\tname: ',name)
+		print('\tparam: ',param)
 		del self.driver_dict[name]
 
 

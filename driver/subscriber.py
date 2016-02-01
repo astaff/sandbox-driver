@@ -32,13 +32,13 @@ class Subscriber():
                 if dictum['type'] in self.in_dispatcher:
                     self.in_dispatcher[dictum['type']](dictum['data'])
                 else:
-                    print(datetime.datetime.now(),' - {error,malformed message, type not in in_dispatcher}')
+                    print(datetime.datetime.now(),' - {error,malformed message, type not in in_dispatcher}\n\r',sys.exc_info()[0])
                     return '{error,malformed message, type not in in_dispatcher}'
             else:
-                print(datetime.datetime.now(),' - {error:subscriber.dispatch_message type or data error}')
+                print(datetime.datetime.now(),' - {error:subscriber.dispatch_message type or data error}\n\r',sys.exc_info()[0])
                 return '{error:subscriber.dispatch_message type or data error}'
         except:
-            print(datetime.datetime.now(),' - {error:general subscriber.dispatch_message error}')
+            print(datetime.datetime.now(),' - {error:general subscriber.dispatch_message error}\n\r',sys.exc_info()[0])
             return '{error:general subscriber.dispatch_message error}'
 
 

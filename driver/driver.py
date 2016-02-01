@@ -21,7 +21,7 @@ class Output(asyncio.Protocol):
 
 	def connection_made(self, transport):
 		print(datetime.datetime.now(),' - Output.connection_made:')
-		print('\ttransport: '+str(transport))
+		print('\ttransport: ',transport)
 		self.transport = transport
 		self.outer.smoothie_transport = transport
 		transport.write("M114\r\n".encode())
@@ -49,7 +49,7 @@ class Output(asyncio.Protocol):
 
 	def connection_lost(self, exc):
 		print(datetime.datetime.now(),' - Output.connection_lost:')
-		print('\texc: '+str(exc))
+		print('\texc: ',exc)
 		self.transport = None
 		self.outer.smoothie_transport = None
 		self.data_buffer = ""
@@ -234,7 +234,7 @@ class SmoothieDriver(object):
 		"""
 		"""
 		print(datetime.datetime.now(),' - driver.__init__:')
-		print('\tsimulate: '+str(simulate))
+		print('\tsimulate: ',simulate)
 		self.simulation = simulate
 		self.the_loop = asyncio.get_event_loop()
 
@@ -257,8 +257,8 @@ class SmoothieDriver(object):
 		"""
 		"""
 		print(datetime.datetime.now(),' - driver.set_config:')
-		print('\tconfig: '+str(config))
-		print('\tsetting: '+str(setting))
+		print('\tconfig: ',config)
+		print('\tsetting: ',setting)
 		if config in self.config_dict:
 			self.config_dict[config] = setting
 		return self.configs()
@@ -284,8 +284,8 @@ class SmoothieDriver(object):
 		name should correspond 
 		"""
 		print(datetime.datetime.now(),' - driver.set_meta_callback:')
-		print('\tname: '+str(name))
-		print('\tcallback: '+str(callback))
+		print('\tname: ',name)
+		print('\tcallback: ',callback)
 		if name in self.meta_callbacks_dict and isinstance(callback, Callable):
 			self.meta_callbacks_dict[name] = callback
 		else:
@@ -297,8 +297,8 @@ class SmoothieDriver(object):
 		"""
 		"""
 		print(datetime.datetime.now(),' - driver.add_callback:')
-		print('\tcallback: '+str(callback))
-		print('\tmessages: '+str(messages))
+		print('\tcallback: ',callback)
+		print('\tmessages: ',messages)
 		if callback.__name__ not in list(self.callbacks_dict):
 			if isinstance(messages, list):
 				self.callbacks_dict[callback.__name__] = {'callback':callback, 'messages':messages}
@@ -315,7 +315,7 @@ class SmoothieDriver(object):
 		"""
 		"""
 		print(datetime.datetime.now(),' - driver.remove_callback')
-		print('\tcallback_name: '+str(callback_name))
+		print('\tcallback_name: ',callback_name)
 		del self.callbacks_dict[callback_name]
 
 
@@ -340,8 +340,8 @@ class SmoothieDriver(object):
 		"""
 		"""
 		print(datetime.datetime.now(),' - driver.connect called:')
-		print('\tdevice: '+str(device))
-		print('\tport: '+str(port))
+		print('\tdevice: ',device)
+		print('\tport: ',port)
 		self.the_loop = asyncio.get_event_loop()
 		#asyncio.async(serial.aio.create_serial_connection(self.the_loop, Output, '/dev/ttyUSB0', baudrate=115200))
 		callbacker = Output(self)
@@ -373,7 +373,7 @@ class SmoothieDriver(object):
 
 	def send(self, message):
 		print(datetime.datetime.now(),' - driver.send:')
-		print('\tmessage: ',str(message))
+		print('\tmessage: ',message)
 		message = message + self.config_dict['message_ender']
 		if self.simulation:
 			self.simulation_queue.append(message)
@@ -404,7 +404,7 @@ class SmoothieDriver(object):
 
 	def _add_to_command_queue(self, command):
 		print(datetime.datetime.now(),' - driver._add_to_command_queue:')
-		print('\tcommand: ',str(command))
+		print('\tcommand: ',command)
 		self.command_queue.append(command)
 		self.state_dict['queue_size'] = len(self.command_queue)
 		self._step_command_queue()
@@ -425,7 +425,7 @@ class SmoothieDriver(object):
 
 	def _format_text_data(self, text_data):
 		print(datetime.datetime.now(),' - driver._format_text_data:')
-		print('\ttext_data: ',str(text_data))
+		print('\ttext_data: ',text_data)
 		return_list = []
 		remainder_data = text_data
 		while remainder_data.find(',')>=0:
@@ -439,7 +439,7 @@ class SmoothieDriver(object):
 
 	def _format_group(self, group_data):
 		print(datetime.datetime.now(),' - driver._format_group:')
-		print('\tgroup_data: ',str(group_data))
+		print('\tgroup_data: ',group_data)
 		return_dict = dict()
 		remainder_data = group_data
 		if remainder_data.find(':')>=0:
@@ -468,7 +468,7 @@ class SmoothieDriver(object):
 		#
 		#
 		print(datetime.datetime.now(),' - driver._format_json_data:')
-		print('\tjson_data: ',str(json_data))
+		print('\tjson_data: ',json_data)
 		return_list = []
 		for name, value in json_data.items():
 			if isinstance(value, dict):
@@ -506,7 +506,7 @@ class SmoothieDriver(object):
 
 	def _process_message_dict(self, message_dict):
 		print(datetime.datetime.now(),' - driver._process_message_dict:')
-		print('\tmessage_dict: ',str(message_dict))
+		print('\tmessage_dict: ',message_dict)
 		# first, check if ack_recieved confirmation
 		if self.config_dict['ack_received_message'] in list(message_dict):
 			value = message_dict.get(self.config_dict['ack_received_message'])
@@ -573,14 +573,14 @@ class SmoothieDriver(object):
 		print(datetime.datetime.now(),' - driver._on_connection_made')
 		self.state_dict['connected'] = True
 		self.state_dict['transport'] = True if self.smoothie_transport else False
-		print('connected!')
+		print('*\t*\t* connected!\t*\t*\t*')
 		if isinstance(self.meta_callbacks_dict['on_connect'],Callable):
 			self.meta_callbacks_dict['on_connect']()
 
 
 	def _on_raw_data(self, data):
 		print(datetime.datetime.now(),' - driver._on_raw_data:')
-		print('\tdata: ',str(data))
+		print('\tdata: ',data)
 		if isinstance(self.meta_callbacks_dict['on_raw_data'],Callable):
 			self.meta_callbacks_dict['on_raw_data']()
 
@@ -613,14 +613,14 @@ class SmoothieDriver(object):
 				for message in json_message_list:
 					self._process_message_dict(message)
 			except:
-				print('ERROR: driver._smoothie_data_handler - json.loads(json_data)')
+				print(dattime.datetime.now(),' - {errir:driver._smoothie_data_handler - json.loads(json_data)}\n\r',sys.exc_info()[0])
 	
 
 	def _on_connection_lost(self):
 		print(datetime.datetime.now(),' - driver._on_connection_lost')
 		self.state_dict['connected'] = False
 		self.state_dict['transport'] = True if self.smoothie_transport else False
-		print('*\t*\t* not connected! *\t*\t*')
+		print('*\t*\t* not connected!\t*\t*\t*')
 		if isinstance(self.meta_callbacks_dict['on_disconnect'],Callable):
 			self.meta_callbacks_dict['on_disconnect']()
 
@@ -641,7 +641,7 @@ class SmoothieDriver(object):
 
 		"""
 		print(datetime.datetime.now(),' - driver.send_command:')
-		print('\tdata: '+str(data))
+		print('\tdata: ',data)
 		command_text = ""
 
 		# data in form 1

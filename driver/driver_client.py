@@ -78,7 +78,7 @@ class WampComponent(wamp.ApplicationSession):
         :param details: Close information.
         """
         print('driver_client : WampComponent.onLeave:')
-        print('\tdetails: ',str(details))
+        print('\tdetails: ',details)
         if self.factory._myAppSession == self:
             self.factory._myAppSession = None
         try:
@@ -128,7 +128,7 @@ try:
 
     # TRYING THE FOLLOWING IN INSTANTIATE OBJECTS vs here
     # INITIAL SETUP PUBLISHER, HARNESS, SUBSCRIBER
-    print('*\t*\t* initial setup - publisher, harness, subscriber *\t*\t*')
+    print('*\t*\t* initial setup - publisher, harness, subscriber\t*\t*\t*')
     publisher = Publisher(session_factory)
     otdriver_harness = driver_harness.Harness(publisher)
     subscriber = Subscriber(otdriver_harness)
@@ -136,12 +136,12 @@ try:
 
 
     # INSTANTIATE DRIVERS:
-    print('*\t*\t* instantiate drivers *\t*\t*')
+    print('*\t*\t* instantiate drivers\t*\t*\t*')
     otdriver = driver.SmoothieDriver()
 
 
     # ADD DRIVERS TO HARNESS 
-    print('*\t*\t* add drivers to harness *\t*\t*')   
+    print('*\t*\t* add drivers to harness\t*\t*\t*')   
     otdriver_harness.add_driver('smoothie',otdriver)
     
 
@@ -153,12 +153,12 @@ try:
     #
     #
     #
-    print('*\t*\t* define callbacks *\t*\t*')
+    print('*\t*\t* define callbacks\t*\t*\t*')
     def positions(name, data_dict):
         """
         """
         print(datetime.datetime.now(),' - driver_client.positions:')
-        print('\tdata_dict: ',str(data_dict))
+        print('\tdata_dict: ',data_dict)
         dd_name = list(data_dict)[0]
         dd_value = data_dict[dd_name]
         publisher.publish('frontend','driver',name,list(data_dict)[0],dd_value)
@@ -166,12 +166,12 @@ try:
 
 
     # ADD CALLBACKS VIA HARNESS:
-    print('*\t*\t* add callbacks via harness *\t*\t*')
+    print('*\t*\t* add callbacks via harness\t*\t*\t*')
     otdriver_harness.add_callback('smoothie', {positions:['None']})
 
 
     # CONNECT TO DRIVERS:
-    print('*\t*\t* connect to drivers *\t*\t*')
+    print('*\t*\t* connect to drivers\t*\t*\t*')
     otdriver_harness.connect('smoothie',None)
 
 
@@ -218,7 +218,7 @@ try:
 
     while (crossbar_status == False):
         try:
-            print('*\t*\t* trying to make a CROSSBAR connection... *\t*\t*')
+            print('*\t*\t* trying to make a CROSSBAR connection...\t*\t*\t*')
             make_a_connection()
         except KeyboardInterrupt:
             crossbar_status = True
@@ -226,7 +226,7 @@ try:
             #raise
             pass
         finally:
-            print('*\t*\t* error while trying to make a CROSSBAR connection, sleeping for 5 seconds *\t*\t*')
+            print('*\t*\t* error while trying to make a CROSSBAR connection, sleeping for 5 seconds\t*\t*\t*')
             time.sleep(5)
 except KeyboardInterrupt:
     pass

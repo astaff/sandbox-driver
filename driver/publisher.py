@@ -54,7 +54,7 @@ class Publisher:
                 try:
                     self.caller._myAppSession.publish(self.topic.get(topic),json.dumps(msg))
                 except:
-                    print(datetime.datetime.now(),' - publisher.py - publish - error: ',sys.exc_info()[0])
+                    print(datetime.datetime.now(),' - publisher.py - publish - error:\n\r',sys.exc_info()[0])
                     raise
             else:
                 print(datetime.datetime.now(),' - publisher.py - publish - error: caller._myAppSession is None')
