@@ -562,9 +562,6 @@ class SmoothieDriver(object):
 		for name_message, value in message_dict.items():
 
 			for callback_name, callback in self.callbacks_dict.items():
-				print('callback_name: '+callback_name)
-				print('callback: '+str(callback))
-				print('name_message: '+name_message)
 				if name_message in callback['messages']:
 					callback['callback'](self.state_dict['name'], value)
 
@@ -623,7 +620,7 @@ class SmoothieDriver(object):
 		print(datetime.datetime.now(),' - driver._on_connection_lost')
 		self.state_dict['connected'] = False
 		self.state_dict['transport'] = True if self.smoothie_transport else False
-		print('not connected!')
+		print('*\t*\t* not connected! *\t*\t*')
 		if isinstance(self.meta_callbacks_dict['on_disconnect'],Callable):
 			self.meta_callbacks_dict['on_disconnect']()
 
