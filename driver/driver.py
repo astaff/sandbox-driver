@@ -18,7 +18,8 @@ class Output(asyncio.Protocol):
 
 
 	def connection_made(self, transport):
-		print("Output.connection_made called")
+		print('Output.connection_made called')
+		print('\ttransport: '+str(transport))
 		self.transport = transport
 		self.outer.smoothie_transport = transport
 		transport.write("M114\r\n".encode())
@@ -27,7 +28,8 @@ class Output(asyncio.Protocol):
 
 
 	def data_received(self, data):
-		#print("Output.data_received called")
+		#print('Output.data_received called:')
+		#print('\tdata: '+str(data))
 		self.data_buffer = self.data_buffer + data.decode()
 		delimiter_index = self.data_buffer.rfind("\n")
 		if delimiter_index >= 0:
@@ -41,14 +43,11 @@ class Output(asyncio.Protocol):
 		if data != self.data_last:
 			self.data_last = data
 			self.outer._on_raw_data(data)
-			print()
-			print('data :')
-			print(data)
-			print()
 
 
 	def connection_lost(self, exc):
-		print("Output.connection_lost called")
+		print('Output.connection_lost called')
+		print('\texc: '+str(exc))
 		self.transport = None
 		self.outer.smoothie_transport = None
 		self.data_buffer = ""
@@ -98,9 +97,7 @@ class SmoothieDriver(object):
 	flow control logic is updated accordingly.
 
 	4. The standard dictionary object is then routed to the appropriate callback based
-	on the message.
-
-
+	on the message
 
 
 	"""
@@ -134,8 +131,6 @@ class SmoothieDriver(object):
 	}
 
 	callbacks_dict = {}
-	# dict:
-	#
 	#  {
 	#    <callback_name>:
 	#    {
@@ -144,6 +139,7 @@ class SmoothieDriver(object):
 	#    },
 	#    ...
 	#  }
+
 	meta_callbacks_dict = {
 		'on_connect' : None,
 		'on_disconnect' : None,
@@ -232,22 +228,43 @@ class SmoothieDriver(object):
 	}
 
 
-
 	def __init__(self, simulate=False):
-		print('driver.__init__ called')
+		"""
+		"""
+		print('driver.__init__ called:')
+		print('\tsimulate: '+str(simulate))
 		self.simulation = simulate
 		self.the_loop = asyncio.get_event_loop()
 
 
 	def callbacks(self):
+		"""
+		"""
 		print('driver.callbacks called')
-		print()
-		print(copy.deepcopy(self.callbacks_dict))
-		print()
 		return copy.deepcopy(self.callbacks_dict)
 
 
+	def configs(self):
+		"""
+		"""
+		print('driver.configs called')
+		return copy.deepcopy(self.config_dict)
+
+
+	def set_config(sefl, config, setting):
+		"""
+		"""
+		print('driver.set_config called')
+		print('\tconfig: '+str(config))
+		print('\tsetting: '+str(setting))
+		if config in self.config_dict:
+			self.config_dict[config] = setting
+		return self.configs()
+
+
 	def meta_callbacks(self):
+		"""
+		"""
 		print('driver.meta_callbacks called')
 		return_dict = dict()
 		for name, value in self.meta_callbacks_dict.items():
@@ -255,19 +272,31 @@ class SmoothieDriver(object):
 				return_dict[name] = value.__name__
 			else:
 				return_dict[name] = 'None'
+		# cannot just send back copy becuase NoneObject causes problem
 		#return copy.deepcopy(self.meta_callbacks_dict)
 		return return_dict
 
 
 	def set_meta_callback(self, name, callback):
-		print('driver.set_meta_callback called')
+		"""
+		name should correspond 
+		"""
+		print('driver.set_meta_callback called:')
+		print('\tname: '+str(name))
+		print('\tcallback: '+str(callback))
 		if name in self.meta_callbacks_dict and isinstance(callback, Callable):
 			self.meta_callbacks_dict[name] = callback
+		else:
+			return '{error:name not in meta_callbacks or callback is not Callable}'
 		return self.meta_callbacks()
 
 
 	def add_callback(self, callback, messages):
-		print('driver.add_callback called')
+		"""
+		"""
+		print('driver.add_callback called:')
+		print('\tcallback: '+str(callback))
+		print('\tmessages: '+str(messages))
 		if callback.__name__ not in list(self.callbacks_dict):
 			if isinstance(messages, list):
 				self.callbacks_dict[callback.__name__] = {'callback':callback, 'messages':messages}
@@ -281,16 +310,23 @@ class SmoothieDriver(object):
 
 
 	def remove_callback(self, callback_name):
+		"""
+		"""
 		print('driver.remove_callback called')
+		print('\tcallback_name: '+str(callback_name))
 		del self.callbacks_dict[callback_name]
 
 
 	def flow(self):
+		"""
+		"""
 		print('driver.flow called')
 		return copy.deepcopy(self.state_dict)
 
 
 	def clear_queue(self):
+		"""
+		"""
 		print('driver.clear_queue called')
 		self.command_queue = []
 		self.state_dict['queue_size'] = len(self.command_queue)
@@ -301,7 +337,9 @@ class SmoothieDriver(object):
 	def connect(self, device=None, port=None):
 		"""
 		"""
-		print('driver.connect called')
+		print('driver.connect called:')
+		print('\tdevice: '+str(device))
+		print('\tport: '+str(port))
 		self.the_loop = asyncio.get_event_loop()
 		#asyncio.async(serial.aio.create_serial_connection(self.the_loop, Output, '/dev/ttyUSB0', baudrate=115200))
 		callbacker = Output(self)
@@ -312,7 +350,7 @@ class SmoothieDriver(object):
 		"""
 		"""
 		print('driver.disconnect called')
-		pass
+		self.smoothie_transport.close()
 
 
 	def commands(self):
@@ -378,8 +416,6 @@ class SmoothieDriver(object):
 			else:
 				self._send(self.command_queue.pop(0))
 				self.state_dict['queue_size'] = len(self.command_queue)
-
-
 
 
 
@@ -558,25 +594,11 @@ class SmoothieDriver(object):
 		if datum.find('{')>=0:
 			json_data = datum[datum.find('{'):].replace('\n','').replace('\r','')
 			text_data = datum[:datum.index('{')]
-		
-		#print("*"*15)
-		#print("json_data:")
-		#print(json_data)
-		#print()
-		#print("text_data:")
-		#print(text_data)
-		#print("*"*15)
 
 		if text_data != "":
 			text_message_list = self._format_text_data(text_data)
-			#print()
-			#print("_smoothie_data_handler --> text_message_list")
-			#print(text_message_list)
-			#print()
+			
 			for message in text_message_list:
-				#print("_smoothie_data_handler --> message")
-				#print(message)
-				#print()
 				self._process_message_dict(message)
 
 		if json_data != "":
@@ -586,8 +608,8 @@ class SmoothieDriver(object):
 				for message in json_message_list:
 					self._process_message_dict(message)
 			except:
-				print('json.loads(json_data) error')
-				raise
+				print('ERROR: driver._smoothie_data_handler - json.loads(json_data)')
+	
 
 	def _on_connection_lost(self):
 		print('driver._on_connection_lost called')
@@ -599,33 +621,33 @@ class SmoothieDriver(object):
 
 
 	def send_command(self, data):
-		#	all entries should be of the form:
-		#	1. command
-		#
-		#	2. data
-		#	
-		#	value 	
-		#
-		#	- or -
-		#
-		#	{
-		#		'parameter':value,
-		#		...
-		#	}
-		#
+		"""
 
-		#, arg=None,**kwargs):
+		data should be in one of 2 forms:
+
+		1. string
+
+		If there is additional information to go with the command, then it should
+		be in JSON format. We're not going to parse the string to try to get additional
+		values to go with the command
+
+		2. {command:params}
+			params --> {param1:value, ... , paramN:value}
+
+		"""
 		print('driver.send_command called!')
+		print('\tdata: '+str(data))
 		command_text = ""
-		print('data: '+str(data))
+
+		# data in form 1
 		if isinstance(data, dict):
 			command = list(data)[0]
+		# data in form 2
 		elif isinstance(data, str):
 			command = data
-		print(command)
+		
 		# check if command is in commands dictionary
 		if command in list(self.commands_dict):
-			print("command is in list!")
 			command_text = self.commands_dict[command]["code"]
 			if isinstance(data, dict):
 				if isinstance(data[command], dict):
@@ -635,15 +657,12 @@ class SmoothieDriver(object):
 							command_text += str(param)
 							command_text += str(val)
 			
-			print("command_text:")
-			print(command_text)
-			print()
 			self.send(command_text)
 
 		else:	#check whether command is actually a code in commands dictionary
 			for cmd, dat in self.commands_dict.items():
 				if command == dat.get("code"):
-					print("command is a code in command list!")
+					# command is actually a code in the commands dictionary
 					command_text = command
 					if isinstance(data,dict):
 						if isinstance(data[command], dict):			
@@ -653,9 +672,6 @@ class SmoothieDriver(object):
 									command_text += str(param)
 									command_text += str(val)
 
-					print("command_text:")
-					print(command_text)
-					print()
 					self.send(command_text)
 					break
 

@@ -17,6 +17,7 @@ class Publisher:
         """
         """
         print('publisher.__init__ called')
+        print('\tsession: '+str(session))
         self.caller = None
         if session is not None:
             self.caller = session
@@ -26,27 +27,35 @@ class Publisher:
         """
         """
         print('publisher.set_caller called')
+        print('\tsession: '+str(session))
         self.caller = session
 
 
     def publish(self,topic,type_,name,message,param):
         """
         """
-        print('publisher.publish called')
-        if self.caller is not None and topic is not None and type_ is not None and name is not None and message is not None and param is not None:
+        print('publisher.publish called:')
+        print('\ttopic: '+str(topic))
+        print('\ttype_: '+str(type_))
+        print('\tname: '+str(name))
+        print('\tmessage: '+str(message))
+        print('\tparam: '+str(param))
+        if self.caller is not None and topic is not None and type_ is not None:
+            if name is None:
+                name = 'None'
+            if message is None:
+                message = ''
+            if param is None:
+                param = ''
             if self.caller._myAppSession is not None:
                 msg = {'type':type_,'data':{'name':name,'message':{message:param}}}
-                print()
-                print('topic:')
-                print(self.topic.get(topic))
-                print('msg:')
-                print(str(msg))
-                print()
                 try:
                     self.caller._myAppSession.publish(self.topic.get(topic),json.dumps(msg))
                 except:
-                    print("error trying to publish")
+                    print('publisher.py - publish - error: '+sys.exc_info()[0])
                     raise
             else:
-                print("error trying to publish, caller._myAppSession is None")
+                print('publisher.py - publish - error: caller._myAppSession is None')
+        else:
+            print('publisher.py - publish - error: calller, topic, or type_ is None')
 
