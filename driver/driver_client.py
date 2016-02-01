@@ -97,7 +97,7 @@ def make_a_connection():
     """Attempt to create streaming transport connection and run event loop
     """
     print(datetime.datetime.now(),' - driver_client.make_a_connection')
-    coro = loop.create_connection(transport_factory, '127.0.0.1', 8080)
+    coro = loop.create_connection(transport_factory, '0.0.0.0', 8080)
 
     transporter, protocoler = loop.run_until_complete(coro)
     
@@ -118,7 +118,7 @@ try:
 
     session_factory._myAppSession = None
 
-    url = "ws://10.10.1.2:8080/ws"
+    url = "ws://0.0.0.0:8080/ws"
     transport_factory = websocket \
             .WampWebSocketClientFactory(session_factory,
                                         url=url,
