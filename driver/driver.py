@@ -243,7 +243,11 @@ class SmoothieDriver(object):
 		"""
 		"""
 		print(datetime.datetime.now(),' - driver.callbacks')
-		return copy.deepcopy(self.callbacks_dict)
+		return_dict = {}
+		for name, value in self.callbacks_dict:
+			return_dict[name] = value['messages']
+		return return_dict
+		#return copy.deepcopy(self.callbacks_dict)
 
 
 	def configs(self):
