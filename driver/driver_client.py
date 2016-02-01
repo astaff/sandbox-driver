@@ -154,6 +154,15 @@ try:
     #
     #
     print('*\t*\t* define callbacks\t*\t*\t*')
+    def none(name, data_dict):
+        """
+        """
+        print(datetime.datetime.now(),' - driver_client.none:')
+        print('\tdata_dict: ',data_dict)
+        dd_name = list(data_dict)[0]
+        dd_value = data_dict[dd_name]
+        publisher.publish('frontend','driver',name,list(data_dict)[0],dd_value)
+
     def positions(name, data_dict):
         """
         """
@@ -167,8 +176,8 @@ try:
 
     # ADD CALLBACKS VIA HARNESS:
     print('*\t*\t* add callbacks via harness\t*\t*\t*')
-    otdriver_harness.add_callback('smoothie', {positions:['None']})
-
+    otdriver_harness.add_callback('smoothie', {none:['None']})
+    otdriver_harness.add_callback('smoothie', {positions:['M114']})
 
     # CONNECT TO DRIVERS:
     print('*\t*\t* connect to drivers\t*\t*\t*')
