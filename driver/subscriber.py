@@ -9,23 +9,23 @@ driver = None
 class Subscriber():
     def __init__(self, harness=None):
         print(datetime.datetime.now(),' - subscriber.__init__:')
-        print('\tharness: ',str(harness))
+        print('\tharness: ',harness)
         self.harness = harness
 
         self.in_dispatcher = {
-            'command': lambda data: self._driver_harness.send_command(data),
-            'meta': lambda data: self._driver_harness.meta_command(data)
+            'command': lambda data: self.harness.send_command(data),
+            'meta': lambda data: self.harness.meta_command(data)
         }
 
     def set_harness(self, harness):
         print(datetime.datetime.now(),' - set_harness:')
-        print('\tharness: ',str(harness))
+        print('\tharness: ',harness)
         self.harness = harness
 
 
     def dispatch_message(self, message):
         print(datetime.datetime.now(),' - dispatch_message:')
-        print('\tmessage: ',str(message))
+        print('\tmessage: ',message)
         try:
             dictum = collections.OrderedDict(json.loads(message.strip(), object_pairs_hook=collections.OrderedDict))
             if 'type' in dictum and 'data' in dictum:
