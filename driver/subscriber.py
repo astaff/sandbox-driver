@@ -38,6 +38,7 @@ class Subscriber():
                 print(datetime.datetime.now(),' - {error:subscriber.dispatch_message type or data error}\n\r',sys.exc_info()[0])
                 return '{error:subscriber.dispatch_message type or data error}'
         except:
+            raise
             print(datetime.datetime.now(),' - {error:general subscriber.dispatch_message error}\n\r',sys.exc_info()[0])
             return '{error:general subscriber.dispatch_message error}'
 
