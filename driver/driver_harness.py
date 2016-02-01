@@ -80,10 +80,7 @@ class Harness(object):
 		print(datetime.datetime.now(),' - driver_harness.callbacks:')
 		print('\tname: ',name)
 		print('\tparam: ',param)
-		print('wtf!')
-		test = driver_dict[name].callbacks()
-		print('test: ',test)
-		#self._publisher.publish('frontend','driver',name,'callbacks',driver_dict[name].callbacks())
+		self._publisher.publish('frontend','driver',name,'callbacks',self.driver_dict[name].callbacks())
 
 
 	def meta_callbacks(self, name, param):
@@ -92,26 +89,26 @@ class Harness(object):
 		print(datetime.datetime.now(),' - driver_harness.meta_callbacks:')
 		print('\tname: ',name)
 		print('\tparam: ',param)
-		self._publisher.publish('frontend','driver',name,'meta_callbacks',driver_dict[name].meta_callbacks())
+		self._publisher.publish('frontend','driver',name,'meta_callbacks',self.driver_dict[name].meta_callbacks())
 
 
 	def set_meta_callback(self, name, param):
 		"""
 		"""
 		print(datetime.datetime.now(),' - driver_harness.set_meta_callback:')
-		print('\tname: '+str(name))
-		print('\tparam: '+str(param))
+		print('\tname: ',name)
+		print('\tparam: ',param)
 		if isinstance(param,dict):
 			self.driver_dict.get(name).set_meta_callback(list(param)[0],list(param.values)[0])
-		self._publisher.publish('frontend','driver',name,'meta_callback',driver_dict.get(name).meta_callbacks())
+		self._publisher.publish('frontend','driver',name,'meta_callback',self.driver_dict.get(name).meta_callbacks())
 
 
 	def add_callback(self, name, param):
 		"""
 		"""
 		print(datetime.datetime.now(),' - driver_harness.add_callback:')
-		print('\tname: '+str(name))
-		print('\tparam: '+str(param))
+		print('\tname: ',name)
+		print('\tparam: ',param)
 		self.driver_dict[name].add_callback(list(param)[0],list(param.values())[0])
 		self._publisher.publish('frontend','driver',name,'callbacks',self.driver_dict.get(name).callbacks())
 
@@ -120,8 +117,8 @@ class Harness(object):
 		"""
 		"""
 		print(datetime.datetime.now(),' - driver_harness.remove_callback:')
-		print('\tname: '+str(name))
-		print('\tparam: '+str(param))
+		print('\tname: ',name)
+		print('\tparam: ',param)
 		self.driver_dict[name].remove_callback(param)
 		self._publisher.publish('frontend','driver',name,'callbacks',self.driver_dict.get(name).callbacks())
 
@@ -130,8 +127,8 @@ class Harness(object):
 		"""
 		"""
 		print(datetime.datetime.now(),' - driver_harness.flow:')
-		print('\tname: '+str(name))
-		print('\tparam: '+str(param))
+		print('\tname: ',name)
+		print('\tparam: ',param)
 		self._publisher.publish('frontend','driver',name,'flow',self.driver_dict.get(name).flow())
 
 
@@ -139,8 +136,8 @@ class Harness(object):
 		"""
 		"""
 		print(datetime.datetime.now(),' - driver_harness.clear_queue:')
-		print('\tname: '+str(name))
-		print('\tparam: '+str(param))
+		print('\tname: ',name)
+		print('\tparam: ',param)
 		self.driver_dict.get(name).clear_queue()
 		self.flow(name, None)
 
@@ -149,8 +146,8 @@ class Harness(object):
 		"""
 		"""
 		print(datetime.datetime.now(),' - driver_harness.connect:')
-		print('\tname: '+str(name))
-		print('\tparam: '+str(param))
+		print('\tname: ',name)
+		print('\tparam: ',param)
 		self.driver_dict[name].connect()
 
 
@@ -158,8 +155,8 @@ class Harness(object):
 		"""
 		"""
 		print(datetime.datetime.now(),' - driver_harness.disconnect:')
-		print('\tname: '+str(name))
-		print('\tparam: '+str(param))
+		print('\tname: ',name)
+		print('\tparam: ',param)
 		self.driver_dict.get(name).disconnect()
 
 
@@ -167,8 +164,8 @@ class Harness(object):
 		"""
 		"""
 		print(datetime.datetime.now(),' - driver_harness.commands:')
-		print('\tname: '+str(name))
-		print('\tparam: '+str(param))
+		print('\tname: ',name)
+		print('\tparam: ',param)
 		self._publisher.publish('frontend','driver',name,'commands',self.driver_dict.get(name).commands())
 
 
@@ -176,16 +173,16 @@ class Harness(object):
 		"""
 		"""
 		print(datetime.datetime.now(),' - driver_harness.meta_commands:')
-		print('\tname: ',str(name))
-		print('\tparam: ',str(param))
+		print('\tname: ',name)
+		print('\tparam: ',param)
 		self._publisher.publish('frontend','driver',name,'meta_commands',copy.deepcopy(self.meta_dict))
 
 	def configs(self, name, param):
 		"""
 		"""
 		print(datetime.datetime.now(),' - driver_harness.meta_commands:')
-		print('\tname: ',str(name))
-		print('\tparam: ',str(param))
+		print('\tname: ',name)
+		print('\tparam: ',param)
 		self._publisher.publish('frontend','driver',name,'configs',self.driver_dict.get(name).configs())
 
 
