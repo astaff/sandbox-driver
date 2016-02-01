@@ -2,6 +2,8 @@
 
 #import serial
 import asyncio, json, copy
+import datetime
+import sys
 from collections import Callable
 
 
@@ -18,7 +20,7 @@ class Output(asyncio.Protocol):
 
 
 	def connection_made(self, transport):
-		print('Output.connection_made called')
+		print(datetime.datetime.now(),' - Output.connection_made:')
 		print('\ttransport: '+str(transport))
 		self.transport = transport
 		self.outer.smoothie_transport = transport
@@ -28,7 +30,7 @@ class Output(asyncio.Protocol):
 
 
 	def data_received(self, data):
-		#print('Output.data_received called:')
+		#print(datetime.datetime.now(),' - Output.data_received:')
 		#print('\tdata: '+str(data))
 		self.data_buffer = self.data_buffer + data.decode()
 		delimiter_index = self.data_buffer.rfind("\n")
@@ -46,7 +48,7 @@ class Output(asyncio.Protocol):
 
 
 	def connection_lost(self, exc):
-		print('Output.connection_lost called')
+		print(datetime.datetime.now(),' - Output.connection_lost:')
 		print('\texc: '+str(exc))
 		self.transport = None
 		self.outer.smoothie_transport = None
@@ -231,7 +233,7 @@ class SmoothieDriver(object):
 	def __init__(self, simulate=False):
 		"""
 		"""
-		print('driver.__init__ called:')
+		print(datetime.datetime.now(),' - driver.__init__:')
 		print('\tsimulate: '+str(simulate))
 		self.simulation = simulate
 		self.the_loop = asyncio.get_event_loop()
@@ -240,21 +242,21 @@ class SmoothieDriver(object):
 	def callbacks(self):
 		"""
 		"""
-		print('driver.callbacks called')
+		print(datetime.datetime.now(),' - driver.callbacks')
 		return copy.deepcopy(self.callbacks_dict)
 
 
 	def configs(self):
 		"""
 		"""
-		print('driver.configs called')
+		print(datetime.datetime.now(),' - driver.configs')
 		return copy.deepcopy(self.config_dict)
 
 
 	def set_config(sefl, config, setting):
 		"""
 		"""
-		print('driver.set_config called')
+		print(datetime.datetime.now(),' - driver.set_config:')
 		print('\tconfig: '+str(config))
 		print('\tsetting: '+str(setting))
 		if config in self.config_dict:
@@ -265,7 +267,7 @@ class SmoothieDriver(object):
 	def meta_callbacks(self):
 		"""
 		"""
-		print('driver.meta_callbacks called')
+		print(datetime.datetime.now(),' - driver.meta_callbacks')
 		return_dict = dict()
 		for name, value in self.meta_callbacks_dict.items():
 			if value is not None and isinstance(value, Callable):
@@ -281,7 +283,7 @@ class SmoothieDriver(object):
 		"""
 		name should correspond 
 		"""
-		print('driver.set_meta_callback called:')
+		print(datetime.datetime.now(),' - driver.set_meta_callback:')
 		print('\tname: '+str(name))
 		print('\tcallback: '+str(callback))
 		if name in self.meta_callbacks_dict and isinstance(callback, Callable):
@@ -294,7 +296,7 @@ class SmoothieDriver(object):
 	def add_callback(self, callback, messages):
 		"""
 		"""
-		print('driver.add_callback called:')
+		print(datetime.datetime.now(),' - driver.add_callback:')
 		print('\tcallback: '+str(callback))
 		print('\tmessages: '+str(messages))
 		if callback.__name__ not in list(self.callbacks_dict):
@@ -312,7 +314,7 @@ class SmoothieDriver(object):
 	def remove_callback(self, callback_name):
 		"""
 		"""
-		print('driver.remove_callback called')
+		print(datetime.datetime.now(),' - driver.remove_callback')
 		print('\tcallback_name: '+str(callback_name))
 		del self.callbacks_dict[callback_name]
 
@@ -320,14 +322,14 @@ class SmoothieDriver(object):
 	def flow(self):
 		"""
 		"""
-		print('driver.flow called')
+		print(datetime.datetime.now(),' - driver.flow')
 		return copy.deepcopy(self.state_dict)
 
 
 	def clear_queue(self):
 		"""
 		"""
-		print('driver.clear_queue called')
+		print(datetime.datetime.now(),' - driver.clear_queue')
 		self.command_queue = []
 		self.state_dict['queue_size'] = len(self.command_queue)
 		self.state_dict['ack_received'] = True
@@ -337,7 +339,7 @@ class SmoothieDriver(object):
 	def connect(self, device=None, port=None):
 		"""
 		"""
-		print('driver.connect called:')
+		print(datetime.datetime.now(),' - driver.connect called:')
 		print('\tdevice: '+str(device))
 		print('\tport: '+str(port))
 		self.the_loop = asyncio.get_event_loop()
@@ -349,28 +351,29 @@ class SmoothieDriver(object):
 	def disconnect(self):
 		"""
 		"""
-		print('driver.disconnect called')
+		print(datetime.datetime.now(),' - driver.disconnect')
 		self.smoothie_transport.close()
 
 
 	def commands(self):
 		"""
 		"""
-		print('driver.commands called')
+		print(datetime.datetime.now(),' - driver.commands')
 		return copy.deepcopy(self.commands_dict)
 
 
 	def unlock(self):
 		"""
 		"""
-		print('driver.unlock called')
+		print(datetime.datetime.now(),' - driver.unlock')
 		self.state_dict['ack_received'] = True
 		self.state_dict['ack_ready'] = True
 		self.lock_check()
 
 
 	def send(self, message):
-		print('driver.send called')
+		print(datetime.datetime.now(),' - driver.send:')
+		print('\tmessage: ',str(message))
 		message = message + self.config_dict['message_ender']
 		if self.simulation:
 			self.simulation_queue.append(message)
@@ -380,14 +383,14 @@ class SmoothieDriver(object):
 					self.state_dict['ack_received'] = False
 					self.smoothie_transport.write(message.encode())
 			else:
-				print("smoothie_transport is None????")
+				print(datetime.datetime.now(),' - smoothie_transport is None????')
 
 
 
 # flow control 
 
 	def lock_check(self):
-		print('driver.lock_check called')
+		print(datetime.datetime.now(),' - driver.lock_check')
 		#print("SmoothieDriver.lock check called")
 		if self.state_dict['ack_received'] and self.state_dict['ack_ready']:
 			self.state_dict['locked'] = False
@@ -400,14 +403,15 @@ class SmoothieDriver(object):
 
 
 	def _add_to_command_queue(self, command):
-		print('driver._add_to_command_queue called')
+		print(datetime.datetime.now(),' - driver._add_to_command_queue:')
+		print('\tcommand: ',str(command))
 		self.command_queue.append(command)
 		self.state_dict['queue_size'] = len(self.command_queue)
 		self._step_command_queue()
 
 
 	def _step_command_queue(self):
-		print('driver._step_command_queue called')
+		print(datetime.datetime.now(),' - driver._step_command_queue')
 		self.lock_check()
 		if self.state_dict['locked'] == False:
 			if len(self.command_queue) == 0:
@@ -420,7 +424,8 @@ class SmoothieDriver(object):
 
 
 	def _format_text_data(self, text_data):
-		print('driver._format_text_data called')
+		print(datetime.datetime.now(),' - driver._format_text_data:')
+		print('\ttext_data: ',str(text_data))
 		return_list = []
 		remainder_data = text_data
 		while remainder_data.find(',')>=0:
@@ -433,7 +438,8 @@ class SmoothieDriver(object):
 
 
 	def _format_group(self, group_data):
-		print('driver._format_group called')
+		print(datetime.datetime.now(),' - driver._format_group:')
+		print('\tgroup_data: ',str(group_data))
 		return_dict = dict()
 		remainder_data = group_data
 		if remainder_data.find(':')>=0:
@@ -461,7 +467,8 @@ class SmoothieDriver(object):
 		#	}
 		#
 		#
-		print('driver._format_json_data called')
+		print(datetime.datetime.now(),' - driver._format_json_data:')
+		print('\tjson_data: ',str(json_data))
 		return_list = []
 		for name, value in json_data.items():
 			if isinstance(value, dict):
@@ -498,8 +505,8 @@ class SmoothieDriver(object):
 
 
 	def _process_message_dict(self, message_dict):
-		print('driver._process_message_dict called')
-
+		print(datetime.datetime.now(),' - driver._process_message_dict:')
+		print('\tmessage_dict: ',str(message_dict))
 		# first, check if ack_recieved confirmation
 		if self.config_dict['ack_received_message'] in list(message_dict):
 			value = message_dict.get(self.config_dict['ack_received_message'])
@@ -566,7 +573,7 @@ class SmoothieDriver(object):
 
 # Device callbacks
 	def _on_connection_made(self):
-		print('driver._on_connection_made called')
+		print(datetime.datetime.now(),' - driver._on_connection_made')
 		self.state_dict['connected'] = True
 		self.state_dict['transport'] = True if self.smoothie_transport else False
 		print('connected!')
@@ -575,7 +582,8 @@ class SmoothieDriver(object):
 
 
 	def _on_raw_data(self, data):
-		print('driver._on_raw_data called')
+		print(datetime.datetime.now(),' - driver._on_raw_data:')
+		print('\tdata: ',str(data))
 		if isinstance(self.meta_callbacks_dict['on_raw_data'],Callable):
 			self.meta_callbacks_dict['on_raw_data']()
 
@@ -584,7 +592,7 @@ class SmoothieDriver(object):
 		"""Handles incoming data from Smoothieboard that has already been split by delimiter
 
 		"""
-		print('driver._smoothie_data_handler called')
+		print(datetime.datetime.now(),' - driver._smoothie_data_handler')
 		json_data = ""
 		text_data = datum
 
@@ -612,7 +620,7 @@ class SmoothieDriver(object):
 	
 
 	def _on_connection_lost(self):
-		print('driver._on_connection_lost called')
+		print(datetime.datetime.now(),' - driver._on_connection_lost')
 		self.state_dict['connected'] = False
 		self.state_dict['transport'] = True if self.smoothie_transport else False
 		print('not connected!')
@@ -635,7 +643,7 @@ class SmoothieDriver(object):
 			params --> {param1:value, ... , paramN:value}
 
 		"""
-		print('driver.send_command called!')
+		print(datetime.datetime.now(),' - driver.send_command:')
 		print('\tdata: '+str(data))
 		command_text = ""
 

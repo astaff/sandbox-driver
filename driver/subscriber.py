@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
 
 import json, collections
-
+import sys
+import datetime
 
 driver = None
 
 class Subscriber():
     def __init__(self, harness=None):
-        print('subscriber.__init__ called:')
-        print('\tharness: '+str(harness))
+        print(datetime.datetime.now(),' - subscriber.__init__:')
+        print('\tharness: ',str(harness))
         self.harness = harness
 
         self.in_dispatcher = {
@@ -17,27 +18,27 @@ class Subscriber():
         }
 
     def set_harness(self, harness):
-        print('set_harness called')
-        print('\tharness: '+str(harness))
+        print(datetime.datetime.now(),' - set_harness:')
+        print('\tharness: ',str(harness))
         self.harness = harness
 
 
     def dispatch_message(self, message):
-        print('dispatch_message called:')
-        print('\tmessage: '+message)
+        print(datetime.datetime.now(),' - dispatch_message:')
+        print('\tmessage: ',str(message))
         try:
             dictum = collections.OrderedDict(json.loads(message.strip(), object_pairs_hook=collections.OrderedDict))
             if 'type' in dictum and 'data' in dictum:
                 if dictum['type'] in self.in_dispatcher:
                     self.in_dispatcher[dictum['type']](dictum['data'])
                 else:
-                    print('{error,malformed message, type not in in_dispatcher}')
+                    print(datetime.datetime.now(),' - {error,malformed message, type not in in_dispatcher}')
                     return '{error,malformed message, type not in in_dispatcher}'
             else:
-                print('{error:subscriber.dispatch_message type or data error}')
+                print(datetime.datetime.now(),' - {error:subscriber.dispatch_message type or data error}')
                 return '{error:subscriber.dispatch_message type or data error}'
         except:
-            print('{error:general subscriber.dispatch_message error}')
+            print(datetime.datetime.now(),' - {error:general subscriber.dispatch_message error}')
             return '{error:general subscriber.dispatch_message error}'
 
 

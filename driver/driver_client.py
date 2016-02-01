@@ -7,6 +7,9 @@ import asyncio
 import time
 import json
 import uuid
+import datetime
+import sys
+
 from subscriber import Subscriber
 from publisher import Publisher
 
@@ -34,8 +37,8 @@ class WampComponent(wamp.ApplicationSession):
 
         Starts instatiation of robot objects by calling :meth:`otone_client.instantiate_objects`.
         """
-        print('driver_client : WampComponent.onJoin called')
-        print('\tdetails: '+str(details))
+        print(datetime.datetime.now(),' - driver_client : WampComponent.onJoin:')
+        print('\tdetails: ',str(details))
         uid = str(uuid.uuid4())
         if not self.factory._myAppSession:
             self.factory._myAppSession = self
@@ -48,8 +51,8 @@ class WampComponent(wamp.ApplicationSession):
             """
             """
             #if debug == True: 
-            print('driver_client : WampComponent.set_client_status called')
-            print('\tstatus: '+str(status))
+            print(datetime.datetime.now(),' - driver_client : WampComponent.set_client_status:')
+            print('\tstatus: ',str(status))
             global client_status
             client_status = status
             self.publish('com.opentrons.driver_client_ready',True)
@@ -59,7 +62,7 @@ class WampComponent(wamp.ApplicationSession):
             }
             self.publish('com.opentrons.frontend',json.dumps(msg))
         
-        print('about to publish com.opentrons.driver_client_ready')
+        print(datetime.datetime.now(),' - about to publish com.opentrons.driver_client_ready')
         self.publish('com.opentrons.driver_client_ready',True)
         msg = {
             'type':'handshake',
@@ -74,8 +77,8 @@ class WampComponent(wamp.ApplicationSession):
         """Callback fired when WAMP session has been closed.
         :param details: Close information.
         """
-        print('driver_client : WampComponent.onLeave called')
-        print('\tdetails: '+str(details))
+        print('driver_client : WampComponent.onLeave:')
+        print('\tdetails: ',str(details))
         if self.factory._myAppSession == self:
             self.factory._myAppSession = None
         try:
@@ -86,14 +89,14 @@ class WampComponent(wamp.ApplicationSession):
     def onDisconnect(self):
         """Callback fired when underlying transport has been closed.
         """
-        print('driver_client : WampComponent.onDisconnect called')
+        print(datetime.datetime.now(),' - driver_client : WampComponent.onDisconnect:')
         asyncio.get_event_loop().stop()
 
 
 def make_a_connection():
     """Attempt to create streaming transport connection and run event loop
     """
-    print('driver_client.make_a_connection called')
+    print(datetime.datetime.now(),' - driver_client.make_a_connection')
     coro = loop.create_connection(transport_factory, '10.10.1.2', 8080)
 
     transporter, protocoler = loop.run_until_complete(coro)
@@ -104,10 +107,10 @@ def make_a_connection():
 def instantiate_objects():
     """After connection has been made, instatiate the various robot objects
     """
-    print('driver_client.instantiate_objects called')
+    print(datetime.datetime.now(),' - driver_client.instantiate_objects')
     
     # INITIAL SETUP PUBLISHER, HARNESS, SUBSCRIBER
-    print('initial setup - publisher, harness, subscriber')
+    print('* initial setup - publisher, harness, subscriber')
     publisher = Publisher(session_factory)
     otdriver_harness = driver_harness.Harness(publisher)
     subscriber = Subscriber(otdriver_harness)
@@ -115,12 +118,12 @@ def instantiate_objects():
 
 
     # INSTANTIATE DRIVERS:
-    print('instantiate drivers')
+    print('* instantiate drivers')
     otdriver = driver.SmoothieDriver()
 
 
     # ADD DRIVERS TO HARNESS 
-    print('add drivers to harness')   
+    print('* add drivers to harness')   
     otdriver_harness.add_driver('smoothie',otdriver)
     
 
@@ -132,12 +135,12 @@ def instantiate_objects():
     #
     #
     #
-    print('define callbacks')
+    print('* define callbacks')
     def positions(name, data_dict):
         """
         """
-        print('driver_client.positions called!')
-        print('\tdata_dict: '+str(data_dict))
+        print(datetime.datetime.now(),' - driver_client.positions:')
+        print('\tdata_dict: ',str(data_dict))
         dd_name = list(data_dict)[0]
         dd_value = data_dict[dd_name]
         publisher.publish('frontend','driver',name,list(data_dict)[0],dd_value)
@@ -145,12 +148,12 @@ def instantiate_objects():
 
 
     # ADD CALLBACKS VIA HARNESS:
-    print('add callbacks via harness')
+    print('* add callbacks via harness')
     otdriver_harness.add_callback('smoothie', {positions:['None']})
 
 
     # CONNECT TO DRIVERS:
-    print('connect to drivers')
+    print('* connect to drivers')
     otdriver_harness.connect('smoothie',None)
 
 
@@ -193,7 +196,8 @@ try:
     #
     #
     #def positions(name, data_dict):
-        #print('driver_client.positions called!')
+        #print(datetime.datetime.now(),' - driver_client.positions:')
+        #print('\tdata_dict: ',str(data_dict))
         #dd_name = list(data_dict)[0]
         #dd_value = data_dict[dd_name]
         #publisher.publish('frontend','driver',name,list(data_dict)[0],dd_value)

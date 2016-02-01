@@ -2,6 +2,8 @@
 
 
 import json, collections
+import sys
+import datetime
 
 
 class Publisher:
@@ -16,7 +18,7 @@ class Publisher:
     def __init__(self, session=None):
         """
         """
-        print('publisher.__init__ called')
+        print(datetime.datetime.now(),' - publisher.__init__:')
         print('\tsession: '+str(session))
         self.caller = None
         if session is not None:
@@ -26,7 +28,7 @@ class Publisher:
     def set_caller(self, session):
         """
         """
-        print('publisher.set_caller called')
+        print(datetime.datetime.now(),' - publisher.set_caller:')
         print('\tsession: '+str(session))
         self.caller = session
 
@@ -34,7 +36,7 @@ class Publisher:
     def publish(self,topic,type_,name,message,param):
         """
         """
-        print('publisher.publish called:')
+        print(datetime.datetime.now(),' - publisher.publish:')
         print('\ttopic: '+str(topic))
         print('\ttype_: '+str(type_))
         print('\tname: '+str(name))
@@ -52,10 +54,10 @@ class Publisher:
                 try:
                     self.caller._myAppSession.publish(self.topic.get(topic),json.dumps(msg))
                 except:
-                    print('publisher.py - publish - error: '+sys.exc_info()[0])
+                    print(datetime.datetime.now(),' - publisher.py - publish - error: '+sys.exc_info()[0])
                     raise
             else:
-                print('publisher.py - publish - error: caller._myAppSession is None')
+                print(datetime.datetime.now(),' - publisher.py - publish - error: caller._myAppSession is None')
         else:
-            print('publisher.py - publish - error: calller, topic, or type_ is None')
+            print(datetime.datetime.now(),' - publisher.py - publish - error: calller, topic, or type_ is None')
 
