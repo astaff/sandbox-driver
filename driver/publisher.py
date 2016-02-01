@@ -19,7 +19,7 @@ class Publisher:
         """
         """
         print(datetime.datetime.now(),' - publisher.__init__:')
-        print('\tsession: '+str(session))
+        print('\tsession: ',session)
         self.caller = None
         if session is not None:
             self.caller = session
@@ -29,7 +29,7 @@ class Publisher:
         """
         """
         print(datetime.datetime.now(),' - publisher.set_caller:')
-        print('\tsession: '+str(session))
+        print('\tsession: ',session)
         self.caller = session
 
 
@@ -37,11 +37,11 @@ class Publisher:
         """
         """
         print(datetime.datetime.now(),' - publisher.publish:')
-        print('\ttopic: '+str(topic))
-        print('\ttype_: '+str(type_))
-        print('\tname: '+str(name))
-        print('\tmessage: '+str(message))
-        print('\tparam: '+str(param))
+        print('\ttopic: ',topic)
+        print('\ttype_: ',type_)
+        print('\tname: ',name)
+        print('\tmessage: ',message)
+        print('\tparam: ',param)
         if self.caller is not None and topic is not None and type_ is not None:
             if name is None:
                 name = 'None'
@@ -54,7 +54,7 @@ class Publisher:
                 try:
                     self.caller._myAppSession.publish(self.topic.get(topic),json.dumps(msg))
                 except:
-                    print(datetime.datetime.now(),' - publisher.py - publish - error: '+sys.exc_info()[0])
+                    print(datetime.datetime.now(),' - publisher.py - publish - error: ',sys.exc_info()[0])
                     raise
             else:
                 print(datetime.datetime.now(),' - publisher.py - publish - error: caller._myAppSession is None')

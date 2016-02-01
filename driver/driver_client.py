@@ -109,6 +109,24 @@ def instantiate_objects():
     """
     print(datetime.datetime.now(),' - driver_client.instantiate_objects')
     
+    
+
+
+try:
+    session_factory = wamp.ApplicationSessionFactory()
+    session_factory.session = WampComponent
+
+    session_factory._myAppSession = None
+
+    url = "ws://10.10.1.2:8080/ws"
+    transport_factory = websocket \
+            .WampWebSocketClientFactory(session_factory,
+                                        url=url,
+                                        debug=False,
+                                        debug_wamp=False)
+    loop = asyncio.get_event_loop()
+
+    # TRYING THE FOLLOWING IN INSTANTIATE OBJECTS vs here
     # INITIAL SETUP PUBLISHER, HARNESS, SUBSCRIBER
     print('* initial setup - publisher, harness, subscriber')
     publisher = Publisher(session_factory)
@@ -157,22 +175,8 @@ def instantiate_objects():
     otdriver_harness.connect('smoothie',None)
 
 
-try:
-    session_factory = wamp.ApplicationSessionFactory()
-    session_factory.session = WampComponent
 
-    session_factory._myAppSession = None
 
-    url = "ws://10.10.1.2:8080/ws"
-    transport_factory = websocket \
-            .WampWebSocketClientFactory(session_factory,
-                                        url=url,
-                                        debug=False,
-                                        debug_wamp=False)
-    loop = asyncio.get_event_loop()
-
-    # TRYING THE FOLLOWING IN INSTANTIATE OBJECTS vs here
-    # INITIAL SETUP PUBLISHER, HARNESS, SUBSCRIBER
     #publisher = Publisher(session_factory)
     #otdriver_harness = driver_harness.Harness(publisher)
     #subscriber = Subscriber(otdriver_harness)
