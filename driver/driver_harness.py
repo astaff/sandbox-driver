@@ -243,8 +243,8 @@ class Harness(object):
 						print(' - B - ')
 						self.meta_dict[command](name,None)
 					except:
-						self._publisher.publish('frontend','driver',name,'error',sys.exc_info()[0])
-						print(datetime.datetime.now(),' - meta_command error: '+sys.exc_info()[0])
+						#self._publisher.publish('frontend','driver',name,'error',sys.exc_info()[0])
+						#print(datetime.datetime.now(),' - meta_command error: '+sys.exc_info()[0])
 			else:
 				if isinstance(value, dict):
 					command = list(value)[0]
