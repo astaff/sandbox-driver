@@ -511,7 +511,7 @@ class SmoothieDriver(object):
 	def _process_message_dict(self, message_dict):
 		print(datetime.datetime.now(),' - driver._process_message_dict:')
 		print('\tmessage_dict: ',message_dict)
-		# first, check if ack_recieved confirmation
+		# first, check if ack_received confirmation
 		if self.config_dict['ack_received_message'] in list(message_dict):
 			value = message_dict.get(self.config_dict['ack_received_message'])
 			if isinstance(value, dict):
@@ -528,7 +528,7 @@ class SmoothieDriver(object):
 						self.state_dict['ack_received'] = True
 
 
-		# second, check if ack_recieved confirmation
+		# second, check if ack_ready confirmation
 		if self.config_dict['ack_ready_message'] in list(self.config_dict['ack_ready_message']):
 			value = message_dict.get(self.config_dict['ack_ready_message'])
 			if isinstance(value, dict):

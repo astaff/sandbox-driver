@@ -194,7 +194,7 @@ class Harness(object):
 		print('\tparam: ',str(param))
 		if isinstance(param,dict):
 			self.driver_dict.get(name).set_config(list(param)[0],list(param.values)[0])
-		self._publisher.publish('frontend','driver',name,'configs',driver_dict.get(name).configs())
+		self._publisher.publish('frontend','driver',name,'configs',self.driver_dict.get(name).configs())
 
 
 	def meta_command(self, data):
