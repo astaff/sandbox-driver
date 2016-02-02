@@ -104,130 +104,7 @@ class SmoothieDriver(object):
 
 	"""
 
-	command_queue = []
-	simulation_queue = []
 	
-	smoothie_transport = None
-	the_loop = None
-
-	state_dict = {
-		'name':'smoothie',
-		'simulation':False,
-		'connected':False,
-		'transport':False,
-		'locked':False,
-		'ack_received':True,
-		'ack_ready':True,
-		'queue_size':0
-	}
-
-	config_dict = {
-		'delimiter':"\n",
-		'message_ender':"\r\n",
-		'ack_received_message':"ok",
-		'ack_received_parameter':None,
-		'ack_received_value':None,
-		'ack_ready_message':"stat",
-		'ack_ready_parameter':None,
-		'ack_ready_value':"0",
-	}
-
-	callbacks_dict = {}
-	#  {
-	#    <callback_name>:
-	#    {
-	#      callback: <CALLBACK OBJECT>,
-	#      messages: [ <messages>... ]
-	#    },
-	#    ...
-	#  }
-
-	meta_callbacks_dict = {
-		'on_connect' : None,
-		'on_disconnect' : None,
-		'on_empty_queue' : None,
-		'on_raw_data' : None
-	}
-
-	commands_dict = {
-		"move":{
-			"code":"G91 G0",
-			"parameters":["","X","Y","Z","A","B"]
-		},
-		"move_to":{
-			"code":"G90 G0",
-			"parameters":["","X","Y","Z","A","B"]
-		},
-		"linear_move":{
-			"code":"G1",
-			"parameters":["","X","Y","Z","A","B"]
-		},
-		"home":{
-			"code":"G28",
-			"parameters":["","X","Y","Z","A","B"]
-		},
-		"absolute":{
-			"code":"G90",
-			"parameters":[]
-		},
-		"relative":{
-			"code":"G91",
-			"parameters":[]
-		},
-		"feedrate":{
-			"code":"F",
-			"parameters":[]
-		},
-		"feedrate_a":{
-			"code":"a",
-			"parameters":[]
-		},
-		"feedrate_b":{
-			"code":"b",
-			"parameters":[]
-		},
-		"feedrate_c":{
-			"code":"c",
-			"parameters":[]
-		},
-		"reset":{
-			"code":"reset",
-			"parameters":[]
-		},
-		"enable_motors":{
-			"code":"M17",
-			"parameters":[]
-		},
-		"disable_motors":{
-			"code":"M18",
-			"parameters":[]
-		},
-		"start_feedback":{
-			"code":"M62",
-			"parameters":[]
-		},
-		"stop_feedback":{
-			"code":"M63",
-			"parameters":[]
-		},
-		"limit_switches":{
-			"code":"M119",
-			"parameters":[]
-		},
-		"halt":{
-			"code":"M112",
-			"parameters":[]
-		},
-		"reset_from_halt":{
-			"code":"M999",
-			"parameters":[]
-		},
-		"positions":{
-			"code":"M114",
-			"parameters":[]
-		}
-
-	}
 
 
 	def __init__(self, simulate=False):
@@ -237,6 +114,130 @@ class SmoothieDriver(object):
 		print('\tsimulate: ',simulate)
 		self.simulation = simulate
 		self.the_loop = asyncio.get_event_loop()
+		command_queue = []
+		self.simulation_queue = []
+	
+		self.smoothie_transport = None
+		self.the_loop = None
+
+		self.state_dict = {
+			'name':'smoothie',
+			'simulation':False,
+			'connected':False,
+			'transport':False,
+			'locked':False,
+			'ack_received':True,
+			'ack_ready':True,
+			'queue_size':0
+		}
+
+		self.config_dict = {
+			'delimiter':"\n",
+			'message_ender':"\r\n",
+			'ack_received_message':"ok",
+			'ack_received_parameter':None,
+			'ack_received_value':None,
+			'ack_ready_message':"stat",
+			'ack_ready_parameter':None,
+			'ack_ready_value':"0",
+		}
+
+		self.callbacks_dict = {}
+		#  {
+		#    <callback_name>:
+		#    {
+		#      callback: <CALLBACK OBJECT>,
+		#      messages: [ <messages>... ]
+		#    },
+		#    ...
+		#  }
+
+		self.meta_callbacks_dict = {
+			'on_connect' : None,
+			'on_disconnect' : None,
+			'on_empty_queue' : None,
+			'on_raw_data' : None
+		}
+
+		self.commands_dict = {
+			"move":{
+				"code":"G91 G0",
+				"parameters":["","X","Y","Z","A","B"]
+			},
+			"move_to":{
+				"code":"G90 G0",
+				"parameters":["","X","Y","Z","A","B"]
+			},
+			"linear_move":{
+				"code":"G1",
+				"parameters":["","X","Y","Z","A","B"]
+			},
+			"home":{
+				"code":"G28",
+				"parameters":["","X","Y","Z","A","B"]
+			},
+			"absolute":{
+				"code":"G90",
+				"parameters":[]
+			},
+			"relative":{
+				"code":"G91",
+				"parameters":[]
+			},
+			"feedrate":{
+				"code":"F",
+				"parameters":[]
+			},
+			"feedrate_a":{
+				"code":"a",
+				"parameters":[]
+			},
+			"feedrate_b":{
+				"code":"b",
+				"parameters":[]
+			},
+			"feedrate_c":{
+				"code":"c",
+				"parameters":[]
+			},
+			"reset":{
+				"code":"reset",
+				"parameters":[]
+			},
+			"enable_motors":{
+				"code":"M17",
+				"parameters":[]
+			},
+			"disable_motors":{
+				"code":"M18",
+				"parameters":[]
+			},
+			"start_feedback":{
+				"code":"M62",
+				"parameters":[]
+			},
+			"stop_feedback":{
+				"code":"M63",
+				"parameters":[]
+			},
+			"limit_switches":{
+				"code":"M119",
+				"parameters":[]
+			},
+			"halt":{
+				"code":"M112",
+				"parameters":[]
+			},
+			"reset_from_halt":{
+				"code":"M999",
+				"parameters":[]
+			},
+			"positions":{
+				"code":"M114",
+				"parameters":[]
+			}
+
+		}
 
 
 	def callbacks(self):
