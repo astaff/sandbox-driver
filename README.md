@@ -213,12 +213,14 @@ with the clear_queue function.
 * The Smoothieboard does not use checksums to verify messages, however other boards, like TinyG do. A mechanism for 
 handling that could be added
 
-** The commands dictionary for Smoothieboard is not complete yet. Will be soon.
 
 
 
 
-TODO: Some examples of commands and their responses.
+
+TODO: 
+* The commands dictionary for Smoothieboard is not complete yet. Will be soon.
+* Some examples of commands and their responses.
 
 
 
