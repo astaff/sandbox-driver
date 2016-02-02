@@ -527,6 +527,7 @@ class SmoothieDriver(object):
 	def _process_message_dict(self, message_dict):
 		print(datetime.datetime.now(),' - driver._process_message_dict:')
 		print('\tmessage_dict: ',message_dict)
+		print('\tlist(message_dict): ',list(message_dict))
 		# first, check if ack_received confirmation
 		print('checking ack_received...')
 		if self.config_dict['ack_received_message'] in list(message_dict):
