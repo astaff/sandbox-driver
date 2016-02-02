@@ -139,7 +139,7 @@ class SmoothieDriver(object):
 			'ack_received_value':None,
 			'ack_ready_message':"None",
 			'ack_ready_parameter':"stat",
-			'ack_ready_value':"0",
+			'ack_ready_value':"0"
 		}
 
 		self.callbacks_dict = {}
@@ -535,15 +535,18 @@ class SmoothieDriver(object):
 			if isinstance(value, dict):
 				if self.config_dict['ack_receieved_parameter'] is None:
 					self.state_dict['ack_received'] = True
+					print('ack_received TRUE 1')
 				else:
 					for value_name, value_value in value.items():
 						if value_name == self.config_dict['ack_received_parameter']:
 							if self.config_dict['ack_received_value'] is None or value_value == self.config_dict['ack_receieved_value']:
 								self.state_dict['ack_received'] = True
+								print('ack_received TRUE 2')
 			else:
 				if self.config_dict['ack_received_parameter'] is None:
 					if self.config_dict['ack_received_value'] is None or value == self.config_dict['ack_received_value']:
 						self.state_dict['ack_received'] = True
+						print('ack_received TRUE 3')
 
 
 		print('checking ack_ready...')
@@ -553,10 +556,15 @@ class SmoothieDriver(object):
 			if isinstance(value, dict):
 				print('...A')
 				if self.config_dict['ack_ready_parameter'] is None:
+					print('...A...1')
 					self.state_dict['ack_ready'] = True
 				else:
+					print('...A...2')
 					for value_name, value_value in value.items():
 						if value_name == self.config_dict['ack_ready_parameter']:
+							print('...A...2 MATCH!')
+							print('ack_ready_value: ',self.config_dict['ack_ready_value'])
+							print('value: ',value_value)
 							if self.config_dict['ack_ready_value'] is None or value_value == self.config_dict['ack_ready_value']:
 								self.state_dict['ack_ready'] = True
 							else:
