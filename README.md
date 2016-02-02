@@ -39,14 +39,16 @@ It is also useful to separate out these types of messages before entry into driv
 
 Incoming Data Format:
 
+```
 {
-	'type': "string",
+	'type': string,
 	'data':
 	{
-		'name': "string",
+		'name': string,
 		'message':{message:param}
 	}
 }
+```
 
 
 ---
@@ -107,7 +109,7 @@ topic = {
 }
 
 Outgoing Data Format:
-
+```
 {
 	'type': "string",
 	'data':
@@ -116,6 +118,7 @@ Outgoing Data Format:
 		'message':{message:param}
 	}
 }
+```
 
 * Note, this is the same as the incoming data format because it is possible, and likely, that outgoing 
 data here will be incoming data to similar communication code elsewhere, only mildly adjusted, and 
@@ -135,25 +138,25 @@ The first set of criticial pieces are the dictionaries used for various purposes
 outlined here:
 
 state_dict:
-	'name' - a device should have a name so it can be referenced
-	'simulation' - is the device is running in simulation mode?
-	'connected' - is the device connected?
-	'transport' - is the transport there? (asyncio)
-	'locked' - is the driver locked from sending data to device? (flow control)
-	'ack_received' - is there acknowledgement data received from device
-	'ack_ready' - is there acknowledgement device is ready to receive data
-	'queue_size' - size of the command queue
+* 'name' - a device should have a name so it can be referenced
+* 'simulation' - is the device is running in simulation mode?
+* 'connected' - is the device connected?
+* 'transport' - is the transport there? (asyncio)
+* 'locked' - is the driver locked from sending data to device? (flow control)
+* 'ack_received' - is there acknowledgement data received from device
+* 'ack_ready' - is there acknowledgement device is ready to receive data
+* 'queue_size' - size of the command queue
 
 
 config_dict:
-	'delimiter' - delimiter to use when parsing incoming data into individual messages (default is "\n")
-	'message_ender' - suffix to put on all data going to device (terminator string)
-	'ack_received_message' - message used to acknowledge data received from device (Smoothieboard uses "ok")
-	'ack_received_parameter' - parameter used to acknowledge data received from device (Smoothieboard does not use this)
-	'ack_received_value' - parameter or message value used to acknowledge data received from device (Smoothieboard does not use this)
-	'ack_ready_message' - message used to acknowledge device ready to receive data (Smoothieboard uses 'stat' for this)
-	'ack_ready_parameter' - parameter used to acknowledge device ready to receive data (Smoothieboard does not use this)
-	'ack_ready_value' - parameter or message value used to acknowledge device ready to receive data (Smoothieboard uses 0 for this)
+* 'delimiter' - delimiter to use when parsing incoming data into individual messages (default is "\n")
+* 'message_ender' - suffix to put on all data going to device (terminator string)
+* 'ack_received_message' - message used to acknowledge data received from device (Smoothieboard uses "ok")
+* 'ack_received_parameter' - parameter used to acknowledge data received from device (Smoothieboard does not use this)
+* 'ack_received_value' - parameter or message value used to acknowledge data received from device (Smoothieboard does not use this)
+* 'ack_ready_message' - message used to acknowledge device ready to receive data (Smoothieboard uses 'stat' for this)
+* 'ack_ready_parameter' - parameter used to acknowledge device ready to receive data (Smoothieboard does not use this)
+* 'ack_ready_value' - parameter or message value used to acknowledge device ready to receive data (Smoothieboard uses 0 for this)
 
 
 callbacks_dict:
@@ -161,6 +164,7 @@ callbacks_dict:
 The callbacks_dict is where custom callbacks are stored to listen for particular messages and then transmit 
 data accordingly. This dictionary starts out empty but has the following format:
 
+```
 {
 	callback name:
 	{
@@ -169,6 +173,7 @@ data accordingly. This dictionary starts out empty but has the following format:
 	},
 	...
 }
+```
 
 All data then transmitted to a given callback is of the form:
 
@@ -198,6 +203,7 @@ commands_dict:
 This dictionary has all of the commands that can be sent to the device and varies by device. 
 The dictionary of commands for the Smoothieboard is too long to include here, but this is the format:
 
+```
 {
 	command:
 	{
@@ -206,6 +212,7 @@ The dictionary of commands for the Smoothieboard is too long to include here, bu
 	},
 	...
 }
+```
 
 
 
