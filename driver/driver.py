@@ -114,7 +114,7 @@ class SmoothieDriver(object):
 		print('\tsimulate: ',simulate)
 		self.simulation = simulate
 		self.the_loop = asyncio.get_event_loop()
-		command_queue = []
+		self.command_queue = []
 		self.simulation_queue = []
 	
 		self.smoothie_transport = None
