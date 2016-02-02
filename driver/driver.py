@@ -684,7 +684,7 @@ class SmoothieDriver(object):
 							command_text += str(param)
 							command_text += str(val)
 			
-			self.send(command_text)
+			self._add_to_command_queue(command_text)
 
 		else:	#check whether command is actually a code in commands dictionary
 			for cmd, dat in self.commands_dict.items():
@@ -699,7 +699,7 @@ class SmoothieDriver(object):
 									command_text += str(param)
 									command_text += str(val)
 
-					self.send(command_text)
+					self._add_to_command_queue(command_text)
 					break
 
 		#else:
