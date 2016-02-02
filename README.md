@@ -40,10 +40,10 @@ It is also useful to separate out these types of messages before entry into driv
 Incoming Data Format:
 
 {
-	'type':<string>,
+	'type': "string",
 	'data':
 	{
-		'name':<string>,
+		'name': "string",
 		'message':{message:param}
 	}
 }
@@ -58,7 +58,7 @@ Messages sent to driver_harness.py are divided into two categories, "command" an
 Meta messages are messages about the driver and drivers, and commands are messages to the 
 devices via their drivers. Driver_harness has two important dictionary objects, driver_dict 
 and meta_dict. driver_dict maps the driver names to the drivers, for example 
-{ 'smoothie' : <smoothie driver> }. Meta_dict is similar to in_dispatcher in subscriber.py, 
+{ 'smoothie' : "smoothie driver object" }. Meta_dict is similar to in_dispatcher in subscriber.py, 
 except that it is for meta commands, and they are:
 
 	'drivers': Publish a list of the drivers.
@@ -109,10 +109,10 @@ topic = {
 Outgoing Data Format:
 
 {
-	'type':<string>,
+	'type': "string",
 	'data':
 	{
-		'name':<string>,
+		'name': "string",
 		'message':{message:param}
 	}
 }
