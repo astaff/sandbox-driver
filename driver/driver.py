@@ -528,6 +528,7 @@ class SmoothieDriver(object):
 		print(datetime.datetime.now(),' - driver._process_message_dict:')
 		print('\tmessage_dict: ',message_dict)
 		# first, check if ack_received confirmation
+		print('checking ack_received...')
 		if self.config_dict['ack_received_message'] in list(message_dict):
 			value = message_dict.get(self.config_dict['ack_received_message'])
 			if isinstance(value, dict):
@@ -544,10 +545,12 @@ class SmoothieDriver(object):
 						self.state_dict['ack_received'] = True
 
 
+		print('checking ack_ready...')
 		# second, check if ack_ready confirmation
-		if self.config_dict['ack_ready_message'] in list(self.config_dict['ack_ready_message']):
+		if self.config_dict['ack_ready_message'] in list(message_dict):
 			value = message_dict.get(self.config_dict['ack_ready_message'])
 			if isinstance(value, dict):
+				print('...A')
 				if self.config_dict['ack_ready_parameter'] is None:
 					self.state_dict['ack_ready'] = True
 				else:
@@ -558,11 +561,17 @@ class SmoothieDriver(object):
 							else:
 								self.state_dict['ack_ready'] = False
 			else:
+				print('...B')
 				if self.config_dict['ack_ready_parameter'] is None:
 					if self.config_dict['ack_ready_value'] is None or value == self.config_dict['ack_ready_value']:
 						self.state_dict['ack_ready'] = True
 					else:
 						self.state_dict['ack_ready'] = False
+				else:
+					if value == self.config_dict['ack_ready_parameter']:
+						self.state_dict['ack_ready'] = True
+					else:
+						self.state_dict['ack_ready'] = False					
 
 
 		# finally, pass messages to their respective callbacks based on callbacks and messages they're registered to receive
