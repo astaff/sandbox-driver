@@ -421,7 +421,7 @@ class SmoothieDriver(object):
 
 	def _step_command_queue(self):
 		print(datetime.datetime.now(),' - driver._step_command_queue')
-		self.lock_check())
+		self.lock_check()
 		if self.state_dict['locked'] == False:
 			if len(self.command_queue) == 0:
 				if isinstance(self.meta_callbacks_dict['on_empty_queue'],Callable):
