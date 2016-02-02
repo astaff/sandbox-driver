@@ -567,9 +567,11 @@ class SmoothieDriver(object):
 							print('...A...2 MATCH!')
 							print('ack_ready_value: ',self.config_dict['ack_ready_value'])
 							print('value: ',value_value)
-							if self.config_dict['ack_ready_value'] is None or value_value == self.config_dict['ack_ready_value']:
+							if self.config_dict['ack_ready_value'] is None or str(value_value) == str(self.config_dict['ack_ready_value']):
+								print('BOOM!')
 								self.state_dict['ack_ready'] = True
 							else:
+								print('FIZZLE!')
 								self.state_dict['ack_ready'] = False
 			else:
 				print('...B')
