@@ -414,35 +414,21 @@ class SmoothieDriver(object):
 
 	def _add_to_command_queue(self, command):
 		print(datetime.datetime.now(),' - driver._add_to_command_queue:')
-		print('\tcommand: ',command)
-		print('\tlen(command_queue) BF: ',len(self.command_queue))
-		print('command_queue: ',self.command_queue)
 		self.command_queue.append(command)
-		print('\tlen(command_queue) AF: ',len(self.command_queue))
-		print('command_queue: ',self.command_queue)
 		self.state_dict['queue_size'] = len(self.command_queue)
-		print(datetime.datetime.now(),'\tqueue_size: ',self.state_dict['queue_size'])
 		self._step_command_queue()
 
 
 	def _step_command_queue(self):
 		print(datetime.datetime.now(),' - driver._step_command_queue')
-		print('\tlocked: ',self.lock_check())
-		print('\tlen(command_queue): ',len(self.command_queue))
-		print('command_queue: ',self.command_queue)
+		self.lock_check())
 		if self.state_dict['locked'] == False:
 			if len(self.command_queue) == 0:
 				if isinstance(self.meta_callbacks_dict['on_empty_queue'],Callable):
 					self.meta_callbacks_dict['on_empty_queue']()
 			else:
-				print('\tlen(command_queue) BEFORE: ',len(self.command_queue))
-				print('command_queue: ',self.command_queue)
 				self.send(self.command_queue.pop(0))
-				print('\tlen(command_queue) AFTER: ',len(self.command_queue))
-				print('command_queue: ',self.command_queue)
 				self.state_dict['queue_size'] = len(self.command_queue)
-		print(datetime.datetime.now(),'\tqueue_size: ',self.state_dict['queue_size'])
-		print('command_queue: ',self.command_queue)
 
 
 	def _format_text_data(self, text_data):
@@ -529,52 +515,37 @@ class SmoothieDriver(object):
 	def _process_message_dict(self, message_dict):
 		print(datetime.datetime.now(),' - driver._process_message_dict:')
 		print('\tmessage_dict: ',message_dict)
-		print('\tlist(message_dict): ',list(message_dict))
 		# first, check if ack_received confirmation
-		print('checking ack_received...')
-		if self.config_dict['ack_received_message'] in list(message_dict):
+		if self.config_dict['ack_received_message'] in list(message_dict) or self.config_dict['ack_received_message'] is None:
 			value = message_dict.get(self.config_dict['ack_received_message'])
 			if isinstance(value, dict):
 				if self.config_dict['ack_receieved_parameter'] is None:
 					self.state_dict['ack_received'] = True
-					print('ack_received TRUE 1')
 				else:
 					for value_name, value_value in value.items():
 						if value_name == self.config_dict['ack_received_parameter']:
 							if self.config_dict['ack_received_value'] is None or value_value == self.config_dict['ack_receieved_value']:
 								self.state_dict['ack_received'] = True
-								print('ack_received TRUE 2')
 			else:
 				if self.config_dict['ack_received_parameter'] is None:
 					if self.config_dict['ack_received_value'] is None or value == self.config_dict['ack_received_value']:
 						self.state_dict['ack_received'] = True
-						print('ack_received TRUE 3')
 
 
-		print('checking ack_ready...')
 		# second, check if ack_ready confirmation
-		if self.config_dict['ack_ready_message'] in list(message_dict):
+		if self.config_dict['ack_ready_message'] in list(message_dict) or self.config_dict['ack_ready_message'] is None:
 			value = message_dict.get(self.config_dict['ack_ready_message'])
 			if isinstance(value, dict):
-				print('...A')
 				if self.config_dict['ack_ready_parameter'] is None:
-					print('...A...1')
 					self.state_dict['ack_ready'] = True
 				else:
-					print('...A...2')
 					for value_name, value_value in value.items():
 						if value_name == self.config_dict['ack_ready_parameter']:
-							print('...A...2 MATCH!')
-							print('ack_ready_value: ',self.config_dict['ack_ready_value'])
-							print('value: ',value_value)
 							if self.config_dict['ack_ready_value'] is None or str(value_value) == str(self.config_dict['ack_ready_value']):
-								print('BOOM!')
 								self.state_dict['ack_ready'] = True
 							else:
-								print('FIZZLE!')
 								self.state_dict['ack_ready'] = False
 			else:
-				print('...B')
 				if self.config_dict['ack_ready_parameter'] is None:
 					if self.config_dict['ack_ready_value'] is None or value == self.config_dict['ack_ready_value']:
 						self.state_dict['ack_ready'] = True
