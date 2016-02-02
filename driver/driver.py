@@ -400,7 +400,9 @@ class SmoothieDriver(object):
 	def lock_check(self):
 		print(datetime.datetime.now(),' - driver.lock_check')
 		#print("SmoothieDriver.lock check called")
-		if self.state_dict['ack_received'] and self.state_dict['ack_ready']:
+		print('\tack_received: ',self.state_dict['ack_received'])
+		print('\tack_ready: ',self.state_dict['ack_ready'])
+		if self.state_dict['ack_received'] == True and self.state_dict['ack_ready'] == True:
 			self.state_dict['locked'] = False
 			print('\tunlocked')
 			return False
