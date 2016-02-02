@@ -137,8 +137,8 @@ class SmoothieDriver(object):
 			'ack_received_message':"ok",
 			'ack_received_parameter':None,
 			'ack_received_value':None,
-			'ack_ready_message':"stat",
-			'ack_ready_parameter':None,
+			'ack_ready_message':"None",
+			'ack_ready_parameter':"stat",
 			'ack_ready_value':"0",
 		}
 
