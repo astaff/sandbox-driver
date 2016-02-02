@@ -411,6 +411,7 @@ class SmoothieDriver(object):
 		print('\tcommand: ',command)
 		self.command_queue.append(command)
 		self.state_dict['queue_size'] = len(self.command_queue)
+		print(datetime.datetime.now(),'\tqueue_size: ',self.state_dict['queue_size'])
 		self._step_command_queue()
 
 
@@ -422,9 +423,9 @@ class SmoothieDriver(object):
 				if isinstance(self.meta_callbacks_dict['on_empty_queue'],Callable):
 					self.meta_callbacks_dict['on_empty_queue']()
 			else:
-				self._send(self.command_queue.pop(0))
+				self.send(self.command_queue.pop(0))
 				self.state_dict['queue_size'] = len(self.command_queue)
-
+		print(datetime.datetime.now(),'\tqueue_size: ',self.state_dict['queue_size'])
 
 
 	def _format_text_data(self, text_data):
