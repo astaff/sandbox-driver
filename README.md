@@ -8,11 +8,11 @@ Frontend, and Labware. Ser2net is used for serial communication with the devices
 currently only one device, the Smoothieboard, however there will be others.
 
 The code is made up of the following modules:
-- [driver_client.py](#driver_client.py)
-- [subscriber.py](#subscriber.py)
-- [publisher.py](#publisher.py)
-- [driver_harness.py](#driver_harness.py)
-- [driver.py](#driver.py)
+- [driver_client.py](#driver_clientpy)
+- [subscriber.py](#subscriberpy)
+- [publisher.py](#publisherpy)
+- [driver_harness.py](#driver_harnesspy)
+- [driver.py](#driverpy)
 
 
 ---
