@@ -8,14 +8,14 @@ Frontend, and Labware. Ser2net is used for serial communication with the devices
 currently only one device, the Smoothieboard, however there will be others.
 
 The code is made up of the following modules:
-- driver_client.py
-- subscriber.py
-- publisher.py
-- driver_harness.py
-- driver.py
+- [driver_client.py](#driver_client.py)
+- [subscriber.py](#subscriber.py)
+- [publisher.py](#publisher.py)
+- [driver_harness.py](#driver_harness.py)
+- [driver.py](#driver.py)
 
 
-
+---
 ## driver_client.py:
 
 This module initiates the others and sets up communication over Crossbar.io, listening on 
@@ -26,7 +26,7 @@ defined and added for communication back to other sections of code based on part
 received from the device. There is more on callbacks below.
 
 
-
+---
 ## subscriber.py
 
 This module is where messages coming in on the listened to url topic get routed first. Its 
@@ -49,7 +49,7 @@ Incoming Data Format:
 }
 
 
-
+---
 ## driver_harness.py
 
 This module uses the word harness because it harnesses the drivers for the various devices, 
@@ -92,7 +92,7 @@ except that it is for meta commands, and they are:
 	'set_config': Set a config to a given value, and return 'configs'.
 
 
-
+---
 ## publisher.py
 
 This module publishes to a given url topic. The url topics are given in the topic dictionary:
@@ -120,7 +120,7 @@ data here will be incoming data to similar communication code elsewhere, only mi
 not just to the Frontend.
 
 
-
+---
 ## driver.py
 
 The driver module communicates directly with the Smoothieboard and serves as a template for 
