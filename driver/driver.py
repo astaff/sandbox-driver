@@ -415,6 +415,7 @@ class SmoothieDriver(object):
 		self.command_queue.append(command)
 		self.state_dict['queue_size'] = len(self.command_queue)
 		print('\tlen(command_queue): ',len(self.command_queue))
+		print('queue: ',self.command_queue)
 		print(datetime.datetime.now(),'\tqueue_size: ',self.state_dict['queue_size'])
 		self._step_command_queue()
 
@@ -423,6 +424,7 @@ class SmoothieDriver(object):
 		print(datetime.datetime.now(),' - driver._step_command_queue')
 		print('\tlocked: ',self.lock_check())
 		print('\tlen(command_queue): ',len(self.command_queue))
+		print('queue: ',self.command_queue)
 		if self.state_dict['locked'] == False:
 			if len(self.command_queue) == 0:
 				if isinstance(self.meta_callbacks_dict['on_empty_queue'],Callable):
@@ -431,6 +433,7 @@ class SmoothieDriver(object):
 				self.send(self.command_queue.pop(0))
 				self.state_dict['queue_size'] = len(self.command_queue)
 		print(datetime.datetime.now(),'\tqueue_size: ',self.state_dict['queue_size'])
+		print('queue: ',self.command_queue)
 
 
 	def _format_text_data(self, text_data):
