@@ -21,7 +21,7 @@ The code is made up of the following modules:
 This module initiates the others and sets up communication over Crossbar.io, listening on 
 url topic 'com.opentrons.driver'. When used in other sections of code, the url topic 
 listened on should be adjusted, for example, in Labware it should listen on url topic 
-'com.opentrons.labware'. It is also important to note that this is also where callbacks are 
+'com.opentrons.labware'. It is also important to note that this is where callbacks are 
 defined and added for communication back to other sections of code based on particular messages 
 received from the device. There is more on callbacks below.
 
