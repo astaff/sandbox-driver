@@ -383,9 +383,11 @@ class SmoothieDriver(object):
 			self.simulation_queue.append(message)
 		else:
 			if self.smoothie_transport is not None:
-				if self.lock_check() == False:
-					self.state_dict['ack_received'] = False
-					self.smoothie_transport.write(message.encode())
+				#if self.lock_check() == False:
+				# should have already been checked
+				self.state_dict['ack_received'] = False
+				self.lock_check()
+				self.smoothie_transport.write(message.encode())
 			else:
 				print(datetime.datetime.now(),' - smoothie_transport is None????')
 
@@ -417,7 +419,7 @@ class SmoothieDriver(object):
 
 	def _step_command_queue(self):
 		print(datetime.datetime.now(),' - driver._step_command_queue')
-		self.lock_check()
+		print('\tlocked: ',self.lock_check())
 		if self.state_dict['locked'] == False:
 			if len(self.command_queue) == 0:
 				if isinstance(self.meta_callbacks_dict['on_empty_queue'],Callable):
