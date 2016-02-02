@@ -608,19 +608,21 @@ class SmoothieDriver(object):
 			text_data = datum[:datum.index('{')]
 
 		if text_data != "":
+			print('\ttext_data: ',text_data)
 			text_message_list = self._format_text_data(text_data)
 			
 			for message in text_message_list:
 				self._process_message_dict(message)
 
 		if json_data != "":
+			print('\tjson_data: ',json_data)
 			try:
 				json_data_dict = json.loads(json_data)
 				json_message_list = self._format_json_data(json_data_dict)
 				for message in json_message_list:
 					self._process_message_dict(message)
 			except:
-				print(dattime.datetime.now(),' - {errir:driver._smoothie_data_handler - json.loads(json_data)}\n\r',sys.exc_info()[0])
+				print(datetime.datetime.now(),' - {errir:driver._smoothie_data_handler - json.loads(json_data)}\n\r',sys.exc_info()[0])
 	
 
 	def _on_connection_lost(self):
