@@ -175,7 +175,7 @@ data accordingly. This dictionary starts out empty but has the following format:
 }
 ```
 
-All data then transmitted to a given callback is of the form:
+Data subsequently transmitted to a given callback is of the form:
 
 { message: { param:value, ... } }
 
