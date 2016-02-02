@@ -386,6 +386,7 @@ class SmoothieDriver(object):
 				#if self.lock_check() == False:
 				# should have already been checked
 				self.state_dict['ack_received'] = False
+				self.state_dict['ack_ready'] = False  # needs to be set here because not ready message from device takes too long, ack_received already received
 				self.lock_check()
 				self.smoothie_transport.write(message.encode())
 			else:
