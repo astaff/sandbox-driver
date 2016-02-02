@@ -233,6 +233,7 @@ handling that could be added
 TODO: 
 * The commands dictionary for Smoothieboard is not complete yet. Will be soon.
 * Some examples of commands and their responses.
+* Crossbar.io and ser2net integration into one of the containers, probably Bootloader.
 
 
 
