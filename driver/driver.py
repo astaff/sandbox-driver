@@ -414,6 +414,7 @@ class SmoothieDriver(object):
 		print('\tcommand: ',command)
 		self.command_queue.append(command)
 		self.state_dict['queue_size'] = len(self.command_queue)
+		print('\tlen(command_queue): ',len(self.command_queue))
 		print(datetime.datetime.now(),'\tqueue_size: ',self.state_dict['queue_size'])
 		self._step_command_queue()
 
@@ -421,6 +422,7 @@ class SmoothieDriver(object):
 	def _step_command_queue(self):
 		print(datetime.datetime.now(),' - driver._step_command_queue')
 		print('\tlocked: ',self.lock_check())
+		print('\tlen(command_queue): ',len(self.command_queue))
 		if self.state_dict['locked'] == False:
 			if len(self.command_queue) == 0:
 				if isinstance(self.meta_callbacks_dict['on_empty_queue'],Callable):
