@@ -57,89 +57,28 @@ class Output(asyncio.Protocol):
 		self.outer._on_connection_lost()
 
 
-class SimulatorServer:
-
-	def __init__(self):
-		self.server = None # encapsulates the server sockets
-
-		# this keeps track of all the clients that connected to our
-		# server.  It can be useful in some cases, for instance to
-		# kill client connections or to broadcast some data to all
-		# clients...
-		self.clients = {} # task -> (reader, writer)
-
-	def _accept_client(self, client_reader, client_writer):
-		"""
-		This method accepts a new client connection and creates a Task
-		to handle this client.  self.clients is updated to keep track
-		of the new client.
-		"""
-
-		# start a new Task to handle this specific client connection
-		task = asyncio.Task(self._handle_client(client_reader, client_writer))
-		self.clients[task] = (client_reader, client_writer)
-
-		def client_done(task):
-			print("client task done:", task, file=sys.stderr)
-			del self.clients[task]
-
-		task.add_done_callback(client_done)
-
-	@asyncio.coroutine
-	def _handle_client(self, client_reader, client_writer):
-		"""
-		This method actually does the work to handle the requests for
-		a specific client.  The protocol is line oriented, so there is
-		a main loop that reads a line with a request and then sends
-		out one or more lines back to the client with the result.
-		"""
-		while True:
-			data = (yield from client_reader.readline()).decode("utf-8")
-			if not data: # an empty string means the client disconnected
-				break
-			cmd, *args = data.rstrip().split(' ')
-			if cmd == 'add':
-				arg1 = float(args[0])
-				arg2 = float(args[1])
-				retval = arg1 + arg2
-				client_writer.write("{!r}\n".format(retval).encode("utf-8"))
-			elif cmd == 'repeat':
-				times = int(args[0])
-				msg = args[1]
-				client_writer.write("begin\n".encode("utf-8"))
-				for idx in range(times):
-					client_writer.write("{}. {}\n".format(idx+1, msg)
-										.encode("utf-8"))
-				client_writer.write("end\n".encode("utf-8"))
-			else:
-				print("Bad command {!r}".format(data), file=sys.stderr)
-
-			# This enables us to have flow control in our connection.
-			yield from client_writer.drain()
 
 
-	def start(self, loop):
-		"""
-		Starts the TCP server, so that it listens on port 12345.
-		For each client that connects, the accept_client method gets
-		called.  This method runs the loop until the server sockets
-		are ready to accept connections.
-		"""
-		self.server = loop.run_until_complete(
-			asyncio.streams.start_server(self._accept_client,
-										'0.0.0.0', 3334,
-										loop=loop))
 
-	def stop(self, loop):
-		"""
-		Stops the TCP server, i.e. closes the listening socket(s).
-		This method runs the loop until the server sockets are closed.
-		"""
-		if self.server is not None:
-			self.server.close()
-			loop.run_until_complete(self.server.wait_closed())
-			self.server = None
-
+@asyncio.coroutine
+def simple_echo_server():
+    # Start a socket server, call back for each client connected.
+    # The client_connected_handler coroutine will be automatically converted to a Task
+    yield from asyncio.start_server(client_connected_handler, '0.0.0.0', 3334)
+ 
+@asyncio.coroutine
+def client_connected_handler(client_reader, client_writer):
+    # Runs for each client connected
+    # client_reader is a StreamReader object
+    # client_writer is a StreamWriter object
+    print("Connection received!")
+    while True:
+        data = yield from client_reader.read(8192)
+        if not data:
+            break
+        print(data)
+        client_writer.write(data)
+ 
 
 
 
@@ -434,8 +373,7 @@ class SmoothieDriver(object):
 		#asyncio.async(serial.aio.create_serial_connection(self.the_loop, Output, '/dev/ttyUSB0', baudrate=115200))
 		callbacker = Output(self)
 		if self.simulation:
-			simulator = SimulatorServer()
-			simulator.start(self.the_loop)
+			asyncio.async(simple_echo_server())
 			asyncio.async(self.the_loop.create_connection(lambda: callbacker, host='0.0.0.0', port=3334))
 		else:
 			asyncio.async(self.the_loop.create_connection(lambda: callbacker, host='0.0.0.0', port=3333))
