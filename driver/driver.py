@@ -61,10 +61,12 @@ class Simulator(asyncio.Protocol):
 
 
 	def __init__(self, outer):
+		print(datetime.datetime.now(),' - Simulator.__init__:')
 		self.transport = None
 
 
 	def connection_made(self, transport):
+		print(datetime.datetime.now(),' - Simulator.connection_made:')
 		self.transport = transport
 
 
@@ -370,6 +372,9 @@ class SmoothieDriver(object):
 		#asyncio.async(serial.aio.create_serial_connection(self.the_loop, Output, '/dev/ttyUSB0', baudrate=115200))
 		callbacker = Output(self)
 		asyncio.async(self.the_loop.create_connection(lambda: callbacker, host='0.0.0.0', port=3333))
+		if self.simulation:
+			simulator = Simulator(self)
+			asyncio.async(self.the_loop.create_connection(lambda: simulator, host='0.0.0.0', port=3333))
 
 
 	def disconnect(self):
