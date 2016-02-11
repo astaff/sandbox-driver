@@ -57,11 +57,30 @@ class Output(asyncio.Protocol):
 		self.outer._on_connection_lost()
 
 
+class Simulator(asyncio.Protocol):
+
+
+	def __init__(self, outer):
+		self.transport = None
+
+
+	def connection_made(self, transport):
+		self.transport = transport
+
+
+	def data_received(self, data):
+		print('-'*15,'simulator data received:\n',data,'\n','-'*10)
+
+
+	def connection_lost(self, exc):
+		print(datetime.datetime.now(),' - Simulator.connection_lost:')
+		print('\texc: ',exc)
+		self.transport = None
+
+
+
 class SmoothieDriver(object):
 	"""
-
-
-
 
 	How data flows to and from Smoothieboard:
 
@@ -104,7 +123,7 @@ class SmoothieDriver(object):
 
 	"""
 
-	
+
 
 
 	def __init__(self, simulate=False):
@@ -628,7 +647,7 @@ class SmoothieDriver(object):
 				for message in json_message_list:
 					self._process_message_dict(message)
 			except:
-				print(datetime.datetime.now(),' - {errir:driver._smoothie_data_handler - json.loads(json_data)}\n\r',sys.exc_info()[0])
+				print(datetime.datetime.now(),' - {errir:driver._smoothie_data_handler - json.loads(json_data)}\n\r',sys.exc_info())
 	
 
 	def _on_connection_lost(self):
