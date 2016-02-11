@@ -435,7 +435,7 @@ class SmoothieDriver(object):
 		callbacker = Output(self)
 		if self.simulation:
 			simulator = SimulatorServer()
-			server.start()
+			simulator.start()
 			asyncio.async(self.the_loop.create_connection(lambda: callbacker, host='0.0.0.0', port=3334))
 		else:
 			asyncio.async(self.the_loop.create_connection(lambda: callbacker, host='0.0.0.0', port=3333))
