@@ -143,7 +143,7 @@ try:
     # ADD DRIVERS TO HARNESS 
     print('*\t*\t* add drivers to harness\t*\t*\t*')   
     otdriver_harness.add_driver('smoothie',otdriver)
-    otdriver_harness.drivers()
+    otdriver_harness.drivers(None,None)
 
     # DEFINE CALLBACKS:
     #
@@ -178,7 +178,7 @@ try:
     otdriver_harness.add_callback('smoothie', {none:['None']})
     otdriver_harness.add_callback('smoothie', {positions:['M114']})
 
-    otdriver_harness.callbacks()
+    otdriver_harness.callbacks(None, None)
 
     # CONNECT TO DRIVERS:
     print('*\t*\t* connect to drivers\t*\t*\t*')
