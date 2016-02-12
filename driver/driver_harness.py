@@ -173,6 +173,8 @@ class Harness(object):
 		print(datetime.datetime.now(),' - driver_harness.connect:')
 		print('\tname: ',name)
 		print('\tparam: ',param)
+		print('self.driver_dict: ',self.driver_dict)
+		print('self.driver_dict[',name,']: ',self.driver_dict[name])
 		self.driver_dict[name].connect()
 
 
