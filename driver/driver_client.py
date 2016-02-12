@@ -238,7 +238,7 @@ try:
             pass
         finally:
             print('*\t*\t* error while trying to make a CROSSBAR connection, sleeping for 5 seconds\t*\t*\t*')
-            time.sleep(10)
+            time.sleep(20)
 except KeyboardInterrupt:
     pass
 finally:
