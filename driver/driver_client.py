@@ -230,15 +230,15 @@ try:
     while (crossbar_status == False):
         try:
             print('*\t*\t* trying to make a CROSSBAR connection...\t*\t*\t*')
-            #make_a_connection()
+            make_a_connection()
         except KeyboardInterrupt:
             crossbar_status = True
         except:
             #raise
             pass
         finally:
-            print('run forever time')
-            loop.run_forever()
+            #print('run forever time')
+            #loop.run_forever()
             #print('*\t*\t* error while trying to make a CROSSBAR connection, sleeping for 5 seconds\t*\t*\t*')
             time.sleep(20)
 except KeyboardInterrupt:
