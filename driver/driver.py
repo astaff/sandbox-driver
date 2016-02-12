@@ -7,34 +7,35 @@ import sys
 from collections import Callable
 
 
-class Simulator(asyncio.Protocol):
-
-	client = {}
-
-	def __init__(self):
-		pass
+#class Simulator(asyncio.Protocol):
+#	client = {}
+#	def __init__(self,):
+#		pass
 		#self.outer = outer
-
-
 	
-	def connection_made(self, transport):
-		self.transport = transport
+#	def connection_made(self, transport):
+#		self.transport = transport
 
-	@asyncio.coroutine
-	def send_data(self, data):
+#	@asyncio.coroutine
+#	def send_data(self, data):
 		# get a client by its peername
-		peername = self.transport.get_extra_info('peername')
-		client = self.clients.get(peername)
+#		peername = self.transport.get_extra_info('peername')
+#		client = self.clients.get(peername)
 		# create a client if peername is not known or the client disconnect
-		if client is None or not client.connected:
-			client.server_transport = self.transport
-			self.clients[peername] = client
+#		if client is None or not client.connected:
+#			client.server_transport = self.transport
+#			self.clients[peername] = client
 		
-		if client is not None:
-			client.transport.write(data)
+#		if client is not None:
+#			client.transport.write(data)
 
-	def data_received(self, data):
-		print('Simulator data: ',data)
+#	def data_received(self, data):
+#		print('Simulator data: ',data)
+
+@asyncio.coroutine
+def simulator(reader, writer):
+	data = yield from reader.read(100)
+	print(data)
 
 
 
@@ -403,7 +404,7 @@ class SmoothieDriver(object):
 				#server = self.the_loop.run_until_complete(coro)
 				#asyncio.async(self.the_loop.create_server(Simulator,'0.0.0.0',3334))
 				print(Simulator)
-				server = self.the_loop.run_until_complete(asyncio.start_server(Simulator,'0.0.0.0',3334))
+				server = self.the_loop.run_until_complete(asyncio.start_server(simulator,'0.0.0.0',3334))
 				#asyncio.async(self.the_loop.create_connection(lambda: callbacker, host='0.0.0.0', port=3334))
 				#asyncio.async(self.the_loop.create_connection(lambda: callbacker, host='0.0.0.0', port=3334))
 				self.the_loop.run_until_complete(self.the_loop.create_connection(lambda: callbacker, host='0.0.0.0', port=3334))
