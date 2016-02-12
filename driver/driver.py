@@ -379,6 +379,7 @@ class SmoothieDriver(object):
 		self.state_dict['ack_ready'] = True
 
 
+	@asyncio.coroutine
 	def connect(self, device=None, port=None):
 		"""
 		"""
