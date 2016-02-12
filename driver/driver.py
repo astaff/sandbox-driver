@@ -9,10 +9,6 @@ from collections import Callable
 
 class Simulator(asyncio.Protocol):
 
-	def __init__(self):
-		print('Simulator.__init__()')
-
-
 	client = {}
 	def connection_made(self, transport):
 		self.transport = transport
