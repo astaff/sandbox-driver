@@ -39,6 +39,7 @@ def simulator(reader, writer):
 	ack_received = 'ok\r\n'.encode()
 	ack_ready = '{"stat":0}\r\n'.encode()
 	writer.write(ack_received)
+	yield from writer.drain()
 	writer.write(ack_ready)
 	yield from writer.drain()
 
