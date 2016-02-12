@@ -8,6 +8,9 @@ from collections import Callable
 
 
 
+simulation_server = None
+
+
 @asyncio.coroutine
 def simulator(reader, writer):
 	data = yield from reader.read(100)
@@ -371,7 +374,7 @@ class SmoothieDriver(object):
 				#server = self.the_loop.run_until_complete(coro)
 				#asyncio.async(self.the_loop.create_server(Simulator,'0.0.0.0',3334))
 				print(simulator)
-				server = self.the_loop.run_until_complete(asyncio.start_server(simulator,'0.0.0.0',3334))
+				simulation_server = self.the_loop.run_until_complete(asyncio.start_server(simulator,'0.0.0.0',3334))
 				#asyncio.async(self.the_loop.create_connection(lambda: callbacker, host='0.0.0.0', port=3334))
 				#asyncio.async(self.the_loop.create_connection(lambda: callbacker, host='0.0.0.0', port=3334))
 				self.the_loop.run_until_complete(self.the_loop.create_connection(lambda: callbacker, host='0.0.0.0', port=3334))
