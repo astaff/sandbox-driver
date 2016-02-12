@@ -8,6 +8,11 @@ from collections import Callable
 
 
 class Simulator(asyncio.Protocol):
+
+	def __init__(self):
+		print('Simulator.__init__()')
+
+
 	client = {}
 	def connection_made(self, transport):
 		self.transport = transport
@@ -379,7 +384,6 @@ class SmoothieDriver(object):
 		self.state_dict['ack_ready'] = True
 
 
-	@asyncio.coroutine
 	def connect(self, device=None, port=None):
 		"""
 		"""
@@ -392,7 +396,8 @@ class SmoothieDriver(object):
 		try:
 			print(self.simulation)
 			if self.simulation:
-				server = yield from self.the_loop.create_server(Simulator, '0.0.0.0', 3334)
+				coro = self.the_loop.create_server(Simulator, '0.0.0.0', 3334)
+				server = self.the_loop.run_until_complete(coro)
 				#asyncio.async(self.the_loop.create_connection(lambda: callbacker, host='0.0.0.0', port=3334))
 			else:
 				asyncio.async(self.the_loop.create_connection(lambda: callbacker, host='0.0.0.0', port=3333))
