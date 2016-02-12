@@ -7,6 +7,32 @@ import sys
 from collections import Callable
 
 
+class Simulator(asymcio.Protocol):
+	client = {}
+	def connection_made(self, transport):
+		self.transport = transport
+
+
+
+
+	@asyncio.coroutine
+	def send_data(self, data):
+		# get a client by its peername
+        peername = self.transport.get_extra_info('peername')
+        client = self.clients.get(peername)
+        # create a client if peername is not known or the client disconnect
+        if client is None or not client.connected:
+            client.server_transport = self.transport
+            self.clients[peername] = client
+        # forward data to the client
+        if client is not None:
+        	client.transport.write(data)
+
+	def data_received(self, data):
+		print('Simulator data: ',data)
+
+
+
 class Output(asyncio.Protocol):
 
 
@@ -58,13 +84,6 @@ class Output(asyncio.Protocol):
 
 
 
-
-
-@asyncio.coroutine
-def simple_echo_server():
-    # Start a socket server, call back for each client connected.
-    # The client_connected_handler coroutine will be automatically converted to a Task
-    yield from asyncio.start_server(client_connected_handler, '0.0.0.0', 3334)
  
 @asyncio.coroutine
 def client_connected_handler(client_reader, client_writer):
@@ -373,7 +392,7 @@ class SmoothieDriver(object):
 		#asyncio.async(serial.aio.create_serial_connection(self.the_loop, Output, '/dev/ttyUSB0', baudrate=115200))
 		callbacker = Output(self)
 		if self.simulation:
-			asyncio.async(simple_echo_server())
+			server = yield from self.the_loop.create_server(Simulator, '0.0.0.0', 3334)
 			asyncio.async(self.the_loop.create_connection(lambda: callbacker, host='0.0.0.0', port=3334))
 		else:
 			asyncio.async(self.the_loop.create_connection(lambda: callbacker, host='0.0.0.0', port=3333))
@@ -654,8 +673,8 @@ class SmoothieDriver(object):
 				for message in json_message_list:
 					self._process_message_dict(message)
 			except:
-				print(datetime.datetime.now(),' - {errir:driver._smoothie_data_handler - json.loads(json_data)}\n\r',sys.exc_info())
-	
+				print(datetime.datetime.now(),' - {error:driver._smoothie_data_handler - json.loads(json_data)}\n\r',sys.exc_info())
+
 
 	def _on_connection_lost(self):
 		print(datetime.datetime.now(),' - driver._on_connection_lost')
