@@ -35,7 +35,13 @@ from collections import Callable
 @asyncio.coroutine
 def simulator(reader, writer):
 	data = yield from reader.read(100)
-	print(data)
+	print('data: ',data.decode())
+	ack_received = 'ok'.encode()
+	ack_ready = '{"stat":0}'.encode()
+	writer.write(ack_received)
+	writer.write(ack_ready)
+	yield from writer.drain()
+
 
 
 
