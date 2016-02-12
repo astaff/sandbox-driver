@@ -18,15 +18,15 @@ class Simulator(asymcio.Protocol):
 	@asyncio.coroutine
 	def send_data(self, data):
 		# get a client by its peername
-        peername = self.transport.get_extra_info('peername')
-        client = self.clients.get(peername)
-        # create a client if peername is not known or the client disconnect
-        if client is None or not client.connected:
-            client.server_transport = self.transport
-            self.clients[peername] = client
-        # forward data to the client
-        if client is not None:
-        	client.transport.write(data)
+		peername = self.transport.get_extra_info('peername')
+		client = self.clients.get(peername)
+		# create a client if peername is not known or the client disconnect
+		if client is None or not client.connected:
+			client.server_transport = self.transport
+			self.clients[peername] = client
+		
+		if client is not None:
+			client.transport.write(data)
 
 	def data_received(self, data):
 		print('Simulator data: ',data)
