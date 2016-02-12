@@ -7,30 +7,6 @@ import sys
 from collections import Callable
 
 
-#class Simulator(asyncio.Protocol):
-#	client = {}
-#	def __init__(self,):
-#		pass
-		#self.outer = outer
-	
-#	def connection_made(self, transport):
-#		self.transport = transport
-
-#	@asyncio.coroutine
-#	def send_data(self, data):
-		# get a client by its peername
-#		peername = self.transport.get_extra_info('peername')
-#		client = self.clients.get(peername)
-		# create a client if peername is not known or the client disconnect
-#		if client is None or not client.connected:
-#			client.server_transport = self.transport
-#			self.clients[peername] = client
-		
-#		if client is not None:
-#			client.transport.write(data)
-
-#	def data_received(self, data):
-#		print('Simulator data: ',data)
 
 @asyncio.coroutine
 def simulator(reader, writer):
@@ -94,22 +70,6 @@ class Output(asyncio.Protocol):
 		self.data_buffer = ""
 		loop = asyncio.get_event_loop()
 		self.outer._on_connection_lost()
-
-
-
- 
-@asyncio.coroutine
-def client_connected_handler(client_reader, client_writer):
-    # Runs for each client connected
-    # client_reader is a StreamReader object
-    # client_writer is a StreamWriter object
-    print("Connection received!")
-    while True:
-        data = yield from client_reader.read(8192)
-        if not data:
-            break
-        print(data)
-        client_writer.write(data)
  
 
 
@@ -171,7 +131,7 @@ class SmoothieDriver(object):
 		self.command_queue = []
 		self.simulation_queue = []
 	
-		self.smoothie_transport = None
+		self.smoothie_streamwriter = None
 		self.the_loop = None
 
 		self.state_dict = {
@@ -427,7 +387,7 @@ class SmoothieDriver(object):
 		"""
 		"""
 		print(datetime.datetime.now(),' - driver.disconnect')
-		self.smoothie_transport.close()
+		self.smoothie_streamwriter.close()
 
 
 	def commands(self):
@@ -453,15 +413,17 @@ class SmoothieDriver(object):
 		if self.simulation:
 			self.simulation_queue.append(message)
 		else:
-			if self.smoothie_transport is not None:
+			if self.smoothie_streamwriter is not None:
+				print(datetime.datetime.now(),' - smoothie_streamwriter not None')
 				#if self.lock_check() == False:
 				# should have already been checked
 				self.state_dict['ack_received'] = False
 				self.state_dict['ack_ready'] = False  # needs to be set here because not ready message from device takes too long, ack_received already received
 				self.lock_check()
-				self.smoothie_transport.write(message.encode())
+				self.smoothie_streamwriter.write(message.encode())
+				yield from self.smoothie_streamwriter.drain()
 			else:
-				print(datetime.datetime.now(),' - smoothie_transport is None????')
+				print(datetime.datetime.now(),' - smoothie_streamwriter is None????')
 
 
 
