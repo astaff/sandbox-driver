@@ -143,7 +143,7 @@ try:
     # ADD DRIVERS TO HARNESS 
     print('*\t*\t* add drivers to harness\t*\t*\t*')   
     otdriver_harness.add_driver('smoothie',otdriver)
-    
+    otdriver_harness.drivers()
 
     # DEFINE CALLBACKS:
     #
@@ -173,11 +173,12 @@ try:
         publisher.publish('frontend','driver',name,list(data_dict)[0],dd_value)
 
 
-
     # ADD CALLBACKS VIA HARNESS:
     print('*\t*\t* add callbacks via harness\t*\t*\t*')
     otdriver_harness.add_callback('smoothie', {none:['None']})
     otdriver_harness.add_callback('smoothie', {positions:['M114']})
+
+    otdriver_harness.callbacks()
 
     # CONNECT TO DRIVERS:
     print('*\t*\t* connect to drivers\t*\t*\t*')
@@ -236,7 +237,7 @@ try:
             pass
         finally:
             print('*\t*\t* error while trying to make a CROSSBAR connection, sleeping for 5 seconds\t*\t*\t*')
-            time.sleep(5)
+            time.sleep(10)
 except KeyboardInterrupt:
     pass
 finally:
