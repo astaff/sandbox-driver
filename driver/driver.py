@@ -406,6 +406,7 @@ class SmoothieDriver(object):
 		self.lock_check()
 
 
+	@asyncio.coroutine
 	def send(self, message):
 		print(datetime.datetime.now(),' - driver.send:')
 		print('\tmessage: ',message)
@@ -459,7 +460,7 @@ class SmoothieDriver(object):
 				if isinstance(self.meta_callbacks_dict['on_empty_queue'],Callable):
 					self.meta_callbacks_dict['on_empty_queue']()
 			else:
-				self.send(self.command_queue.pop(0))
+				yield from self.send(self.command_queue.pop(0))
 				self.state_dict['queue_size'] = len(self.command_queue)
 
 
