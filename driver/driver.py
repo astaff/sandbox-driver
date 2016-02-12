@@ -11,18 +11,35 @@ from collections import Callable
 simulation_server = None
 
 
-@asyncio.coroutine
-def simulator(reader, writer):
-	data = yield from reader.read(100)
-	print('data: ',data.decode())
-	ack_received = 'ok\r\n'.encode()
-	ack_ready = '{"stat":0}\r\n'.encode()
-	writer.write(ack_received)
-	yield from writer.drain()
-	writer.write(ack_ready)
-	yield from writer.drain()
-	writer.close()
+#@asyncio.coroutine
+#def simulator(reader, writer):
+#	data = yield from reader.read(100)
+#	print('data: ',data.decode())
+#	ack_received = 'ok\r\n'.encode()
+#	ack_ready = '{"stat":0}\r\n'.encode()
+#	writer.write(ack_received)
+#	yield from writer.drain()
+#	writer.write(ack_ready)
+#	yield from writer.drain()
+#	writer.close()
 
+
+class Simulator(asyncio.Protocol):
+	
+	def connection_made(self, transport):
+		print('Simulator connection made!')
+		self.transport = transport
+
+
+	def data_recieved(self, data):
+		print('Simulated data: ',data)
+		self.transport.write(b'ok\r\n')
+		self.transport.write(b'{"stat":0}\r\n')
+
+
+	def connection_lost(self, exc):
+		print('Connection lost! Closing server... exc: ',exc)
+		simulation_server.close()
 
 
 
@@ -374,8 +391,9 @@ class SmoothieDriver(object):
 				#coro = self.the_loop.create_server(Simulator, '0.0.0.0', 3334)
 				#server = self.the_loop.run_until_complete(coro)
 				#asyncio.async(self.the_loop.create_server(Simulator,'0.0.0.0',3334))
-				print(simulator)
-				simulation_server = self.the_loop.run_until_complete(asyncio.start_server(simulator,'0.0.0.0',3334))
+				print(Simulator)
+				simulation_server = self.the_loop.run_until_complete(asyncio.create_server(Simulator,'0.0.0.0',3334))
+				self.the_loop.run_until_complete(server.wait_closed())
 				#asyncio.async(self.the_loop.create_connection(lambda: callbacker, host='0.0.0.0', port=3334))
 				#asyncio.async(self.the_loop.create_connection(lambda: callbacker, host='0.0.0.0', port=3334))
 				self.the_loop.run_until_complete(self.the_loop.create_connection(lambda: callbacker, host='0.0.0.0', port=3334))
