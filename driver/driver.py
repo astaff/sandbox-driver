@@ -131,7 +131,7 @@ class SmoothieDriver(object):
 		self.command_queue = []
 		self.simulation_queue = []
 	
-		self.smoothie_streamwriter = None
+		self.smoothie_transport = None
 		self.the_loop = None
 
 		self.state_dict = {
@@ -387,7 +387,7 @@ class SmoothieDriver(object):
 		"""
 		"""
 		print(datetime.datetime.now(),' - driver.disconnect')
-		self.smoothie_streamwriter.close()
+		self.smoothie_transport.close()
 
 
 	def commands(self):
@@ -413,17 +413,17 @@ class SmoothieDriver(object):
 		if self.simulation:
 			self.simulation_queue.append(message)
 		
-		if self.smoothie_streamwriter is not None:
-			print(datetime.datetime.now(),' - smoothie_streamwriter not None')
+		if self.smoothie_transport is not None:
+			print(datetime.datetime.now(),' - smoothie_transport not None')
 			#if self.lock_check() == False:
 			# should have already been checked
 			self.state_dict['ack_received'] = False
 			self.state_dict['ack_ready'] = False  # needs to be set here because not ready message from device takes too long, ack_received already received
 			self.lock_check()
-			self.smoothie_streamwriter.write(message.encode())
-			self.smoothie_streamwriter.drain()
+			self.smoothie_transport.write(message.encode())
+			#self.smoothie_streamwriter.drain()
 		else:
-			print(datetime.datetime.now(),' - smoothie_streamwriter is None????')
+			print(datetime.datetime.now(),' - smoothie_transport is None????')
 
 
 
