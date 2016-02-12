@@ -400,8 +400,8 @@ class SmoothieDriver(object):
 				#server = self.the_loop.run_until_complete(coro)
 				#asyncio.async(self.the_loop.create_server(Simulator,'0.0.0.0',3334))
 				server = self.the_loop.run_until_complete(asyncio.start_server(Simulator,'0.0.0.0',3334))
-				yield from self.the_loop.run_until_complete(server.wait_closed())
 				#asyncio.async(self.the_loop.create_connection(lambda: callbacker, host='0.0.0.0', port=3334))
+				print('here')
 			else:
 				asyncio.async(self.the_loop.create_connection(lambda: callbacker, host='0.0.0.0', port=3333))
 		except:
