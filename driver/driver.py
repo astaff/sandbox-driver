@@ -7,7 +7,7 @@ import sys
 from collections import Callable
 
 
-class Simulator(asymcio.Protocol):
+class Simulator(asyncio.Protocol):
 	client = {}
 	def connection_made(self, transport):
 		self.transport = transport
