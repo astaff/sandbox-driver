@@ -145,7 +145,7 @@ class SmoothieDriver(object):
 
 
 
-	def __init__(self, simulate=False):
+	def __init__(self, simulate=True):
 		"""
 		"""
 		print(datetime.datetime.now(),' - driver.__init__:')
@@ -388,14 +388,12 @@ class SmoothieDriver(object):
 		self.the_loop = asyncio.get_event_loop()
 		#asyncio.async(serial.aio.create_serial_connection(self.the_loop, Output, '/dev/ttyUSB0', baudrate=115200))
 		callbacker = Output(self)
+		print(self.simulation)
 		if self.simulation:
-			print(self.simulation)
+			server = yield from self.the_loop.create_server(Simulator, '0.0.0.0', 3334)
+			asyncio.async(self.the_loop.create_connection(lambda: callbacker, host='0.0.0.0', port=3334))
 		else:
-			print(self.simulation)
-		#	server = yield from self.the_loop.create_server(Simulator, '0.0.0.0', 3334)
-		#	asyncio.async(self.the_loop.create_connection(lambda: callbacker, host='0.0.0.0', port=3334))
-		#else:
-		#	asyncio.async(self.the_loop.create_connection(lambda: callbacker, host='0.0.0.0', port=3333))
+			asyncio.async(self.the_loop.create_connection(lambda: callbacker, host='0.0.0.0', port=3333))
 
 
 	def disconnect(self):
