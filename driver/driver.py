@@ -404,7 +404,7 @@ class SmoothieDriver(object):
 				#asyncio.async(self.the_loop.create_connection(lambda: callbacker, host='0.0.0.0', port=3334))
 				#asyncio.async(self.the_loop.create_connection(lambda: callbacker, host='0.0.0.0', port=3334))
 				self.the_loop.create_connection(lambda: callbacker, host='0.0.0.0', port=3334)
-				server.close()
+				
 				#yield from server.wait_closed()
 				print('here')
 			else:
