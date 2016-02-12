@@ -396,9 +396,10 @@ class SmoothieDriver(object):
 		try:
 			print(self.simulation)
 			if self.simulation:
-				coro = self.the_loop.create_server(Simulator, '0.0.0.0', 3334)
-				server = self.the_loop.run_until_complete(coro)
-				#asyncio.async(self.the_loop.create_connection(lambda: callbacker, host='0.0.0.0', port=3334))
+				#coro = self.the_loop.create_server(Simulator, '0.0.0.0', 3334)
+				#server = self.the_loop.run_until_complete(coro)
+				asyncio.async(self.the_loop.create_server(Simulator,'0.0.0.0',3334))
+				asyncio.async(self.the_loop.create_connection(lambda: callbacker, host='0.0.0.0', port=3334))
 			else:
 				asyncio.async(self.the_loop.create_connection(lambda: callbacker, host='0.0.0.0', port=3333))
 		except:
