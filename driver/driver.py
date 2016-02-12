@@ -12,6 +12,7 @@ class Simulator(asyncio.Protocol):
 	client = {}
 
 	def __init__(self):
+		pass
 		#self.outer = outer
 
 
