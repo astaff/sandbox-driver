@@ -406,7 +406,6 @@ class SmoothieDriver(object):
 		self.lock_check()
 
 
-	@asyncio.coroutine
 	def send(self, message):
 		print(datetime.datetime.now(),' - driver.send:')
 		print('\tmessage: ',message)
@@ -422,7 +421,7 @@ class SmoothieDriver(object):
 				self.state_dict['ack_ready'] = False  # needs to be set here because not ready message from device takes too long, ack_received already received
 				self.lock_check()
 				self.smoothie_streamwriter.write(message.encode())
-				yield from self.smoothie_streamwriter.drain()
+				self.smoothie_streamwriter.drain()
 			else:
 				print(datetime.datetime.now(),' - smoothie_streamwriter is None????')
 
@@ -460,7 +459,7 @@ class SmoothieDriver(object):
 				if isinstance(self.meta_callbacks_dict['on_empty_queue'],Callable):
 					self.meta_callbacks_dict['on_empty_queue']()
 			else:
-				yield from self.send(self.command_queue.pop(0))
+				self.send(self.command_queue.pop(0))
 				self.state_dict['queue_size'] = len(self.command_queue)
 
 
