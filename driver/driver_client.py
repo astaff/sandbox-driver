@@ -178,7 +178,7 @@ try:
     otdriver_harness.add_callback('smoothie', {none:['None']})
     otdriver_harness.add_callback('smoothie', {positions:['M114']})
 
-    for d in otdriver_harness.drivers(None):
+    for d in otdriver_harness.drivers(None,None):
         print(otdriver_harness.callbacks(d, None))
 
     # CONNECT TO DRIVERS:
