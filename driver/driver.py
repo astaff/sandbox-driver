@@ -21,6 +21,7 @@ def simulator(reader, writer):
 	yield from writer.drain()
 	writer.write(ack_ready)
 	yield from writer.drain()
+	writer.close()
 
 
 
