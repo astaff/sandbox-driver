@@ -36,8 +36,8 @@ from collections import Callable
 def simulator(reader, writer):
 	data = yield from reader.read(100)
 	print('data: ',data.decode())
-	ack_received = 'ok'.encode()
-	ack_ready = '{"stat":0}'.encode()
+	ack_received = 'ok\r\n'.encode()
+	ack_ready = '{"stat":0}\r\n'.encode()
 	writer.write(ack_received)
 	writer.write(ack_ready)
 	yield from writer.drain()
