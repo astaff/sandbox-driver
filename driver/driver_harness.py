@@ -56,6 +56,7 @@ class Harness(object):
 		if name is None:
 			name = 'None'
 		self._publisher.publish('frontend','driver',name,'drivers',list(self.driver_dict))
+		return list(self.driver_dict)
 
 
 	def add_driver(self, name, param):
@@ -89,6 +90,7 @@ class Harness(object):
 		print('\tname: ',name)
 		print('\tparam: ',param)
 		self._publisher.publish('frontend','driver',name,'callbacks',self.driver_dict[name].callbacks())
+		return self.driver_dict[name].callbacks()
 
 
 	def meta_callbacks(self, name, param):
@@ -100,6 +102,7 @@ class Harness(object):
 		print('\tname: ',name)
 		print('\tparam: ',param)
 		self._publisher.publish('frontend','driver',name,'meta_callbacks',self.driver_dict[name].meta_callbacks())
+		return self.driver_dict[name].meta_callbacks
 
 
 	def set_meta_callback(self, name, param):
