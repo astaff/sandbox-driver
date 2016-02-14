@@ -33,68 +33,65 @@ class WampComponent(wamp.ApplicationSession):
 
         self.loop = asyncio.get_event_loop()
 
-        try:
-            # TRYING THE FOLLOWING IN INSTANTIATE OBJECTS vs here
-            # INITIAL SETUP PUBLISHER, HARNESS, SUBSCRIBER
-            print('*\t*\t* initial setup - publisher, harness, subscriber\t*\t*\t*')
-            self.publisher = Publisher(self)
-            self.driver_harness = Harness(self.publisher)
-            self.subscriber = Subscriber(self.driver_harness,self.publisher)
-            self.driver_harness.set_publisher(self.publisher)
+    
+        # TRYING THE FOLLOWING IN INSTANTIATE OBJECTS vs here
+        # INITIAL SETUP PUBLISHER, HARNESS, SUBSCRIBER
+        print('*\t*\t* initial setup - publisher, harness, subscriber\t*\t*\t*')
+        self.publisher = Publisher(self)
+        self.driver_harness = Harness(self.publisher)
+        self.subscriber = Subscriber(self.driver_harness,self.publisher)
+        self.driver_harness.set_publisher(self.publisher)
 
 
-            # INSTANTIATE DRIVERS:
-            print('*\t*\t* instantiate drivers\t*\t*\t*')
-            self.smoothie_driver = SmoothieDriver()
+        # INSTANTIATE DRIVERS:
+        print('*\t*\t* instantiate drivers\t*\t*\t*')
+        self.smoothie_driver = SmoothieDriver()
 
 
-            # ADD DRIVERS TO HARNESS 
-            print('*\t*\t* add drivers to harness\t*\t*\t*')   
-            self.driver_harness.add_driver(self.publisher.id,'smoothie',self.smoothie_driver)
-            print(self.driver_harness.drivers(self.publisher.id,None,None))
+        # ADD DRIVERS TO HARNESS 
+        print('*\t*\t* add drivers to harness\t*\t*\t*')   
+        self.driver_harness.add_driver(self.publisher.id,'smoothie',self.smoothie_driver)
+        print(self.driver_harness.drivers(self.publisher.id,None,None))
 
-            # DEFINE CALLBACKS:
-            #
-            #   data_dict format:
-            #
-            #
-            #
-            #
-            #
-            print('*\t*\t* define callbacks\t*\t*\t*')
-            def none(name, data_dict):
-                """
-                """
-                print(datetime.datetime.now(),' - driver_client.none:')
-                print('\tdata_dict: ',data_dict)
-                dd_name = list(data_dict)[0]
-                dd_value = data_dict[dd_name]
-                self.publisher.publish('frontend','','driver',name,list(data_dict)[0],dd_value)
+        # DEFINE CALLBACKS:
+        #
+        #   data_dict format:
+        #
+        #
+        #
+        #
+        #
+        print('*\t*\t* define callbacks\t*\t*\t*')
+        def none(name, data_dict):
+            """
+            """
+            print(datetime.datetime.now(),' - driver_client.none:')
+            print('\tdata_dict: ',data_dict)
+            dd_name = list(data_dict)[0]
+            dd_value = data_dict[dd_name]
+            self.publisher.publish('frontend','','driver',name,list(data_dict)[0],dd_value)
 
-            def positions(name, data_dict):
-                """
-                """
-                print(datetime.datetime.now(),' - driver_client.positions:')
-                print('\tdata_dict: ',data_dict)
-                dd_name = list(data_dict)[0]
-                dd_value = data_dict[dd_name]
-                self.publisher.publish('frontend','','driver',name,list(data_dict)[0],dd_value)
+        def positions(name, data_dict):
+            """
+            """
+            print(datetime.datetime.now(),' - driver_client.positions:')
+            print('\tdata_dict: ',data_dict)
+            dd_name = list(data_dict)[0]
+            dd_value = data_dict[dd_name]
+            self.publisher.publish('frontend','','driver',name,list(data_dict)[0],dd_value)
 
 
-            # ADD CALLBACKS VIA HARNESS:
-            print('*\t*\t* add callbacks via harness\t*\t*\t*')
-            self.driver_harness.add_callback(self.publisher.id,'smoothie', {none:['None']})
-            self.driver_harness.add_callback(self.publisher.id,'smoothie', {positions:['M114']})
+        # ADD CALLBACKS VIA HARNESS:
+        print('*\t*\t* add callbacks via harness\t*\t*\t*')
+        self.driver_harness.add_callback(self.publisher.id,'smoothie', {none:['None']})
+        self.driver_harness.add_callback(self.publisher.id,'smoothie', {positions:['M114']})
 
-            for d in self.driver_harness.drivers(self.publisher.id,None,None):
-                print(self.driver_harness.callbacks(self.publisher.id,d, None))
+        for d in self.driver_harness.drivers(self.publisher.id,None,None):
+            print(self.driver_harness.callbacks(self.publisher.id,d, None))
 
-            # CONNECT TO DRIVERS:
-            print('*\t*\t* connect to drivers\t*\t*\t*')
-            self.driver_harness.connect(self.publisher.id,'smoothie',None)
-
-        except KeyboardInterrupt:
-            raise
+        # CONNECT TO DRIVERS:
+        print('*\t*\t* connect to drivers\t*\t*\t*')
+        self.driver_harness.connect(self.publisher.id,'smoothie',None)
 
         print('END INIT')
 
@@ -116,22 +113,19 @@ class WampComponent(wamp.ApplicationSession):
         print(datetime.datetime.now(),' - driver_client : WampComponent.onJoin:')
         print('\tdetails: ',str(details))
 
-        
-        try:
-        
-            def handshake(client_data):
-                """
-                """
-                #if debug == True:
-                print(datetime.datetime.now(),' - driver_client : WampComponent.handshake:')
-                self.publisher.handshake(client_data)
+    
+    
+        def handshake(client_data):
+            """
+            """
+            #if debug == True:
+            print(datetime.datetime.now(),' - driver_client : WampComponent.handshake:')
+            self.publisher.handshake(client_data)
 
 
-            yield from self.subscribe(handshake, 'com.opentrons.driver_handshake')
-            yield from self.subscribe(subscriber.dispatch_message, 'com.opentrons.driver')
+        yield from self.subscribe(handshake, 'com.opentrons.driver_handshake')
+        yield from self.subscribe(subscriber.dispatch_message, 'com.opentrons.driver')
 
-        except KeyboardInterrupt:
-            raise
 
 
     def onLeave(self, details):
