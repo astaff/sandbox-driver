@@ -108,7 +108,7 @@ class WampComponent(wamp.ApplicationSession):
 
             # CONNECT TO DRIVERS:
             print('*\t*\t* connect to drivers\t*\t*\t*')
-            self.driver_harness.connect('smoothie',None)
+            self.driver_harness.connect(self.publisher.id,'smoothie',None)
 
         
             def handshake(client_data):
