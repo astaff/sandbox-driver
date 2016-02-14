@@ -100,8 +100,8 @@ class WampComponent(wamp.ApplicationSession):
 
             # ADD CALLBACKS VIA HARNESS:
             print('*\t*\t* add callbacks via harness\t*\t*\t*')
-            self.driver_harness.add_callback('smoothie', {none:['None']})
-            self.driver_harness.add_callback('smoothie', {positions:['M114']})
+            self.driver_harness.add_callback(self.publisher.id,'smoothie', {none:['None']})
+            self.driver_harness.add_callback(self.publisher.id,'smoothie', {positions:['M114']})
 
             for d in self.driver_harness.drivers(self.publisher.id,None,None):
                 print(self.driver_harness.callbacks(self.publisher.id,d, None))
