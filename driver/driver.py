@@ -382,7 +382,8 @@ class SmoothieDriver(object):
 			else:
 				asyncio.async(self.the_loop.create_connection(lambda: callbacker, host='0.0.0.0', port=3333))
 		except:
-			raise
+			print(datetime.datetime.now(),' - error:driver.connects\n\r',sys.exc_info())
+			
 
 	def disconnect(self):
 		"""
