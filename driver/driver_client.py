@@ -28,27 +28,8 @@ class WampComponent(wamp.ApplicationSession):
         self.subscriber = None
         self.publisher = None
         self.driver_harness = None
-        print('END INIT')
 
 
-    def onConnect(self):
-        """Callback fired when the transport this session will run over has been established.
-        """
-        self.join(u"ot_realm")
-
-
-    @asyncio.coroutine
-    def onJoin(self, details):
-        """Callback fired when WAMP session has been established.
-
-        May return a Deferred/Future.
-
-        Starts instatiation of robot objects by calling :meth:`otone_client.instantiate_objects`.
-        """
-        print(datetime.datetime.now(),' - driver_client : WampComponent.onJoin:')
-        print('\tdetails: ',str(details))
-
-        self.driver_uuid = str(uuid.uuid4())
 
         self.loop = asyncio.get_event_loop()
 
@@ -112,6 +93,31 @@ class WampComponent(wamp.ApplicationSession):
             print('*\t*\t* connect to drivers\t*\t*\t*')
             self.driver_harness.connect(self.publisher.id,'smoothie',None)
 
+        except KeyboardInterrupt:
+            raise
+
+        print('END INIT')
+
+
+    def onConnect(self):
+        """Callback fired when the transport this session will run over has been established.
+        """
+        self.join(u"ot_realm")
+
+
+    @asyncio.coroutine
+    def onJoin(self, details):
+        """Callback fired when WAMP session has been established.
+
+        May return a Deferred/Future.
+
+        Starts instatiation of robot objects by calling :meth:`otone_client.instantiate_objects`.
+        """
+        print(datetime.datetime.now(),' - driver_client : WampComponent.onJoin:')
+        print('\tdetails: ',str(details))
+
+        
+        try:
         
             def handshake(client_data):
                 """
@@ -125,7 +131,7 @@ class WampComponent(wamp.ApplicationSession):
             yield from self.subscribe(subscriber.dispatch_message, 'com.opentrons.driver')
 
         except KeyboardInterrupt:
-            pass
+            raise
 
 
     def onLeave(self, details):
