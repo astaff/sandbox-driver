@@ -106,16 +106,19 @@ class WampComponent(wamp.ApplicationSession):
             self.driver_harness.connect('smoothie',None)
 
         
-        def handshake(client_data):
-            """
-            """
-            #if debug == True:
-            print(datetime.datetime.now(),' - driver_client : WampComponent.handshake:')
-            self.publisher(client_data)
+            def handshake(client_data):
+                """
+                """
+                #if debug == True:
+                print(datetime.datetime.now(),' - driver_client : WampComponent.handshake:')
+                self.publisher(client_data)
 
 
-        yield from self.subscribe(handshake, 'com.opentrons.driver_handshake')
-        yield from self.subscribe(subscriber.dispatch_message, 'com.opentrons.driver')
+            yield from self.subscribe(handshake, 'com.opentrons.driver_handshake')
+            yield from self.subscribe(subscriber.dispatch_message, 'com.opentrons.driver')
+
+        except KeyboardInterrupt:
+            pass
 
 
     def onLeave(self, details):
