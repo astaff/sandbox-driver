@@ -22,7 +22,7 @@ class WampComponent(wamp.ApplicationSession):
     """WAMP application session for OTOne (Overrides protocol.ApplicationSession - WAMP endpoint session)
     """
 
-    def __init__(): # <--- even necessary???
+    def __init__(self,outer): # <--- even necessary???
         self.subscriber = None
         self.publisher = None
         self.driver_harness = None
