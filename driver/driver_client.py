@@ -28,7 +28,6 @@ class WampComponent(wamp.ApplicationSession):
         self.subscriber = None
         self.publisher = None
         self.driver_harness = None
-        self.outer = outer
         print('END INIT')
 
 
