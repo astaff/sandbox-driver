@@ -65,7 +65,7 @@ class Publisher:
     def client_check(id_):
         if id_ in self.cleints:
             return True
-        else
+        else:
             return False
 
 
