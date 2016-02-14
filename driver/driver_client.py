@@ -67,8 +67,8 @@ class WampComponent(wamp.ApplicationSession):
 
             # ADD DRIVERS TO HARNESS 
             print('*\t*\t* add drivers to harness\t*\t*\t*')   
-            self.driver_harness.add_driver('smoothie',self.smoothie_driver)
-            print(self.driver_harness.drivers(None,None))
+            self.driver_harness.add_driver(self.publisher.id,'smoothie',self.smoothie_driver)
+            print(self.driver_harness.drivers(self.publisher.id,None,None))
 
             # DEFINE CALLBACKS:
             #
@@ -103,8 +103,8 @@ class WampComponent(wamp.ApplicationSession):
             self.driver_harness.add_callback('smoothie', {none:['None']})
             self.driver_harness.add_callback('smoothie', {positions:['M114']})
 
-            for d in self.driver_harness.drivers(None,None):
-                print(self.driver_harness.callbacks(d, None))
+            for d in self.driver_harness.drivers(self.publisher.id,None,None):
+                print(self.driver_harness.callbacks(self.publisher.id,d, None))
 
             # CONNECT TO DRIVERS:
             print('*\t*\t* connect to drivers\t*\t*\t*')
@@ -116,7 +116,7 @@ class WampComponent(wamp.ApplicationSession):
                 """
                 #if debug == True:
                 print(datetime.datetime.now(),' - driver_client : WampComponent.handshake:')
-                self.publisher(client_data)
+                self.publisher.handshake(client_data)
 
 
             yield from self.subscribe(handshake, 'com.opentrons.driver_handshake')
