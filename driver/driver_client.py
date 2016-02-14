@@ -22,15 +22,17 @@ class WampComponent(wamp.ApplicationSession):
     """WAMP application session for OTOne (Overrides protocol.ApplicationSession - WAMP endpoint session)
     """
 
-    def __init__(self,outer): # <--- even necessary???
-        self.subscriber = None
-        self.publisher = None
-        self.driver_harness = None
+    #def __init__(self,outer): # <--- even necessary???
+    #    self.subscriber = None
+    #    self.publisher = None
+    #    self.driver_harness = None
+
 
     def onConnect(self):
         """Callback fired when the transport this session will run over has been established.
         """
         self.join(u"ot_realm")
+
 
     @asyncio.coroutine
     def onJoin(self, details):
