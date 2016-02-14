@@ -14,6 +14,7 @@ from driver_harness import Harness
 from driver import SmoothieDriver
 
 from autobahn.asyncio import wamp, websocket
+from autobahn.asyncio.wamp import ApplicationSession, ApplicationRunner 
 
 
 
