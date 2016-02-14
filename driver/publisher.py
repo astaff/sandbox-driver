@@ -85,7 +85,7 @@ class Publisher:
         self.caller = session
 
 
-    def publish(self,topic,to='',type_,name,message,param):
+    def publish(self,topic,to,type_,name,message,param):
         """
         """
         print(datetime.datetime.now(),' - publisher.publish:')
