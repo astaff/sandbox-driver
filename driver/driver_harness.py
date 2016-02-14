@@ -19,21 +19,21 @@ class Harness(object):
 		self._publisher = publisher
 		self.driver_dict = {}
 		self.meta_dict = {
-			'drivers' : lambda name,param: self.drivers(name,param),
-			'add_driver' : lambda name,param: self.add_driver(name,param),
-			'remove_driver' : lambda name,param: self.remove_driver(name,param),
-			'callbacks' : lambda name,param: self.callbacks(name,param),
-			'meta_callbacks' : lambda name, param: self.meta_callbacks(name,param),
-			'set_meta_callback' : lambda name,param: self.set_meta_callback(name,param),
-			'add_callback' : lambda name,param: self.add_callback(name,param),
-			'remove_callback' : lambda name,param: self.remove_callback(name,param),
-			'flow' : lambda name,param: self.flow(name,param),
-			'clear_queue' : lambda name,param: self.clear_queue(name,param),
-			'connect' : lambda name,param: self.connect(name,param),
-			'disconnect' : lambda name,param: self.disconnect(name,param),
-			'commands' : lambda name,param: self.commands(name,param),
-			'configs' : lambda name,param: self.configs(name,param),
-			'set_config' : lambda name,param: self.set_config(name,param)
+			'drivers' : lambda name,param: self.drivers(from_,name,param),
+			'add_driver' : lambda name,param: self.add_driver(from_,name,param),
+			'remove_driver' : lambda name,param: self.remove_driver(from_,name,param),
+			'callbacks' : lambda name,param: self.callbacks(from_,name,param),
+			'meta_callbacks' : lambda name, param: self.meta_callbacks(form_,name,param),
+			'set_meta_callback' : lambda name,param: self.set_meta_callback(from_,name,param),
+			'add_callback' : lambda name,param: self.add_callback(from_,name,param),
+			'remove_callback' : lambda name,param: self.remove_callback(from_,name,param),
+			'flow' : lambda name,param: self.flow(from_,name,param),
+			'clear_queue' : lambda name,param: self.clear_queue(from_,name,param),
+			'connect' : lambda name,param: self.connect(from_,name,param),
+			'disconnect' : lambda name,param: self.disconnect(from_,name,param),
+			'commands' : lambda name,param: self.commands(form_,name,param),
+			'configs' : lambda name,param: self.configs(from_,name,param),
+			'set_config' : lambda name,param: self.set_config(from_,name,param)
 		}
 
 
@@ -45,7 +45,7 @@ class Harness(object):
 		self._publisher = publisher
 
 
-	def drivers(self, name, param):
+	def drivers(self, from_, name, param):
 		"""
 		name: n/a
 		param: n/a
@@ -59,7 +59,7 @@ class Harness(object):
 		return list(self.driver_dict)
 
 
-	def add_driver(self, name, param):
+	def add_driver(self, from_, name, param):
 		"""
 		name: name of driver to add_driver
 		param: driver object
@@ -70,7 +70,7 @@ class Harness(object):
 		self.driver_dict[name] = param
 
 
-	def remove_driver(self, name, param):
+	def remove_driver(self, from_, name, param):
 		"""
 		name: name of driver to be driver
 		param: n/a
@@ -81,7 +81,7 @@ class Harness(object):
 		del self.driver_dict[name]
 
 
-	def callbacks(self, name, param):
+	def callbacks(self, from_, name, param):
 		"""
 		name: name of driver
 		param: n/a
@@ -93,7 +93,7 @@ class Harness(object):
 		return self.driver_dict[name].callbacks()
 
 
-	def meta_callbacks(self, name, param):
+	def meta_callbacks(self, from_, name, param):
 		"""
 		name: name of driver
 		param: n/a
@@ -105,7 +105,7 @@ class Harness(object):
 		return self.driver_dict[name].meta_callbacks
 
 
-	def set_meta_callback(self, name, param):
+	def set_meta_callback(self, from_, name, param):
 		"""
 		name: name of driver
 		param: { meta-callback-name : meta-callback-object }
@@ -115,10 +115,10 @@ class Harness(object):
 		print('\tparam: ',param)
 		if isinstance(param,dict):
 			self.driver_dict.get(name).set_meta_callback(list(param)[0],list(param.values)[0])
-		self._publisher.publish('frontend','driver',name,'meta_callback',self.driver_dict.get(name).meta_callbacks())
+		self._publisher.publish(from_,from_,'driver',name,'meta_callback',self.driver_dict.get(name).meta_callbacks())
 
 
-	def add_callback(self, name, param):
+	def add_callback(self, from_, name, param):
 		"""
 		name: name of driver
 		param: { callback obj: [messages list] }
@@ -127,10 +127,10 @@ class Harness(object):
 		print('\tname: ',name)
 		print('\tparam: ',param)
 		self.driver_dict[name].add_callback(list(param)[0],list(param.values())[0])
-		self._publisher.publish('frontend','driver',name,'callbacks',self.driver_dict.get(name).callbacks())
+		self._publisher.publish(from_,from_,'driver',name,'callbacks',self.driver_dict.get(name).callbacks())
 
 
-	def remove_callback(self, name, param):
+	def remove_callback(self, from_, name, param):
 		"""
 		name: name of driver
 		param: name of callback to remove
@@ -139,10 +139,10 @@ class Harness(object):
 		print('\tname: ',name)
 		print('\tparam: ',param)
 		self.driver_dict[name].remove_callback(param)
-		self._publisher.publish('frontend','driver',name,'callbacks',self.driver_dict.get(name).callbacks())
+		self._publisher.publish(form_,from_,'driver',name,'callbacks',self.driver_dict.get(name).callbacks())
 
 
-	def flow(self, name, param):
+	def flow(self, from_, name, param):
 		"""
 		name: name of driver
 		param: n/a
@@ -150,10 +150,10 @@ class Harness(object):
 		print(datetime.datetime.now(),' - driver_harness.flow:')
 		print('\tname: ',name)
 		print('\tparam: ',param)
-		self._publisher.publish('frontend','driver',name,'flow',self.driver_dict.get(name).flow())
+		self._publisher.publish(from_,from_,'driver',name,'flow',self.driver_dict.get(name).flow())
 
 
-	def clear_queue(self, name, param):
+	def clear_queue(self, from_, name, param):
 		"""
 		name: name of driver
 		param: n/a
@@ -165,7 +165,7 @@ class Harness(object):
 		self.flow(name, None)
 
 
-	def connect(self, name, param):
+	def connect(self, from_, name, param):
 		"""
 		name: name of driver
 		param: n/a
@@ -178,7 +178,7 @@ class Harness(object):
 		self.driver_dict[name].connect()
 
 
-	def disconnect(self, name, param):
+	def disconnect(self, from_, name, param):
 		"""
 		name: name of driver
 		param: n/a
@@ -189,7 +189,7 @@ class Harness(object):
 		self.driver_dict.get(name).disconnect()
 
 
-	def commands(self, name, param):
+	def commands(self, from_, name, param):
 		"""
 		name: name of driver
 		param: n/a
@@ -197,10 +197,10 @@ class Harness(object):
 		print(datetime.datetime.now(),' - driver_harness.commands:')
 		print('\tname: ',name)
 		print('\tparam: ',param)
-		self._publisher.publish('frontend','driver',name,'commands',self.driver_dict.get(name).commands())
+		self._publisher.publish(from_,from_,'driver',name,'commands',self.driver_dict.get(name).commands())
 
 
-	def meta_commands(self, name, param):
+	def meta_commands(self, fom_, name, param):
 		"""
 		name: name of driver
 		param: n/a
@@ -208,9 +208,9 @@ class Harness(object):
 		print(datetime.datetime.now(),' - driver_harness.meta_commands:')
 		print('\tname: ',name)
 		print('\tparam: ',param)
-		self._publisher.publish('frontend','driver',name,'meta_commands',copy.deepcopy(self.meta_dict))
+		self._publisher.publish(from_,from_,'driver',name,'meta_commands',copy.deepcopy(self.meta_dict))
 
-	def configs(self, name, param):
+	def configs(self, from_, name, param):
 		"""
 		name: name of driver
 		param: n/a
@@ -218,10 +218,10 @@ class Harness(object):
 		print(datetime.datetime.now(),' - driver_harness.meta_commands:')
 		print('\tname: ',name)
 		print('\tparam: ',param)
-		self._publisher.publish('frontend','driver',name,'configs',self.driver_dict.get(name).configs())
+		self._publisher.publish(from_,from_,'driver',name,'configs',self.driver_dict.get(name).configs())
 
 
-	def set_config(self, name, param):
+	def set_config(self, from_, name, param):
 		"""
 		name: name
 		param: { config name : config value }
@@ -231,10 +231,10 @@ class Harness(object):
 		print('\tparam: ',str(param))
 		if isinstance(param,dict):
 			self.driver_dict.get(name).set_config(list(param)[0],list(param.values)[0])
-		self._publisher.publish('frontend','driver',name,'configs',self.driver_dict.get(name).configs())
+		self._publisher.publish(from_,from_,'driver',name,'configs',self.driver_dict.get(name).configs())
 
 
-	def meta_command(self, data):
+	def meta_command(self, from_, data):
 		"""
 
 		data should be in the form:
@@ -259,6 +259,7 @@ class Harness(object):
 		"""
 		print(datetime.datetime.now(),' - driver_harness.meta_command:')
 		print('\tdata: ',data)
+		print('\tdata: ',data)
 		if isinstance(data, dict):
 			name = data['name']
 			value = data['message']
@@ -267,36 +268,36 @@ class Harness(object):
 					command = list(value)[0]
 					params = value[command]
 					try:
-						self.meta_dict[command](name,params)
+						self.meta_dict[command](from_,name,params)
 					except:
-						self._publisher.publish('frontend','driver',name,'error',sys.exc_info())
+						self._publisher.publish(from_,from_,'driver',name,'error',sys.exc_info())
 						print(datetime.datetime.now(),' - meta_command error: ',sys.exc_info())
 				elif isinstance(value, str):
 					command = value
 					try:
-						self.meta_dict[command](name,None)
+						self.meta_dict[command](from_,name,None)
 					except:
-						self._publisher.publish('frontend','driver',name,'error',sys.exc_info())
+						self._publisher.publish(from_,from_,'driver',name,'error',sys.exc_info())
 						print(datetime.datetime.now(),' - meta_command error: ',sys.exc_info())
 			else:
 				if isinstance(value, dict):
 					command = list(value)[0]
 					params = value[command]
 					try:
-						self.meta_dict[command](None, params)
+						self.meta_dict[command](from_,None, params)
 					except:
-						self._publisher.publish('frontend','driver',name,'error',sys.exc_info())
+						self._publisher.publish(from_,from_,'driver',name,'error',sys.exc_info())
 						print(datetime.datetime.now(),' - meta_command error, name not in drivers: ',sys.exc_info())
 				elif isinstance(value, str):
 					command = value
 					try:
-						self.meta_dict[command](None,None)
+						self.meta_dict[command](from_,None,None)
 					except:
-						self._publisher.publish('frontend','driver','None','error',sys.exc_info())
+						self._publisher.publish(from_,from_,'driver','None','error',sys.exc_info())
 						print(datetime.datetime.now(),' - meta_command error, name not in drivers: ',sys.exc_info())
 
 
-	def send_command(self, data):
+	def send_command(self, from_, data):
 		"""
 		data:
 		{
@@ -305,6 +306,7 @@ class Harness(object):
 		}
 		"""
 		print('driver_harness.send_command:')
+		print('\tfrom: '+str(from_))
 		print('\tdata: '+str(data))
 		if isinstance(data, dict):
 			name = data['name']
@@ -313,10 +315,10 @@ class Harness(object):
 				try:
 					self.driver_dict[name].send_command(value)
 				except:
-					self._publisher.publish('frontend','driver',name,'error',sys.exc_info()[0])
+					self._publisher.publish(self_,self_,'driver',name,'error',sys.exc_info()[0])
 					print(datetime.datetime.now(),' - send_command error: '+sys.exc_info()[0])
 			else:
-				self._publisher.publish('frontend','driver','None','error',sys.exc_info()[0])
+				self._publisher.publish(self_,self_,'driver','None','error',sys.exc_info()[0])
 				print(datetime.datetime.now(),' - send_command_error, name not in drivers: '+sys.exc_info()[0])
 
 

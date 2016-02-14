@@ -7,14 +7,15 @@ import datetime
 driver = None
 
 class Subscriber():
-    def __init__(self, harness=None):
+    def __init__(self, harness=None, publisher=None):
         print(datetime.datetime.now(),' - subscriber.__init__:')
         print('\tharness: ',harness)
         self.harness = harness
+        self.publisher = publisher
 
         self.in_dispatcher = {
-            'command': lambda data: self.harness.send_command(data),
-            'meta': lambda data: self.harness.meta_command(data)
+            'command': lambda data: self.harness.send_command(from_,data),
+            'meta': lambda data: self.harness.meta_command(from_,data)
         }
 
     def set_harness(self, harness):
@@ -28,9 +29,13 @@ class Subscriber():
         print('\tmessage: ',message)
         try:
             dictum = collections.OrderedDict(json.loads(message.strip(), object_pairs_hook=collections.OrderedDict))
-            if 'type' in dictum and 'data' in dictum:
+            if 'type' in dictum and 'from' in dictum and 'data' in dictum:
                 if dictum['type'] in self.in_dispatcher:
-                    self.in_dispatcher[dictum['type']](dictum['data'])
+                    if self.publisher.client_check(dictum['from']):
+                        #opportunity to filter, not actually used
+                        self.in_dispatcher[dictum['type']](dictum['from'],dictum['data'])
+                    else:
+                        self.in_dispatcher[doctum['type']](dictum['from'],dictum['data'])
                 else:
                     print(datetime.datetime.now(),' - {error:malformed message, type not in in_dispatcher}\n\r',sys.exc_info())
                     return '{error,malformed message, type not in in_dispatcher}'
