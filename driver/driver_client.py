@@ -22,11 +22,13 @@ class WampComponent(wamp.ApplicationSession):
     """WAMP application session for OTOne (Overrides protocol.ApplicationSession - WAMP endpoint session)
     """
 
-    #def __init__(self,outer): # <--- even necessary???
-    #    self.subscriber = None
-    #    self.publisher = None
-    #    self.driver_harness = None
-    #    self.outer = outer
+    def __init__(self,outer): # <--- even necessary???
+        print('START INIT')
+        self.subscriber = None
+        self.publisher = None
+        self.driver_harness = None
+        self.outer = outer
+        print('END INIT')
 
 
     def onConnect(self):
