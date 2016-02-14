@@ -4,6 +4,7 @@
 import json, collections
 import sys
 import datetime
+import uuid
 
 
 class Publisher:

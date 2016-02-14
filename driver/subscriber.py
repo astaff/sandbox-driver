@@ -3,6 +3,7 @@
 import json, collections
 import sys
 import datetime
+import Publisher
 
 driver = None
 

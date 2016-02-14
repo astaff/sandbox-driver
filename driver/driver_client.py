@@ -26,6 +26,7 @@ class WampComponent(wamp.ApplicationSession):
     #    self.subscriber = None
     #    self.publisher = None
     #    self.driver_harness = None
+    #    self.outer = outer
 
 
     def onConnect(self):
@@ -44,6 +45,10 @@ class WampComponent(wamp.ApplicationSession):
         """
         print(datetime.datetime.now(),' - driver_client : WampComponent.onJoin:')
         print('\tdetails: ',str(details))
+
+        if not self.factory._myAppSession:
+            self.factory._myAppSession = self
+
         self.driver_uuid = str(uuid.uuid4())
 
         self.loop = asyncio.get_event_loop()
