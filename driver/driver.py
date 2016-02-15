@@ -366,6 +366,8 @@ class SmoothieDriver(object):
 		#asyncio.async(serial.aio.create_serial_connection(self.the_loop, Output, '/dev/ttyUSB0', baudrate=115200))
 		callbacker = Output(self)
 		try:
+			if self.the_loop.is_running():
+				self.the_loop.stop()
 			print(self.simulation)
 			if self.simulation:
 				#coro = self.the_loop.create_server(Simulator, '0.0.0.0', 3334)
@@ -381,6 +383,7 @@ class SmoothieDriver(object):
 				print('here')
 			else:
 				asyncio.async(self.the_loop.create_connection(lambda: callbacker, host='0.0.0.0', port=3333))
+		
 		except:
 			print(datetime.datetime.now(),' - error:driver.connects\n\r',sys.exc_info())
 			
