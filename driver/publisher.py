@@ -44,15 +44,17 @@ class Publisher:
                 client_id = data['from']
                 if client_id in self.clients:
                     if 'data' in data:
-                        if 'extend' in data['data']:
-                            print('handshake called again on client ',client_data['uuid'],'. We could have done something here to repopulate data')
-                            self.publish( client_id , client_id ,'handshake','driver','result','already_connected')
-                        if 'shake' in data['data']:
-                            self.publish_client_ids(client_id)
+                        if 'message' in data['data']:
+                            if 'extend' in data['data']['message']:
+                                print('handshake called again on client ',client_data['uuid'],'. We could have done something here to repopulate data')
+                                self.publish( client_id , client_id ,'handshake','driver','result','already_connected')
+                            if 'shake' in data['data']:
+                                self.publish_client_ids(client_id)
                 else:
                     if 'data' in data:
-                        if 'extend' in data['data']:
-                            self.gen_client_id()
+                        if 'message' in data['data']:
+                            if 'extend' in data['data']['message']:
+                                self.gen_client_id()
             else:
                 self.gen_client_id()
 
