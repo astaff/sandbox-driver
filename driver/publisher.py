@@ -57,14 +57,16 @@ class Publisher:
 
 
     def gen_client_id(self):
+        ret_id = ''
         if len(self.clients) > self.max_clients:
             self.publish( 'frontend', '' , 'handshake' , 'driver' , 'result' , 'fail' )
-            return ''
         else:
             client_id = str(uuid.uuid4())
             self.clients[client_id] = 'com.opentrons.'+client_id
             self.publish( 'frontend' , client_id , 'handshake' , 'driver' , 'result' , 'success' )
-            return client_id
+            ret_id = client_id
+        self.publish( client_id, client_id, 'test', 'driver', 'test','test')
+        return ret_id
 
 
     def client_check(self, id_):
