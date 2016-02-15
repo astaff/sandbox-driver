@@ -34,7 +34,7 @@ class Publisher:
             self.caller = session
 
 
-    def handshake(data):
+    def handshake(self, data):
         print(datetime.datetime.now(),' - publisher.handshake:')
         print('\tdata: ',data)
 
@@ -52,7 +52,7 @@ class Publisher:
             publish_client_ids()
 
 
-    def gen_client_id():
+    def gen_client_id(self):
         if len(self.clients) > self.max_clients:
             self.publish( 'frontend', '' , 'handshake' , 'driver' , 'result' , 'fail' )
             return ''
@@ -63,14 +63,14 @@ class Publisher:
             return client_id
 
 
-    def client_check(id_):
+    def client_check(self, id_):
         if id_ in self.cleints:
             return True
         else:
             return False
 
 
-    def publish_client_ids(id_):
+    def publish_client_ids(self, id_):
         if id_ in self.clients:
             self.publish( id_ , id_ , 'handshake' , 'driver' , 'ids' , list(self.clients) )
         else:
@@ -108,9 +108,9 @@ class Publisher:
                     msg = {'type':type_,'to':to,'from':self.id,'data':{'name':name,'message':{message:param}}}
                     try:
                         if topic in self.topic:
-                            self.caller.publish(self.topic.get(topic),json.dumps(msg))
+                            self.caller._myAppSession.publish(self.topic.get(topic),json.dumps(msg))
                         elif topic in self.clients:
-                            self.caller.publish(self.clients.get(topic),json.dumps(msg))
+                            self.caller._myAppSession.publish(self.clients.get(topic),json.dumps(msg))
 
 
                     except:

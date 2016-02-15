@@ -83,7 +83,7 @@ class WampComponent(wamp.ApplicationSession):
         try:
             self.disconnect()
         except:
-            pass
+            raise
         
 
     def onDisconnect(self):
