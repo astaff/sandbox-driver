@@ -25,6 +25,7 @@ class Publisher:
         self.clients = {
             # uuid : 'com.opentrons.[uuid]'
         }
+        self.max_clients = 4
 
         self.id = str(uuid.uuid4())
 
