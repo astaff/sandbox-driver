@@ -38,18 +38,21 @@ class Publisher:
         print(datetime.datetime.now(),' - publisher.handshake:')
         print('\tdata: ',data)
 
-        if 'id' in data:
-            client_id = data['id']
-            if client_id in self.clients:
-                print('handshake called again on client ',client_data['uuid'],'. We could have done something here to repopulate data')
-                self.publish( client_id , client_id ,'handshake','driver','result','already_connected')
+        if isinstance(data, dict):
+            if 'id' in data:
+                client_id = data['id']
+                if client_id in self.clients:
+                    print('handshake called again on client ',client_data['uuid'],'. We could have done something here to repopulate data')
+                    self.publish( client_id , client_id ,'handshake','driver','result','already_connected')
+                else:
+                    self.gen_client_id()
             else:
                 self.gen_client_id()
+
+            if 'get_ids' in data:
+                publish_client_ids()
         else:
             self.gen_client_id()
-
-        if 'get_ids' in data:
-            publish_client_ids()
 
 
     def gen_client_id(self):
