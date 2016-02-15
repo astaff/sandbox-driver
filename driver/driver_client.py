@@ -26,7 +26,7 @@ def make_connection():
         loop.stop()
     coro = loop.create_connection(transport_factory, '0.0.0.0', 8080)
     transport, protocoler = loop.run_until_complete(coro)
-    protocoler.set_outer(self)
+    #protocoler.set_outer(self)
     if not loop.is_running():
         loop.run_forever()
 
@@ -62,8 +62,9 @@ class WampComponent(wamp.ApplicationSession):
             """
             #if debug == True:
             print(datetime.datetime.now(),' - driver_client : WampComponent.handshake:')
-            if outer is not None:
-                outer.publisher.handshake(client_data)
+            #if outer is not None:
+            #outer.
+            publisher.handshake(client_data)
 
         yield from self.subscribe(handshake, 'com.opentrons.driver_handshake')
         yield from self.subscribe(outer.subscriber.dispatch_message, 'com.opentrons.driver')
