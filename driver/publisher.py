@@ -113,8 +113,8 @@ class Publisher:
                             self.caller.publish(self.clients.get(topic),json.dumps(msg))
 
 
-                except:
-                    print(datetime.datetime.now(),' - publisher.py - publish - error:\n\r',sys.exc_info())
+                    except:
+                        print(datetime.datetime.now(),' - publisher.py - publish - error:\n\r',sys.exc_info())
             else:
                 print(datetime.datetime.now(),' - publisher.py - publish - error: caller._myAppSession is None')
         else:
