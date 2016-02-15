@@ -67,7 +67,7 @@ class WampComponent(wamp.ApplicationSession):
             publisher.handshake(client_data)
 
         yield from self.subscribe(handshake, 'com.opentrons.driver_handshake')
-        yield from self.subscribe(outer.subscriber.dispatch_message, 'com.opentrons.driver')
+        yield from self.subscribe(subscriber.dispatch_message, 'com.opentrons.driver')
 
 
 
