@@ -40,13 +40,19 @@ class Publisher:
         print('\tdata: ',data)
 
         if isinstance(data, dict):
-            if 'id' in data:
-                client_id = data['id']
+            if 'from' in data:
+                client_id = data['from']
                 if client_id in self.clients:
-                    print('handshake called again on client ',client_data['uuid'],'. We could have done something here to repopulate data')
-                    self.publish( client_id , client_id ,'handshake','driver','result','already_connected')
+                    if 'data' in data:
+                        if 'extend' in data['data']:
+                            print('handshake called again on client ',client_data['uuid'],'. We could have done something here to repopulate data')
+                            self.publish( client_id , client_id ,'handshake','driver','result','already_connected')
+                        if 'shake' in data['data']:
+                            self.publish_client_ids(client_id)
                 else:
-                    self.gen_client_id()
+                    if 'data' in data:
+                        if 'extend' in data['data']:
+                            self.gen_client_id()
             else:
                 self.gen_client_id()
 
@@ -65,7 +71,6 @@ class Publisher:
             self.clients[client_id] = 'com.opentrons.'+client_id
             self.publish( 'frontend' , client_id , 'handshake' , 'driver' , 'result' , 'success' )
             ret_id = client_id
-        self.publish( client_id, client_id, 'test', 'driver', 'test','test')
         return ret_id
 
 
@@ -114,8 +119,10 @@ class Publisher:
                     msg = {'type':type_,'to':to,'from':self.id,'data':{'name':name,'message':{message:param}}}
                     try:
                         if topic in self.topic:
+                            print(datetime.datetime.now(),'url topic: ',self.topic.get(topic))
                             self.caller._myAppSession.publish(self.topic.get(topic),json.dumps(msg))
                         elif topic in self.clients:
+                            print(datetime.datetime.now(),'url topic: ',self.clients.get(topic))
                             self.caller._myAppSession.publish(self.clients.get(topic),json.dumps(msg))
 
 
