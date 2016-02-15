@@ -149,8 +149,8 @@ if __name__ == '__main__':
 
         # ADD CALLBACKS VIA HARNESS:
         print('*\t*\t* add callbacks via harness\t*\t*\t*')
-        driver_harness.add_callback(self.publisher.id,'smoothie', {none:['None']})
-        driver_harness.add_callback(self.publisher.id,'smoothie', {positions:['M114']})
+        driver_harness.add_callback(publisher.id,'smoothie', {none:['None']})
+        driver_harness.add_callback(publisher.id,'smoothie', {positions:['M114']})
 
         for d in driver_harness.drivers(publisher.id,None,None):
             print(driver_harness.callbacks(publisher.id,d, None))
