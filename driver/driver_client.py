@@ -36,6 +36,9 @@ class WampComponent(wamp.ApplicationSession):
     """
     outer = None
 
+    def set_outer(self, outer_):
+        outer = outer_
+
     def onConnect(self):
         """Callback fired when the transport this session will run over has been established.
         """
@@ -81,9 +84,7 @@ class WampComponent(wamp.ApplicationSession):
         print(datetime.datetime.now(),' - driver_client : WampComponent.onDisconnect:')
         asyncio.get_event_loop().stop()
 
-
-    def set_outer(self, outer_):
-        outer = outer_
+    
     
 
 
