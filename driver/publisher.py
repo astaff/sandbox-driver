@@ -104,12 +104,13 @@ class Publisher:
             if param is None:
                 param = ''
             if self.caller is not None:
-                msg = {'type':type_,'to':to,'from':self.id,'data':{'name':name,'message':{message:param}}}
-                try:
-                    if topic in self.topic:
-                        self.caller.publish(self.topic.get(topic),json.dumps(msg))
-                    elif topic in self.clients:
-                        self.caller.publish(self.clients.get(topic),json.dumps(msg))
+                if self.caller._myAppSession is not None:
+                    msg = {'type':type_,'to':to,'from':self.id,'data':{'name':name,'message':{message:param}}}
+                    try:
+                        if topic in self.topic:
+                            self.caller.publish(self.topic.get(topic),json.dumps(msg))
+                        elif topic in self.clients:
+                            self.caller.publish(self.clients.get(topic),json.dumps(msg))
 
 
                 except:
