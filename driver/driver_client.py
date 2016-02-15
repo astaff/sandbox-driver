@@ -55,7 +55,8 @@ class WampComponent(wamp.ApplicationSession):
         """
         print(datetime.datetime.now(),' - driver_client : WampComponent.onJoin:')
         print('\tdetails: ',str(details))
-
+        if not self.factory._myAppSession:
+            self.factory._myAppSession = self
     
         def handshake(client_data):
             """
@@ -77,6 +78,12 @@ class WampComponent(wamp.ApplicationSession):
         """
         print('driver_client : WampComponent.onLeave:')
         print('\tdetails: ',details)
+        if self.factory._myAppSession == self:
+            self.factory._myAppSession = None
+        try:
+            self.disconnect()
+        except:
+            pass
         
 
     def onDisconnect(self):
@@ -94,6 +101,7 @@ if __name__ == '__main__':
     try:
         session_factory = wamp.ApplicationSessionFactory()
         session_factory.session = WampComponent
+        sessiom_factory._myAppSession = None
 
         url = "ws://0.0.0.0:8080/ws"
         transport_factory = websocket.WampWebSocketClientFactory(session_factory,
