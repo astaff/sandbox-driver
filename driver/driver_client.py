@@ -101,7 +101,7 @@ if __name__ == '__main__':
     try:
         session_factory = wamp.ApplicationSessionFactory()
         session_factory.session = WampComponent
-        sessiom_factory._myAppSession = None
+        session_factory._myAppSession = None
 
         url = "ws://0.0.0.0:8080/ws"
         transport_factory = websocket.WampWebSocketClientFactory(session_factory,
