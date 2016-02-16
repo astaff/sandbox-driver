@@ -51,7 +51,7 @@ class Publisher:
                             if 'extend' in data_dict['data']['message']:
                                 print('handshake called again on client ',client_data['uuid'],'. We could have done something here to repopulate data')
                                 self.publish( client_id , client_id ,'handshake','driver','result','already_connected')
-                            if 'shake' in data_dict['data']:
+                            if 'shake' in data_dict['data']['message']:
                                 self.publish_client_ids(client_id)
                 else:
                     print('* from is NOT a client')
