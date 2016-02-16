@@ -41,8 +41,10 @@ class Publisher:
 
         if isinstance(data, dict):
             if 'from' in data:
+                print('* data has "from"')
                 client_id = data['from']
                 if client_id in self.clients:
+                    print('* from is a client')
                     if 'data' in data:
                         if 'message' in data['data']:
                             if 'extend' in data['data']['message']:
@@ -51,11 +53,13 @@ class Publisher:
                             if 'shake' in data['data']:
                                 self.publish_client_ids(client_id)
                 else:
+                    print('* from is NOT a client')
                     if 'data' in data:
                         if 'message' in data['data']:
                             if 'extend' in data['data']['message']:
                                 self.gen_client_id()
             else:
+                print('* data does NOT have "from"')
                 self.gen_client_id()
 
             if 'get_ids' in data:
