@@ -15,8 +15,8 @@ class Subscriber():
         self.publisher = publisher
 
         self.in_dispatcher = {
-            'command': lambda data: self.harness.send_command(from_,data),
-            'meta': lambda data: self.harness.meta_command(from_,data)
+            'command': lambda from_,data: self.harness.send_command(from_,data),
+            'meta': lambda from_,data: self.harness.meta_command(from_,data)
         }
 
     def set_harness(self, harness):
