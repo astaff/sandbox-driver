@@ -39,6 +39,7 @@ class Subscriber():
                         self.in_dispatcher[doctum['type']](dictum['from'],dictum['data'])
                 else:
                     print(datetime.datetime.now(),' - {error:malformed message, type not in in_dispatcher}\n\r',sys.exc_info())
+                    print('type: ',dictum['type'])
                     return '{error,malformed message, type not in in_dispatcher}'
             else:
                 print(datetime.datetime.now(),' - {error:subscriber.dispatch_message type or data error}\n\r',sys.exc_info())
