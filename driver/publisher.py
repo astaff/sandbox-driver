@@ -82,7 +82,7 @@ class Publisher:
 
 
     def client_check(self, id_):
-        if id_ in self.cleints:
+        if id_ in self.clients:
             return True
         else:
             return False
