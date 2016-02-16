@@ -39,30 +39,31 @@ class Publisher:
         print(datetime.datetime.now(),' - publisher.handshake:')
         print('\tdata: ',data)
 
-        if isinstance(data, dict):
+        data_dict = json.loads(data)
+        if isinstance(data_dict, dict):
             if 'from' in data:
                 print('* data has "from"')
-                client_id = data['from']
+                client_id = data_dict['from']
                 if client_id in self.clients:
                     print('* from is a client')
-                    if 'data' in data:
-                        if 'message' in data['data']:
-                            if 'extend' in data['data']['message']:
+                    if 'data' in data_dict:
+                        if 'message' in data_dict['data']:
+                            if 'extend' in data_dict['data']['message']:
                                 print('handshake called again on client ',client_data['uuid'],'. We could have done something here to repopulate data')
                                 self.publish( client_id , client_id ,'handshake','driver','result','already_connected')
-                            if 'shake' in data['data']:
+                            if 'shake' in data_dict['data']:
                                 self.publish_client_ids(client_id)
                 else:
                     print('* from is NOT a client')
-                    if 'data' in data:
-                        if 'message' in data['data']:
-                            if 'extend' in data['data']['message']:
+                    if 'data' in data_dict:
+                        if 'message' in data_dict['data']:
+                            if 'extend' in data_dict['data']['message']:
                                 self.gen_client_id()
             else:
                 print('* data does NOT have "from"')
                 self.gen_client_id()
 
-            if 'get_ids' in data:
+            if 'get_ids' in data_dict:
                 publish_client_ids()
         else:
             self.gen_client_id()
