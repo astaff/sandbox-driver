@@ -202,7 +202,7 @@ class Harness(object):
 		self._publisher.publish(from_,from_,'driver',name,'commands',self.driver_dict.get(name).commands())
 
 
-	def meta_commands(self, fom_, name, param):
+	def meta_commands(self, from_, name, param):
 		"""
 		name: name of driver
 		param: n/a
