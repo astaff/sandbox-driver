@@ -127,9 +127,11 @@ class Publisher:
                     msg = {'type':type_,'to':to,'from':self.id,'data':{'name':name,'message':{message:param}}}
                     try:
                         if topic in self.topic:
+                            print('TOPIC: ',self.topic)
                             print(datetime.datetime.now(),'url topic: ',self.topic.get(topic))
                             self.caller._myAppSession.publish(self.topic.get(topic),json.dumps(msg))
                         elif topic in self.clients:
+                            print('CLIENTS: ',self.clients)
                             print(datetime.datetime.now(),'url topic: ',self.clients.get(topic))
                             self.caller._myAppSession.publish(self.clients.get(topic),json.dumps(msg))
 
