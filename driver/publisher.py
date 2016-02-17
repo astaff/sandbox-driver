@@ -44,6 +44,7 @@ class Publisher:
             if 'from' in data:
                 print('* data has "from"')
                 client_id = data_dict['from']
+                print('client_id: ',client_id)
                 if client_id in self.clients:
                     print('* from is a client')
                     if 'data' in data_dict:
