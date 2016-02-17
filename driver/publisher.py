@@ -55,10 +55,11 @@ class Publisher:
                                 self.publish_client_ids(client_id)
                 else:
                     print('* from is NOT a client')
-                    if 'data' in data_dict:
-                        if 'message' in data_dict['data']:
-                            if 'extend' in data_dict['data']['message']:
-                                self.gen_client_id()
+                    if len(self.clients) > self.max_clients:
+                        self.publish( 'frontend', '' , 'handshake' , 'driver' , 'result' , 'fail' )
+                    else:
+                        self.clients[client_id] = 'com.opentrons.'+client_id
+                        self.publish( 'frontend' , client_id , 'handshake', 'driver', 'result','success')
             else:
                 print('* data does NOT have "from"')
                 self.gen_client_id()
