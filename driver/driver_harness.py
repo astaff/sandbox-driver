@@ -138,6 +138,7 @@ class Harness(object):
 		param: name of callback to remove
 		"""
 		print(datetime.datetime.now(),' - driver_harness.remove_callback:')
+		print('\tfrom: ',from_)
 		print('\tname: ',name)
 		print('\tparam: ',param)
 		self.driver_dict[name].remove_callback(param)
@@ -150,6 +151,7 @@ class Harness(object):
 		param: n/a
 		"""
 		print(datetime.datetime.now(),' - driver_harness.flow:')
+		print('\tfrom: ',from_)
 		print('\tname: ',name)
 		print('\tparam: ',param)
 		self._publisher.publish(from_,from_,'driver',name,'flow',self.driver_dict.get(name).flow())
@@ -161,6 +163,7 @@ class Harness(object):
 		param: n/a
 		"""
 		print(datetime.datetime.now(),' - driver_harness.clear_queue:')
+		print('\tfrom: ',from_)
 		print('\tname: ',name)
 		print('\tparam: ',param)
 		self.driver_dict.get(name).clear_queue()
@@ -173,6 +176,7 @@ class Harness(object):
 		param: n/a
 		"""
 		print(datetime.datetime.now(),' - driver_harness.connect:')
+		print('\tfrom: ',from_)
 		print('\tname: ',name)
 		print('\tparam: ',param)
 		print('self.driver_dict: ',self.driver_dict)
@@ -186,6 +190,7 @@ class Harness(object):
 		param: n/a
 		"""
 		print(datetime.datetime.now(),' - driver_harness.disconnect:')
+		print('\tfrom: ',from_)
 		print('\tname: ',name)
 		print('\tparam: ',param)
 		self.driver_dict.get(name).disconnect()
@@ -197,6 +202,7 @@ class Harness(object):
 		param: n/a
 		"""
 		print(datetime.datetime.now(),' - driver_harness.commands:')
+		print('\tfrom: ',from_)
 		print('\tname: ',name)
 		print('\tparam: ',param)
 		self._publisher.publish(from_,from_,'driver',name,'commands',self.driver_dict.get(name).commands())
@@ -219,6 +225,7 @@ class Harness(object):
 		param: n/a
 		"""
 		print(datetime.datetime.now(),' - driver_harness.meta_commands:')
+		print('\tfrom: ',from_)
 		print('\tname: ',name)
 		print('\tparam: ',param)
 		self._publisher.publish(from_,from_,'driver',name,'configs',self.driver_dict.get(name).configs())
@@ -230,8 +237,9 @@ class Harness(object):
 		param: { config name : config value }
 		"""
 		print(datetime.datetime.now(),' - driver_harness.meta_commands:')
-		print('\tname: ',str(name))
-		print('\tparam: ',str(param))
+		print('\tfrom: ',from_)
+		print('\tname: ',name)
+		print('\tparam: ',param)
 		if isinstance(param,dict):
 			self.driver_dict.get(name).set_config(list(param)[0],list(param.values)[0])
 		self._publisher.publish(from_,from_,'driver',name,'configs',self.driver_dict.get(name).configs())
@@ -309,8 +317,8 @@ class Harness(object):
 		}
 		"""
 		print('driver_harness.send_command:')
-		print('\tfrom: '+str(from_))
-		print('\tdata: '+str(data))
+		print('\tfrom: ',from_)
+		print('\tdata: ',data)
 		if isinstance(data, dict):
 			name = data['name']
 			value = data['message']
