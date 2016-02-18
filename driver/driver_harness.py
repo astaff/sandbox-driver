@@ -208,7 +208,7 @@ class Harness(object):
 		param: n/a
 		"""
 		print(datetime.datetime.now(),' - driver_harness.meta_commands:')
-		print('\tfrom_:'from_)
+		print('\tfrom_:',from_)
 		print('\tname: ',name)
 		print('\tparam: ',param)
 		self._publisher.publish(from_,from_,'driver',name,'meta_commands',copy.deepcopy(self.meta_dict))
