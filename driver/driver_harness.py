@@ -19,21 +19,21 @@ class Harness(object):
 		self._publisher = publisher
 		self.driver_dict = {}
 		self.meta_dict = {
-			'drivers' : lambda form_,name,param: self.drivers(from_,name,param),
-			'add_driver' : lambda form_,name,param: self.add_driver(from_,name,param),
-			'remove_driver' : lambda form_,name,param: self.remove_driver(from_,name,param),
-			'callbacks' : lambda form_,name,param: self.callbacks(from_,name,param),
-			'meta_callbacks' : lambda form_,name, param: self.meta_callbacks(form_,name,param),
-			'set_meta_callback' : lambda form_,name,param: self.set_meta_callback(from_,name,param),
-			'add_callback' : lambda form_,name,param: self.add_callback(from_,name,param),
-			'remove_callback' : lambda form_,name,param: self.remove_callback(from_,name,param),
-			'flow' : lambda form_,name,param: self.flow(from_,name,param),
-			'clear_queue' : lambda form_,name,param: self.clear_queue(from_,name,param),
-			'connect' : lambda form_,name,param: self.connect(from_,name,param),
-			'disconnect' : lambda form_,name,param: self.disconnect(from_,name,param),
-			'commands' : lambda form_,name,param: self.commands(form_,name,param),
-			'configs' : lambda form_,name,param: self.configs(from_,name,param),
-			'set_config' : lambda form_,name,param: self.set_config(from_,name,param)
+			'drivers' : lambda from_,name,param: self.drivers(from_,name,param),
+			'add_driver' : lambda from_,name,param: self.add_driver(from_,name,param),
+			'remove_driver' : lambda from_,name,param: self.remove_driver(from_,name,param),
+			'callbacks' : lambda from_,name,param: self.callbacks(from_,name,param),
+			'meta_callbacks' : lambda from_,name, param: self.meta_callbacks(form_,name,param),
+			'set_meta_callback' : lambda from_,name,param: self.set_meta_callback(from_,name,param),
+			'add_callback' : lambda from_,name,param: self.add_callback(from_,name,param),
+			'remove_callback' : lambda from_,name,param: self.remove_callback(from_,name,param),
+			'flow' : lambda from_,name,param: self.flow(from_,name,param),
+			'clear_queue' : lambda from_,name,param: self.clear_queue(from_,name,param),
+			'connect' : lambda from_,name,param: self.connect(from_,name,param),
+			'disconnect' : lambda from_,name,param: self.disconnect(from_,name,param),
+			'commands' : lambda from_,name,param: self.commands(form_,name,param),
+			'configs' : lambda from_,name,param: self.configs(from_,name,param),
+			'set_config' : lambda from_,name,param: self.set_config(from_,name,param)
 		}
 
 
