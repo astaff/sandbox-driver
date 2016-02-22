@@ -145,7 +145,7 @@ if __name__ == '__main__':
             print('\tdata_dict: ',data_dict)
             dd_name = list(data_dict)[0]
             dd_value = data_dict[dd_name]
-            publisher.publish('frontend','','driver',name,list(data_dict)[0],dd_value)
+            publisher.publish('frontend','','','driver',name,list(data_dict)[0],dd_value)
 
         def positions(name, data_dict):
             """
@@ -154,20 +154,20 @@ if __name__ == '__main__':
             print('\tdata_dict: ',data_dict)
             dd_name = list(data_dict)[0]
             dd_value = data_dict[dd_name]
-            publisher.publish('frontend','','driver',name,list(data_dict)[0],dd_value)
+            publisher.publish('frontend','','','driver',name,list(data_dict)[0],dd_value)
 
 
         # ADD CALLBACKS VIA HARNESS:
         print('*\t*\t* add callbacks via harness\t*\t*\t*')
-        driver_harness.add_callback(publisher.id,'smoothie', {none:['None']})
-        driver_harness.add_callback(publisher.id,'smoothie', {positions:['M114']})
+        driver_harness.add_callback(publisher.id,'','smoothie', {none:['None']})
+        driver_harness.add_callback(publisher.id,'','smoothie', {positions:['M114']})
 
-        for d in driver_harness.drivers(publisher.id,None,None):
-            print(driver_harness.callbacks(publisher.id,d, None))
+        for d in driver_harness.drivers(publisher.id,'',None,None):
+            print(driver_harness.callbacks(publisher.id,'',d, None))
 
         # CONNECT TO DRIVERS:
         print('*\t*\t* connect to drivers\t*\t*\t*')
-        driver_harness.connect(publisher.id,'smoothie',None)
+        driver_harness.connect(publisher.id,'','smoothie',None)
 
         print('END INIT')
 
