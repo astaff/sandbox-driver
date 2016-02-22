@@ -89,9 +89,9 @@ class Harness(object):
 		"""
 		print(datetime.datetime.now(),' - driver_harness.callbacks:')
 		print('\targs:',locals())
-		return_dict = 
-		self._publisher.publish(from_,from_,session_id,'driver',name,'callbacks',self.driver_dict[name].callbacks())
-		return copy.deepcopy(self.driver_dict[name].callbacks())
+		return_dict = self.driver_dict[name].callbacks()
+		self._publisher.publish(from_,from_,session_id,'driver',name,'callbacks',return_dict)
+		return return_dict
 
 
 	def meta_callbacks(self, from_, session_id, name, param):
