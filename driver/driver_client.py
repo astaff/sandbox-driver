@@ -8,8 +8,8 @@ import uuid
 import datetime
 import sys
 
-from subscriber import Subscriber
-from publisher import Publisher
+from driver_subscriber import Subscriber
+from driver_publisher import Publisher
 from driver_harness import Harness
 from driver import SmoothieDriver
 
