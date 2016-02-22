@@ -8,6 +8,7 @@ TODO:
 import driver
 import sys
 import datetime
+import copy
 
 class Harness(object):
 
@@ -88,6 +89,7 @@ class Harness(object):
 		"""
 		print(datetime.datetime.now(),' - driver_harness.callbacks:')
 		print('\targs:',locals())
+		return_dict = 
 		self._publisher.publish(from_,from_,session_id,'driver',name,'callbacks',self.driver_dict[name].callbacks())
 		return copy.deepcopy(self.driver_dict[name].callbacks())
 
@@ -99,8 +101,9 @@ class Harness(object):
 		"""
 		print(datetime.datetime.now(),' - driver_harness.meta_callbacks:')
 		print('\targs:',locals())
-		self._publisher.publish(from_,from_,session_id,'driver',name,'meta_callbacks',self.driver_dict[name].meta_callbacks())
-		return copy.deepcopy(self.driver_dict[name].meta_callbacks)
+		return_dict = self.driver_dict[name].meta_callbacks()
+		self._publisher.publish(from_,from_,session_id,'driver',name,'meta_callbacks',return_dict)
+		return return_dict
 
 
 	def set_meta_callback(self, from_, session_id, name, param):
@@ -198,8 +201,9 @@ class Harness(object):
 		"""
 		print(datetime.datetime.now(),' - driver_harness.meta_commands:')
 		print('\targs:',locals())
-		self._publisher.publish(from_,from_,session_id,'driver',name,'meta_commands',copy.deepcopy(self.meta_dict))
-		return copy.deepcopy(self.meta_dict)
+		return_dict = copy.deepcopy(self.meta_dict)
+		self._publisher.publish(from_,from_,session_id,'driver',name,'meta_commands',return_dict)
+		return return_dict
 
 
 	def configs(self, from_, session_id, name, param):
@@ -223,7 +227,9 @@ class Harness(object):
 		print('\targs:',locals())
 		if isinstance(param,dict):
 			self.driver_dict.get(name).set_config(list(param)[0],list(param.values)[0])
-		self._publisher.publish(from_,from_,session_id,'driver',name,'configs',self.driver_dict.get(name).configs())
+		return_dict = self.driver_dict.get(name).configs()
+		self._publisher.publish(from_,from_,session_id,'driver',name,'configs',return_dict)
+		return return_dict
 
 
 	def meta_command(self, from_, session_id, data):
