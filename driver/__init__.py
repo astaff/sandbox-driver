@@ -1,1 +1,1 @@
-from .gears import SmoothieDriver, OpenTronsDriver
+from .driver import SmoothieDriver, OpenTronsDriver

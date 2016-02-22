@@ -12,14 +12,14 @@ class Publisher:
     def __init__(self, session=None):
         """
         """
-        print(datetime.datetime.now(),' - publisher.__init__:')
-        print('\tsession: ',session)
+        print(datetime.datetime.now(),' - driver_publisher.__init__:')
+        print('\targs:',locals())
         
         self.topic = {
             'frontend' : 'com.opentrons.frontend',
             'driver' : 'com.opentrons.driver',
             'labware' : 'com.opentrons.labware',
-            'bootloader' : 'com.opentrons.bootloader'
+            'bootstrapper' : 'com.opentrons.bootstrapper'
         }
 
         self.clients = {
@@ -36,8 +36,8 @@ class Publisher:
 
 
     def handshake(self, data):
-        print(datetime.datetime.now(),' - publisher.handshake:')
-        print('\tdata: ',data)
+        print(datetime.datetime.now(),' - driver_publisher.handshake:')
+        print('\targs:',locals())
 
         data_dict = json.loads(data)
         if isinstance(data_dict, dict):
@@ -77,48 +77,43 @@ class Publisher:
     def gen_client_id(self):
         ret_id = ''
         if len(self.clients) > self.max_clients:
-            self.publish( 'frontend', '' , 'handshake' , 'driver' , 'result' , 'fail' )
+            self.publish( 'frontend', '' , '' , 'handshake' , 'driver' , 'result' , 'fail' )
         else:
             client_id = str(uuid.uuid4())
             self.clients[client_id] = 'com.opentrons.'+client_id
-            self.publish( 'frontend' , client_id , 'handshake' , 'driver' , 'result' , 'success' )
+            self.publish( 'frontend' , client_id , client_id , 'handshake' , 'driver' , 'result' , 'success' )
             ret_id = client_id
         return ret_id
 
 
-    def client_check(self, id_):
+    def client_check(self, id_, session_id):
         if id_ in self.clients:
             return True
         else:
             return False
 
 
-    def publish_client_ids(self, id_):
+    def publish_client_ids(self, id_, session_id):
         if id_ in self.clients:
-            self.publish( id_ , id_ , 'handshake' , 'driver' , 'ids' , list(self.clients) )
+            self.publish( id_ , id_ , session_id, 'handshake' , 'driver' , 'ids' , list(self.clients) )
         else:
-            self.publish( 'frontend' , '' , 'handshake' , 'driver' , 'ids' , list(self.clients) )
+            self.publish( 'frontend' , '' , session_id, 'handshake' , 'driver' , 'ids' , list(self.clients) )
         return list(self.clients)
 
 
     def set_caller(self, session):
         """
         """
-        print(datetime.datetime.now(),' - publisher.set_caller:')
-        print('\tsession: ',session)
+        print(datetime.datetime.now(),' - driver_publisher.set_caller:')
+        print('\targs:',locals())
         self.caller = session
 
 
-    def publish(self,topic,to,type_,name,message,param):
+    def publish(self,topic,to,session_id,type_,name,message,param):
         """
         """
-        print(datetime.datetime.now(),' - publisher.publish:')
-        print('\ttopic: ',topic)
-        print('\tto: ',to)
-        print('\ttype_: ',type_)
-        print('\tname: ',name)
-        print('\tmessage: ',message)
-        print('\tparam: ',param)
+        print(datetime.datetime.now(),' - driver_publisher.publish:')
+        print('\targs:',locals())
         if self.caller is not None and topic is not None and type_ is not None:
             if name is None:
                 name = 'None'
@@ -128,7 +123,7 @@ class Publisher:
                 param = ''
             if self.caller is not None:
                 if self.caller._myAppSession is not None:
-                    msg = {'type':type_,'to':to,'from':self.id,'data':{'name':name,'message':{message:param}}}
+                    msg = {'type':type_,'to':to,'from':self.id,'sessionID':session_id,'data':{'name':name,'message':{message:param}}}
                     try:
                         if topic in self.topic:
                             print('TOPIC: ',self.topic)
