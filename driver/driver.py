@@ -122,7 +122,7 @@ class SmoothieDriver(object):
 
 
 
-	def __init__(self, simulate=False):
+	def __init__(self, simulate=True):
 		"""
 		"""
 		print(datetime.datetime.now(),' - driver.__init__:')
