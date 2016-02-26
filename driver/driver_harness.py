@@ -158,7 +158,7 @@ class Harness(object):
 		print(datetime.datetime.now(),' - driver_harness.clear_queue:')
 		print('\targs:',locals())
 		self.driver_dict.get(name).clear_queue()
-		self.flow(name,session_id,name,None)
+		self.flow(from_,session_id,name,None)
 
 
 	def connect(self, from_, session_id, name, param):
@@ -170,7 +170,7 @@ class Harness(object):
 		print('\targs:',locals())
 		print('self.driver_dict: ',self.driver_dict)
 		print('self.driver_dict[',name,']: ',self.driver_dict[name])
-		self.driver_dict[name].connect()	# <--- This should lead to on_connection_made callback
+		self.driver_dict[name].connect(from_,session_id)	# <--- This should lead to on_connection_made callback
 
 
 	def disconnect(self, from_, name, param):
@@ -180,7 +180,7 @@ class Harness(object):
 		"""
 		print(datetime.datetime.now(),' - driver_harness.disconnect:')
 		print('\targs:',locals())
-		self.driver_dict.get(name).disconnect()	# <--- This should lead to on_connection_lost callback
+		self.driver_dict.get(name).disconnect(from_,session_id)	# <--- This should lead to on_connection_lost callback
 
 
 	def commands(self, from_, session_id, name, param):

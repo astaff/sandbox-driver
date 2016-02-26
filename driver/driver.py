@@ -360,7 +360,7 @@ class SmoothieDriver(object):
 		self.state_dict['ack_ready'] = True
 
 	
-	def connect(self, device=None, port=None, from_, session_id):
+	def connect(self, from_, session_id, device=None, port=None):
 		"""
 		"""
 		print(datetime.datetime.now(),' - driver.connect called:')
