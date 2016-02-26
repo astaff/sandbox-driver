@@ -660,7 +660,7 @@ class SmoothieDriver(object):
 			text_data = str_datum
 
 			if self.config_dict['ack_received_message'] in str_datum:
-			self.ack_received = True
+				self.ack_received = True
 
 			if str_datum.find('{')>=0:
 				json_data = str_datum[str_datum.find('{'):].replace('\n','').replace('\r','')
