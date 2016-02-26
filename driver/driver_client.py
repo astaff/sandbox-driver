@@ -121,7 +121,7 @@ if __name__ == '__main__':
 
         # INSTANTIATE DRIVERS:
         print('*\t*\t* instantiate drivers\t*\t*\t*')
-        smoothie_driver = SmoothieDriver(publisher.id,False)
+        smoothie_driver = SmoothieDriver(False)
 
 
         # ADD DRIVERS TO HARNESS 

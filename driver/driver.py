@@ -122,11 +122,11 @@ class SmoothieDriver(object):
 
 
 
-	def __init__(self, session_id, simulate=True):
+	def __init__(self, simulate=True):
 		"""
 		"""
 		print(datetime.datetime.now(),' - driver.__init__:')
-		print('\tsimulate: ',simulate)
+		print('\n\targs: ',locals(),'\n')
 		self.simulation = simulate
 		self.the_loop = asyncio.get_event_loop()
 		self.command_queue = []
@@ -281,8 +281,7 @@ class SmoothieDriver(object):
 		"""
 		"""
 		print(datetime.datetime.now(),' - driver.set_config:')
-		print('\tconfig: ',config)
-		print('\tsetting: ',setting)
+		print('\n\targs: ',locals(),'\n')
 		if config in self.config_dict:
 			self.config_dict[config] = setting
 		return self.configs()
@@ -308,8 +307,7 @@ class SmoothieDriver(object):
 		name should correspond 
 		"""
 		print(datetime.datetime.now(),' - driver.set_meta_callback:')
-		print('\tname: ',name)
-		print('\tcallback: ',callback)
+		print('\n\targs: ',locals(),'\n')
 		if name in self.meta_callbacks_dict and isinstance(callback, Callable):
 			self.meta_callbacks_dict[name] = callback
 		else:
@@ -321,8 +319,7 @@ class SmoothieDriver(object):
 		"""
 		"""
 		print(datetime.datetime.now(),' - driver.add_callback:')
-		print('\tcallback: ',callback)
-		print('\tmessages: ',messages)
+		print('\n\targs: ',locals(),'\n')
 		if callback.__name__ not in list(self.callbacks_dict):
 			if isinstance(messages, list):
 				self.callbacks_dict[callback.__name__] = {'callback':callback, 'messages':messages}
@@ -333,14 +330,16 @@ class SmoothieDriver(object):
 				self.callbacks_dict[callback.__name__]['messages'].extend(messages)
 			else:
 				self.callbacks_dict[callback.__name__]['messages'].append(messages)
+		return self.callbacks()
 
 
 	def remove_callback(self, callback_name):
 		"""
 		"""
 		print(datetime.datetime.now(),' - driver.remove_callback')
-		print('\tcallback_name: ',callback_name)
+		print('\n\targs: ',locals(),'\n')
 		del self.callbacks_dict[callback_name]
+		return self.callbacks()
 
 
 	def flow(self):
@@ -358,6 +357,7 @@ class SmoothieDriver(object):
 		self.state_dict['queue_size'] = len(self.command_queue)
 		self.state_dict['ack_received'] = True
 		self.state_dict['ack_ready'] = True
+		return self.flow()
 
 	
 	def connect(self, from_, session_id, device=None, port=None):
@@ -396,6 +396,7 @@ class SmoothieDriver(object):
 		"""
 		"""
 		print(datetime.datetime.now(),' - driver.disconnect')
+		print('\n\targs: ',locals(),'\n')
 		self.disconnected_info = {'from':from_,'session_id':session_id}
 		self.smoothie_transport.close()
 
@@ -431,8 +432,7 @@ class SmoothieDriver(object):
 			self.state_dict['ack_received'] = False
 			self.state_dict['ack_ready'] = False  # needs to be set here because not ready message from device takes too long, ack_received already received
 			self.lock_check()
-			self.current_info['session_id'] = message['session_id']
-			self.current_info['from'] = message['from']
+			self.current_info = {'session_id':message['session_id'],'from':message['from']}
 			self.smoothie_transport.write(message['command'].encode())
 			#self.smoothie_streamwriter.drain()
 		else:
@@ -475,12 +475,11 @@ class SmoothieDriver(object):
 					self.meta_callbacks_dict['on_empty_queue'](self.current_info['from'],self.current_info['session_id'])
 			else:
 				self.send(self.command_queue.pop(0))
-				#self.state_dict['queue_size'] = len(self.command_queue)
 
 
 	def _format_text_data(self, text_data):
 		print(datetime.datetime.now(),' - driver._format_text_data:')
-		print('\ttext_data: ',text_data)
+		print('\n\targs: ',locals(),'\n')
 		return_list = []
 		remainder_data = text_data
 		while remainder_data.find(',')>=0:
@@ -494,7 +493,7 @@ class SmoothieDriver(object):
 
 	def _format_group(self, group_data):
 		print(datetime.datetime.now(),' - driver._format_group:')
-		print('\tgroup_data: ',group_data)
+		print('\n\targs: ',locals(),'\n')
 		return_dict = dict()
 		remainder_data = group_data
 		if remainder_data.find(':')>=0:
@@ -523,7 +522,7 @@ class SmoothieDriver(object):
 		#
 		#
 		print(datetime.datetime.now(),' - driver._format_json_data:')
-		print('\tjson_data: ',json_data)
+		print('\n\targs: ',locals(),'\n')
 		return_list = []
 		for name, value in json_data.items():
 			if isinstance(value, dict):
@@ -561,7 +560,7 @@ class SmoothieDriver(object):
 
 	def _process_message_dict(self, message_dict):
 		print(datetime.datetime.now(),' - driver._process_message_dict:')
-		print('\tmessage_dict: ',message_dict)
+		print('\n\targs: ',locals(),'\n')
 
 		# First, pass messages to their respective callbacks based on callbacks and messages they're registered to receive
 		#
@@ -578,12 +577,11 @@ class SmoothieDriver(object):
 		#	---->  value = { X:<f>, Y:<f>, Z:<f>, A:<f>, B:<f> } 
 		#
 		#
-
 		for name_message, value in message_dict.items():
 
 			for callback_name, callback in self.callbacks_dict.items():
 				if name_message in callback['messages']:
-					callback['callback'](self.state_dict['name'], current_info['from'], current_info['session_id'], value)
+					callback['callback'](self.state_dict['name'], self.current_info['from'], self.current_info['session_id'], value)
 
 
 		# second, check if ack_received confirmation
