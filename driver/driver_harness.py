@@ -56,7 +56,10 @@ class Harness(object):
 		return_list = list(self.driver_dict)
 		if name is None:
 			name = 'None'
-		self._publisher.publish(from_,from_,session_id,'driver',name,'drivers',return_list)
+		if from_ == "":
+			self._publisher.publish('frontend',from_,session_id,'driver',name,'drivers',return_list)
+		else:
+			self._publisher.publish(from_,from_,session_id,'driver',name,'drivers',return_list)
 		return return_list
 
 
@@ -73,6 +76,7 @@ class Harness(object):
 			self._publisher.publish('frontend',from_,session_id,'driver',name,'drivers',return_list)
 		else:
 			self._publisher.publish(from_,from_,session_id,'driver',name,'drivers',return_list)
+		return return_list
 
 
 	def remove_driver(self, from_, session_id, name, param):
@@ -98,7 +102,6 @@ class Harness(object):
 		print(datetime.datetime.now(),' - driver_harness.callbacks:')
 		print('\n\targs: ',locals(),'\n')
 		return_dict = self.driver_dict[name].callbacks()
-		self._publisher.publish(from_,from_,session_id,'driver',name,'callbacks',return_dict)
 		if from_ == "":
 			self._publisher.publish('frontend',from_,session_id,'driver',name,'callbacks',return_dict)
 		else:
@@ -129,7 +132,7 @@ class Harness(object):
 			return_dict = self.driver_dict.get(name).set_meta_callback(list(param)[0],list(param.values())[0])
 		else:
 			return_dict = self.driver_dict.get(name).meta_callbacks()
-		self._publisher.publish(from_,from_,session_id,'driver',name,'meta_callback',self.driver_dict.get(name).meta_callbacks())
+		self._publisher.publish(from_,from_,session_id,'driver',name,'meta_callback',return_dict)
 		return return_dict
 
 
@@ -140,8 +143,11 @@ class Harness(object):
 		"""
 		print(datetime.datetime.now(),' - driver_harness.add_callback:')
 		print('\n\targs: ',locals(),'\n')
-		self.driver_dict[name].add_callback(list(param)[0],list(param.values())[0])
-		self._publisher.publish(from_,from_,session_id,'driver',name,'callbacks',self.driver_dict.get(name).callbacks())
+		return_dict = self.driver_dict.get(name).add_callback(list(param)[0],list(param.values())[0])
+		if from_ == "":
+			self._publisher.publish('frontend',from_,session_id,'driver',name,'callbacks',return_dict)
+		else:
+			self._publisher.publish(from_,from_,session_id,'driver',name,'callbacks',return_dict)
 
 
 	def remove_callback(self, from_, session_id, name, param):
@@ -168,7 +174,7 @@ class Harness(object):
 		print('\n\targs: ',locals(),'\n')
 		return_dict = self.driver_dict.get(name).flow()
 		if from_ == "":
-			self._publisher.publish(from_,from_,session_id,'driver',name,'flow',return_dict)
+			self._publisher.publish('frontend',from_,session_id,'driver',name,'flow',return_dict)
 		else:
 			self._publisher.publish(from_,from_,session_id,'driver',name,'flow',return_dict)
 		return return_dict
@@ -181,9 +187,12 @@ class Harness(object):
 		"""
 		print(datetime.datetime.now(),' - driver_harness.clear_queue:')
 		print('\n\targs: ',locals(),'\n')
-		self.driver_dict.get(name).clear_queue()
 		return_dict = self.driver_dict.get(name).clear_queue()
-		self._publisher.publish(from_,from_,session_id,'labware',name,'clear_queue',return_dict)
+		if from_ == "":
+			self._publisher.publish('frontend',from_,session_id,'labware',name,'clear_queue',return_dict)
+		else:
+			self._publisher.publish(from_,from_,session_id,'labware',name,'clear_queue',return_dict)
+		return return_dict
 
 
 	def connect(self, from_, session_id, name, param):
@@ -347,7 +356,7 @@ class Harness(object):
 			'message': <string> or { message : {param:values} } <--- the part the driver cares about
 		}
 		"""
-		print('driver_harness.send_command:')
+		print(datetime.datetime.now(),' - driver_harness.send_command:')
 		print('\n\targs: ',locals(),'\n')
 		if isinstance(data, dict):
 			name = data['name']
