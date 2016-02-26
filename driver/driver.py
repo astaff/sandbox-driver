@@ -135,7 +135,7 @@ class SmoothieDriver(object):
 		self.smoothie_transport = None
 		self.the_loop = None
 
-		self.current_info = {'current_id':"",'from':""}
+		self.current_info = {'session_id':"",'from':""}
 		self.connected_info = {'session_id':"",'from':""}
 		self.disconnected_info = {'session_id':"",'from':""}
 
@@ -642,7 +642,7 @@ class SmoothieDriver(object):
 		print(datetime.datetime.now(),' - driver._on_raw_data:')
 		print('\n\targs: ',locals(),'\n')
 		if isinstance(self.meta_callbacks_dict['on_raw_data'],Callable):
-			self.meta_callbacks_dict['on_raw_data'](current_info['from'],current_info['session_id'],data)
+			self.meta_callbacks_dict['on_raw_data'](self.current_info['from'],self.current_info['session_id'],data)
 
 
 	def _smoothie_data_handler(self, datum):
