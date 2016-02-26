@@ -709,7 +709,7 @@ class SmoothieDriver(object):
 
 		"""
 		print(datetime.datetime.now(),' - driver.send_command:')
-		print('\tdata: ',data)
+		print('\n\targs: ',locals(),'\n')
 		command_text = ""
 
 		# data in form 1

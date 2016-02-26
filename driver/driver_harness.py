@@ -53,10 +53,11 @@ class Harness(object):
 		"""
 		print(datetime.datetime.now(),'- driver_harness.drivers:')
 		print('\n\targs: ',locals(),'\n')
+		return_list = list(self.driver_dict)
 		if name is None:
 			name = 'None'
-		self._publisher.publish(from_,from_,session_id,'driver',name,'drivers',list(self.driver_dict))
-		return list(self.driver_dict)
+		self._publisher.publish(from_,from_,session_id,'driver',name,'drivers',return_list)
+		return return_list
 
 
 	def add_driver(self, from_, session_id, name, param):
@@ -67,7 +68,11 @@ class Harness(object):
 		print(datetime.datetime.now(),' - driver_harness.add_driver:')
 		print('\n\targs: ',locals(),'\n')
 		self.driver_dict[name] = param
-		self.drivers(from_,session_id,name,param)
+		return_list = list(self.drivers_dict)
+		if from_ == "":
+			self._publisher.publish('frontend',from_,session_id,'driver',name,'drivers',return_list)
+		else:
+			self._publisher.publish(from_,from_,session_id,'driver',name,'drivers',return_list)
 
 
 	def remove_driver(self, from_, session_id, name, param):
@@ -78,8 +83,11 @@ class Harness(object):
 		print(datetime.datetime.now(),' - driver_harness.remove_driver:')
 		print('\n\targs: ',locals(),'\n')
 		del self.driver_dict[name]
-		self.drivers(from_,session_id,name,param)
-
+		return_list = list(self.drivers_dict)
+		if from_ == "":
+			self._publisher.publish('frontend',from_,session_id,'driver',name,'drivers',return_list)
+		else:
+			self._publisher.publish(from_,from_,session_id,'driver',name,'drivers',return_list)
 
 
 	def callbacks(self, from_, session_id, name, param):
@@ -91,6 +99,10 @@ class Harness(object):
 		print('\n\targs: ',locals(),'\n')
 		return_dict = self.driver_dict[name].callbacks()
 		self._publisher.publish(from_,from_,session_id,'driver',name,'callbacks',return_dict)
+		if from_ == "":
+			self._publisher.publish('frontend',from_,session_id,'driver',name,'callbacks',return_dict)
+		else:
+			self._publisher.publish(from_,from_,session_id,'driver',name,'callbacks',return_dict)
 		return return_dict
 
 
@@ -114,8 +126,11 @@ class Harness(object):
 		print(datetime.datetime.now(),' - driver_harness.set_meta_callback:')
 		print('\n\targs: ',locals(),'\n')
 		if isinstance(param,dict):
-			self.driver_dict.get(name).set_meta_callback(list(param)[0],list(param.values())[0])
+			return_dict = self.driver_dict.get(name).set_meta_callback(list(param)[0],list(param.values())[0])
+		else:
+			return_dict = self.driver_dict.get(name).meta_callbacks()
 		self._publisher.publish(from_,from_,session_id,'driver',name,'meta_callback',self.driver_dict.get(name).meta_callbacks())
+		return return_dict
 
 
 	def add_callback(self, from_, session_id, name, param):
@@ -136,8 +151,12 @@ class Harness(object):
 		"""
 		print(datetime.datetime.now(),' - driver_harness.remove_callback:')
 		print('\n\targs: ',locals(),'\n')
-		self.driver_dict[name].remove_callback(param)
-		self._publisher.publish(form_,from_,session_id,'driver',name,'callbacks',self.driver_dict.get(name).callbacks())
+		return_dict = self.driver_dict[name].remove_callback(param)
+		if from_ == "":
+			self._publisher.publish('frontend',from_,session_id,'driver',name,'callbacks',return_dict)
+		else:
+			self._publisher.publish(from_,from_,session_id,'driver',name,'callbacks',return_dict)
+		return return_dict
 
 
 	def flow(self, from_, session_id, name, param):
@@ -147,7 +166,12 @@ class Harness(object):
 		"""
 		print(datetime.datetime.now(),' - driver_harness.flow:')
 		print('\n\targs: ',locals(),'\n')
-		self._publisher.publish(from_,from_,session_id,'driver',name,'flow',self.driver_dict.get(name).flow())
+		return_dict = self.driver_dict.get(name).flow()
+		if from_ == "":
+			self._publisher.publish(from_,from_,session_id,'driver',name,'flow',return_dict)
+		else:
+			self._publisher.publish(from_,from_,session_id,'driver',name,'flow',return_dict)
+		return return_dict
 
 
 	def clear_queue(self, from_, session_id, name, param):
@@ -158,7 +182,8 @@ class Harness(object):
 		print(datetime.datetime.now(),' - driver_harness.clear_queue:')
 		print('\n\targs: ',locals(),'\n')
 		self.driver_dict.get(name).clear_queue()
-		self.flow(from_,session_id,name,None)
+		return_dict = self.driver_dict.get(name).clear_queue()
+		self._publisher.publish(from_,from_,session_id,'labware',name,'clear_queue',return_dict)
 
 
 	def connect(self, from_, session_id, name, param):
@@ -190,8 +215,9 @@ class Harness(object):
 		"""
 		print(datetime.datetime.now(),' - driver_harness.commands:')
 		print('\n\targs: ',locals(),'\n')
-		self._publisher.publish(from_,from_,session_id,'driver',name,'commands',self.driver_dict.get(name).commands())
-		return self.driver_dict.get(name).commands()
+		return_dict = self.driver_dict.get(name).commands()
+		self._publisher.publish(from_,from_,session_id,'driver',name,'commands',return_dict)
+		return return_dict
 
 
 	def meta_commands(self, from_, session_id, name, param):
@@ -202,7 +228,10 @@ class Harness(object):
 		print(datetime.datetime.now(),' - driver_harness.meta_commands:')
 		print('\n\targs: ',locals(),'\n')
 		return_dict = copy.deepcopy(self.meta_dict)
-		self._publisher.publish(from_,from_,session_id,'driver',name,'meta_commands',return_dict)
+		if from_ == "":
+			self._publisher.publish('frontend',from_,session_id,'driver',name,'meta_commands',return_dict)
+		else:
+			self._publisher.publish(from_,from_,session_id,'driver',name,'meta_commands',return_dict)
 		return return_dict
 
 
@@ -214,7 +243,10 @@ class Harness(object):
 		print(datetime.datetime.now(),' - driver_harness.configs:')
 		print('\n\targs: ',locals(),'\n')
 		return_dict = self.driver_dict.get(name).configs()
-		self._publisher.publish(from_,from_,session_id,'driver',name,'configs',return_dict)
+		if from_ == "":
+			self._publisher.publish('frontend',from_,session_id,'driver',name,'configs',return_dict)
+		else:
+			self._publisher.publish(from_,from_,session_id,'driver',name,'configs',return_dict)
 		return return_dict
 
 
@@ -228,7 +260,10 @@ class Harness(object):
 		if isinstance(param,dict):
 			self.driver_dict.get(name).set_config(list(param)[0],list(param.values)[0])
 		return_dict = self.driver_dict.get(name).configs()
-		self._publisher.publish(from_,from_,session_id,'driver',name,'configs',return_dict)
+		if from_ == "":
+			self._publisher.publish('frontend',from_,session_id,'driver',name,'configs',return_dict)
+		else:
+			self._publisher.publish(from_,from_,session_id,'driver',name,'configs',return_dict)
 		return return_dict
 
 
@@ -239,9 +274,7 @@ class Harness(object):
 
 		{
 			'name': name,
-
 			'message': value
-
 		}
 
 		where name the name of the driver or None if n/a,
@@ -267,14 +300,20 @@ class Harness(object):
 					try:
 						self.meta_dict[command](from_,session_id,name,params)
 					except:
-						self._publisher.publish(from_,from_,session_id,'driver',name,'error',sys.exc_info())
+						if from_ == "":
+							self._publisher.publish('frontend',from_,session_id,'driver',name,'error',sys.exc_info())
+						else:
+							self._publisher.publish(from_,from_,session_id,'driver',name,'error',sys.exc_info())
 						print(datetime.datetime.now(),' - meta_command error: ',sys.exc_info())
 				elif isinstance(value, str):
 					command = value
 					try:
 						self.meta_dict[command](from_,session_id,name,None)
 					except:
-						self._publisher.publish(from_,from_,session_id,'driver',name,'error',sys.exc_info())
+						if from_ == "":
+							self._publisher.publish('frontend',from_,session_id,'driver',name,'error',sys.exc_info())
+						else:
+							self._publisher.publish(from_,from_,session_id,'driver',name,'error',sys.exc_info())
 						print(datetime.datetime.now(),' - meta_command error: ',sys.exc_info())
 			else:
 				if isinstance(value, dict):
@@ -283,14 +322,20 @@ class Harness(object):
 					try:
 						self.meta_dict[command](from_,session_id,None, params)
 					except:
-						self._publisher.publish(from_,from_,session_id,'driver',name,'error',sys.exc_info())
+						if from_ == "":
+							self._publisher.publish('frontend',from_,session_id,'driver',name,'error',sys.exc_info())
+						else:
+							self._publisher.publish(from_,from_,session_id,'driver',name,'error',sys.exc_info())
 						print(datetime.datetime.now(),' - meta_command error, name not in drivers: ',sys.exc_info())
 				elif isinstance(value, str):
 					command = value
 					try:
 						self.meta_dict[command](from_,session_id,None,None)
 					except:
-						self._publisher.publish(from_,from_,session_id,'driver','None','error',sys.exc_info())
+						if from_ == "":
+							self._publisher.publish('frontend',from_,session_id,'driver','None','error',sys.exc_info())
+						else:
+							self._publisher.publish(from_,from_,session_id,'driver','None','error',sys.exc_info())
 						print(datetime.datetime.now(),' - meta_command error, name not in drivers: ',sys.exc_info())
 
 
@@ -311,11 +356,17 @@ class Harness(object):
 				try:
 					self.driver_dict[name].send_command(from_, session_id, value)
 				except:
-					self._publisher.publish(session_id,session_id,session_id,'driver',name,'error',sys.exc_info()[0])
+					if from_ == "":
+						self._publisher.publish('frontend',from_,session_id,'driver',name,'error',sys.exc_info())
+					else:
+						self._publisher.publish(from_,from_,session_id,'driver',name,'error',sys.exc_info())
 					print(datetime.datetime.now(),' - send_command error: '+sys.exc_info()[0])
 			else:
-				self._publisher.publish(session_id,session_id,session_id,'driver','None','error',sys.exc_info()[0])
-				print(datetime.datetime.now(),' - send_command_error, name not in drivers: '+sys.exc_info()[0])
+				if from_ == "":
+					self._publisher.publish('frontend',from_,session_id,'driver','None','error',sys.exc_info())
+				else:
+					self._publisher.publish(from_,from_,session_id,'driver','None','error',sys.exc_info())
+				print(datetime.datetime.now(),' - send_command_error, name not in drivers: '+sys.exc_info())
 
 
 
