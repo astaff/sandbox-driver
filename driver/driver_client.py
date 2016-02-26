@@ -185,10 +185,10 @@ if __name__ == '__main__':
             publisher.publish(from_,from_,session_id,'raw','driver','data',data)
 
 
-        labware_harness.set_meta_callback(publisher.id,'','driver',{'on_connect':on_connect})
-        labware_harness.set_meta_callback(publisher.id,'','driver',{'on_disconnect':on_disconnect})
-        labware_harness.set_meta_callback(publisher.id,'','driver',{'on_empty_queue':on_empty_queue})
-        labware_harness.set_meta_callback(publisher.id,'','driver',{'on_raw_data':on_raw_data})
+        driver_harness.set_meta_callback(publisher.id,'','driver',{'on_connect':on_connect})
+        driver_harness.set_meta_callback(publisher.id,'','driver',{'on_disconnect':on_disconnect})
+        driver_harness.set_meta_callback(publisher.id,'','driver',{'on_empty_queue':on_empty_queue})
+        driver_harness.set_meta_callback(publisher.id,'','driver',{'on_raw_data':on_raw_data})
 
         # CONNECT TO DRIVERS:
         print('*\t*\t* connect to drivers\t*\t*\t*')
