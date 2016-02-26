@@ -369,7 +369,7 @@ class Harness(object):
 						self._publisher.publish('frontend',from_,session_id,'driver',name,'error',sys.exc_info())
 					else:
 						self._publisher.publish(from_,from_,session_id,'driver',name,'error',sys.exc_info())
-					print(datetime.datetime.now(),' - send_command error: '+sys.exc_info()[0])
+					print(datetime.datetime.now(),' - send_command error: '+sys.exc_info())
 			else:
 				if from_ == "":
 					self._publisher.publish('frontend',from_,session_id,'driver','None','error',sys.exc_info())
