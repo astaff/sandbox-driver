@@ -578,7 +578,6 @@ class SmoothieDriver(object):
 		#
 		#
 		for name_message, value in message_dict.items():
-
 			for callback_name, callback in self.callbacks_dict.items():
 				if name_message in callback['messages']:
 					callback['callback'](self.state_dict['name'], self.current_info['from'], self.current_info['session_id'], value)
@@ -648,18 +647,24 @@ class SmoothieDriver(object):
 
 	def _smoothie_data_handler(self, datum):
 		"""Handles incoming data from Smoothieboard that has already been split by delimiter
-
 		"""
-		print(datetime.datetime.now(),' - driver._smoothie_data_handler')
+		print(datetime.datetime.now(),' - driver._smoothie_data_handler:')
+		print('\n\targs: ',locals(),'\n')
 		json_data = ""
-		text_data = datum
+		text_data = ""
 
-		if self.config_dict['ack_received_message'] in datum:
+		if isinstance(datum,dict):
+			json_data = json.dumps(datum)
+		else:
+			str_datum = str(datum)
+			text_data = str_datum
+
+			if self.config_dict['ack_received_message'] in str_datum:
 			self.ack_received = True
 
-		if datum.find('{')>=0:
-			json_data = datum[datum.find('{'):].replace('\n','').replace('\r','')
-			text_data = datum[:datum.index('{')]
+			if str_datum.find('{')>=0:
+				json_data = str_datum[str_datum.find('{'):].replace('\n','').replace('\r','')
+				text_data = str_datum[:str_datum.index('{')]
 
 		if text_data != "":
 			print('\ttext_data: ',text_data)
