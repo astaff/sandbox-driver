@@ -122,7 +122,7 @@ class SmoothieDriver(object):
 
 
 
-	def __init__(self, simulate=True, session_id):
+	def __init__(self, session_id, simulate=True):
 		"""
 		"""
 		print(datetime.datetime.now(),' - driver.__init__:')
@@ -603,7 +603,7 @@ class SmoothieDriver(object):
 						self.state_dict['ack_received'] = True
 
 
-		# finally, check if ack_ready confirmation
+		# third, check if ack_ready confirmation
 		if self.config_dict['ack_ready_message'] in list(message_dict) or self.config_dict['ack_ready_message'] is None:
 			value = message_dict.get(self.config_dict['ack_ready_message'])
 			if isinstance(value, dict):
