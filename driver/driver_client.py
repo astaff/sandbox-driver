@@ -142,7 +142,7 @@ if __name__ == '__main__':
             """
             """
             print(datetime.datetime.now(),' - driver_client.none:')
-            print('\targs: ',locals())
+            print('\n\targs: ',locals(),'\n')
             dd_name = list(data_dict)[0]
             dd_value = data_dict[dd_name]
             publisher.publish('frontend',from_,session_id,'driver',name,list(data_dict)[0],dd_value)
@@ -153,7 +153,7 @@ if __name__ == '__main__':
             """
             """
             print(datetime.datetime.now(),' - driver_client.positions:')
-            print('\targs: ',locals())
+            print('\n\targs: ',locals(),'\n')
             dd_name = list(data_dict)[0]
             dd_value = data_dict[dd_name]
             publisher.publish('frontend',from_,session_id,'driver',name,list(data_dict)[0],dd_value)

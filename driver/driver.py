@@ -364,7 +364,7 @@ class SmoothieDriver(object):
 		"""
 		"""
 		print(datetime.datetime.now(),' - driver.connect called:')
-		print('\targs: ',locals())
+		print('\n\targs: ',locals(),'\n')
 		self.connected_info = {'from':from_,'session_id':session_id}
 		self.the_loop = asyncio.get_event_loop()
 		#asyncio.async(serial.aio.create_serial_connection(self.the_loop, Output, '/dev/ttyUSB0', baudrate=115200))
@@ -418,7 +418,7 @@ class SmoothieDriver(object):
 
 	def send(self, message):
 		print(datetime.datetime.now(),' - driver.send:')
-		print('\targs: ',locals())
+		print('\n\targs: ',locals(),'\n')
 		self.state_dict['queue_size'] = len(self.command_queue)
 		message = message + self.config_dict['message_ender']
 		if self.simulation:
@@ -459,7 +459,7 @@ class SmoothieDriver(object):
 
 	def _add_to_command_queue(self, from_, session_id, command):
 		print(datetime.datetime.now(),' - driver._add_to_command_queue:')
-		print('\targs:',locals())
+		print('\n\targs: ',locals(),'\n')
 		cmd = {'session_id':session_id,'from':from_,'command':command}
 		self.command_queue.append(cmd)
 		self.state_dict['queue_size'] = len(self.command_queue)
@@ -643,7 +643,7 @@ class SmoothieDriver(object):
 
 	def _on_raw_data(self, data):
 		print(datetime.datetime.now(),' - driver._on_raw_data:')
-		print('\targs: ',locals())
+		print('\n\targs: ',locals(),'\n')
 		if isinstance(self.meta_callbacks_dict['on_raw_data'],Callable):
 			self.meta_callbacks_dict['on_raw_data'](current_info['from'],current_info['session_id'],data)
 
