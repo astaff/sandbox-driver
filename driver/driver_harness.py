@@ -71,7 +71,7 @@ class Harness(object):
 		print(datetime.datetime.now(),' - driver_harness.add_driver:')
 		print('\n\targs: ',locals(),'\n')
 		self.driver_dict[name] = param
-		return_list = list(self.drivers_dict)
+		return_list = list(self.driver_dict)
 		if from_ == "":
 			self._publisher.publish('frontend',from_,session_id,'driver',name,'drivers',return_list)
 		else:
@@ -87,7 +87,7 @@ class Harness(object):
 		print(datetime.datetime.now(),' - driver_harness.remove_driver:')
 		print('\n\targs: ',locals(),'\n')
 		del self.driver_dict[name]
-		return_list = list(self.drivers_dict)
+		return_list = list(self.driver_dict)
 		if from_ == "":
 			self._publisher.publish('frontend',from_,session_id,'driver',name,'drivers',return_list)
 		else:
