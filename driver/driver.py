@@ -122,7 +122,7 @@ class SmoothieDriver(object):
 
 
 
-	def __init__(self, simulate=True):
+	def __init__(self, simulate=True, session_id):
 		"""
 		"""
 		print(datetime.datetime.now(),' - driver.__init__:')
@@ -134,6 +134,10 @@ class SmoothieDriver(object):
 	
 		self.smoothie_transport = None
 		self.the_loop = None
+
+		self.current_info = {'current_id':"",'from':""}
+		self.connected_info = {'session_id':"",'from':""}
+		self.disconnected_info = {'session_id':"",'from':""}
 
 		self.state_dict = {
 			'name':'smoothie',
@@ -356,12 +360,12 @@ class SmoothieDriver(object):
 		self.state_dict['ack_ready'] = True
 
 	
-	def connect(self, device=None, port=None):
+	def connect(self, device=None, port=None, from_, session_id):
 		"""
 		"""
 		print(datetime.datetime.now(),' - driver.connect called:')
-		print('\tdevice: ',device)
-		print('\tport: ',port)
+		print('\targs: ',locals())
+		self.connected_info = {'from':from_,'session_id':session_id}
 		self.the_loop = asyncio.get_event_loop()
 		#asyncio.async(serial.aio.create_serial_connection(self.the_loop, Output, '/dev/ttyUSB0', baudrate=115200))
 		callbacker = Output(self)
@@ -388,10 +392,11 @@ class SmoothieDriver(object):
 			print(datetime.datetime.now(),' - error:driver.connects\n\r',sys.exc_info())
 			
 
-	def disconnect(self):
+	def disconnect(self, from_, session_id):
 		"""
 		"""
 		print(datetime.datetime.now(),' - driver.disconnect')
+		self.disconnected_info = {'from':from_,'session_id':session_id}
 		self.smoothie_transport.close()
 
 
@@ -413,7 +418,8 @@ class SmoothieDriver(object):
 
 	def send(self, message):
 		print(datetime.datetime.now(),' - driver.send:')
-		print('\tmessage: ',message)
+		print('\targs: ',locals())
+		self.state_dict['queue_size'] = len(self.command_queue)
 		message = message + self.config_dict['message_ender']
 		if self.simulation:
 			self.simulation_queue.append(message)
@@ -425,7 +431,9 @@ class SmoothieDriver(object):
 			self.state_dict['ack_received'] = False
 			self.state_dict['ack_ready'] = False  # needs to be set here because not ready message from device takes too long, ack_received already received
 			self.lock_check()
-			self.smoothie_transport.write(message.encode())
+			self.current_info['session_id'] = message['session_id']
+			self.current_info['from'] = message['from']
+			self.smoothie_transport.write(message['command'].encode())
 			#self.smoothie_streamwriter.drain()
 		else:
 			print(datetime.datetime.now(),' - smoothie_transport is None????')
@@ -449,9 +457,11 @@ class SmoothieDriver(object):
 			return True
 
 
-	def _add_to_command_queue(self, command):
+	def _add_to_command_queue(self, from_, session_id, command):
 		print(datetime.datetime.now(),' - driver._add_to_command_queue:')
-		self.command_queue.append(command)
+		print('\targs:',locals())
+		cmd = {'session_id':session_id,'from':from_,'command':command}
+		self.command_queue.append(cmd)
 		self.state_dict['queue_size'] = len(self.command_queue)
 		self._step_command_queue()
 
@@ -462,10 +472,10 @@ class SmoothieDriver(object):
 		if self.state_dict['locked'] == False:
 			if len(self.command_queue) == 0:
 				if isinstance(self.meta_callbacks_dict['on_empty_queue'],Callable):
-					self.meta_callbacks_dict['on_empty_queue']()
+					self.meta_callbacks_dict['on_empty_queue'](self.current_info['from'],self.current_info['session_id'])
 			else:
 				self.send(self.command_queue.pop(0))
-				self.state_dict['queue_size'] = len(self.command_queue)
+				#self.state_dict['queue_size'] = len(self.command_queue)
 
 
 	def _format_text_data(self, text_data):
@@ -552,7 +562,31 @@ class SmoothieDriver(object):
 	def _process_message_dict(self, message_dict):
 		print(datetime.datetime.now(),' - driver._process_message_dict:')
 		print('\tmessage_dict: ',message_dict)
-		# first, check if ack_received confirmation
+
+		# First, pass messages to their respective callbacks based on callbacks and messages they're registered to receive
+		#
+		# this is done first to keep _step_command_queue() being called elsewhere from screwing up from_ and 
+		# session_id before being done with them
+		# eg:
+		#
+		#	message dict:
+		#	{ 'None':
+		#		{ X:<f>, Y:<f>, Z:<f>, A:<f>, B:<f> } 
+		#	}
+		#
+		#	---->  name_message = 'None'
+		#	---->  value = { X:<f>, Y:<f>, Z:<f>, A:<f>, B:<f> } 
+		#
+		#
+
+		for name_message, value in message_dict.items():
+
+			for callback_name, callback in self.callbacks_dict.items():
+				if name_message in callback['messages']:
+					callback['callback'](self.state_dict['name'], current_info['from'], current_info['session_id'], value)
+
+
+		# second, check if ack_received confirmation
 		if self.config_dict['ack_received_message'] in list(message_dict) or self.config_dict['ack_received_message'] is None:
 			value = message_dict.get(self.config_dict['ack_received_message'])
 			if isinstance(value, dict):
@@ -569,7 +603,7 @@ class SmoothieDriver(object):
 						self.state_dict['ack_received'] = True
 
 
-		# second, check if ack_ready confirmation
+		# finally, check if ack_ready confirmation
 		if self.config_dict['ack_ready_message'] in list(message_dict) or self.config_dict['ack_ready_message'] is None:
 			value = message_dict.get(self.config_dict['ack_ready_message'])
 			if isinstance(value, dict):
@@ -594,27 +628,6 @@ class SmoothieDriver(object):
 					else:
 						self.state_dict['ack_ready'] = False					
 
-
-		# finally, pass messages to their respective callbacks based on callbacks and messages they're registered to receive
-
-		# eg:
-		#
-		#	message dict:
-		#	{ 'None':
-		#		{ X:<f>, Y:<f>, Z:<f>, A:<f>, B:<f> } 
-		#	}
-		#
-		#	---->  name_message = 'None'
-		#	---->  value = { X:<f>, Y:<f>, Z:<f>, A:<f>, B:<f> } 
-		#
-		#
-
-		for name_message, value in message_dict.items():
-
-			for callback_name, callback in self.callbacks_dict.items():
-				if name_message in callback['messages']:
-					callback['callback'](self.state_dict['name'], value)
-
 		self._step_command_queue()
 
 
@@ -625,14 +638,14 @@ class SmoothieDriver(object):
 		self.state_dict['transport'] = True if self.smoothie_transport else False
 		print('*\t*\t* connected!\t*\t*\t*')
 		if isinstance(self.meta_callbacks_dict['on_connect'],Callable):
-			self.meta_callbacks_dict['on_connect']()
+			self.meta_callbacks_dict['on_connect'](self.connected_info['from'],self.connected_info['session_id'])
 
 
 	def _on_raw_data(self, data):
 		print(datetime.datetime.now(),' - driver._on_raw_data:')
-		print('\tdata: ',data)
+		print('\targs: ',locals())
 		if isinstance(self.meta_callbacks_dict['on_raw_data'],Callable):
-			self.meta_callbacks_dict['on_raw_data']()
+			self.meta_callbacks_dict['on_raw_data'](current_info['from'],current_info['session_id'],data)
 
 
 	def _smoothie_data_handler(self, datum):
@@ -674,10 +687,10 @@ class SmoothieDriver(object):
 		self.state_dict['transport'] = True if self.smoothie_transport else False
 		print('*\t*\t* not connected!\t*\t*\t*')
 		if isinstance(self.meta_callbacks_dict['on_disconnect'],Callable):
-			self.meta_callbacks_dict['on_disconnect']()
+			self.meta_callbacks_dict['on_disconnect'](self.disconnected_info['from'],self.disconnected_info['session_id'])
 
 
-	def send_command(self, data):
+	def send_command(self, from_, session_id, data):
 		"""
 
 		data should be in one of 2 forms:
@@ -714,7 +727,7 @@ class SmoothieDriver(object):
 							command_text += str(param)
 							command_text += str(val)
 			
-			self._add_to_command_queue(command_text)
+			self._add_to_command_queue(from_ ,session_id, command_text)
 
 		else:	#check whether command is actually a code in commands dictionary
 			for cmd, dat in self.commands_dict.items():
@@ -729,7 +742,7 @@ class SmoothieDriver(object):
 									command_text += str(param)
 									command_text += str(val)
 
-					self._add_to_command_queue(command_text)
+					self._add_to_command_queue(from_, session_id, command_text)
 					break
 
 		#else:

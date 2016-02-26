@@ -65,7 +65,7 @@ class Harness(object):
 		param: driver object
 		"""
 		print(datetime.datetime.now(),' - driver_harness.add_driver:')
-		print('\targs:',locals())
+		print('\targs: ',locals())
 		self.driver_dict[name] = param
 		self.drivers(from_,session_id,name,param)
 
@@ -309,12 +309,12 @@ class Harness(object):
 			value = data['message']
 			if name in self.driver_dict:
 				try:
-					self.driver_dict[name].send_command(value)
+					self.driver_dict[name].send_command(from_, session_id, value)
 				except:
-					self._publisher.publish(self_,self_,session_id,'driver',name,'error',sys.exc_info()[0])
+					self._publisher.publish(session_id,session_id,session_id,'driver',name,'error',sys.exc_info()[0])
 					print(datetime.datetime.now(),' - send_command error: '+sys.exc_info()[0])
 			else:
-				self._publisher.publish(self_,self_,session_id,'driver','None','error',sys.exc_info()[0])
+				self._publisher.publish(session_id,session_id,session_id,'driver','None','error',sys.exc_info()[0])
 				print(datetime.datetime.now(),' - send_command_error, name not in drivers: '+sys.exc_info()[0])
 
 

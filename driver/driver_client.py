@@ -121,7 +121,7 @@ if __name__ == '__main__':
 
         # INSTANTIATE DRIVERS:
         print('*\t*\t* instantiate drivers\t*\t*\t*')
-        smoothie_driver = SmoothieDriver()
+        smoothie_driver = SmoothieDriver(False, publisher.id)
 
 
         # ADD DRIVERS TO HARNESS 
@@ -138,23 +138,27 @@ if __name__ == '__main__':
         #
         #
         print('*\t*\t* define callbacks\t*\t*\t*')
-        def none(name, data_dict):
+        def none(name, from_, session_id, data_dict):
             """
             """
             print(datetime.datetime.now(),' - driver_client.none:')
-            print('\tdata_dict: ',data_dict)
+            print('\targs: ',locals())
             dd_name = list(data_dict)[0]
             dd_value = data_dict[dd_name]
-            publisher.publish('frontend','','','driver',name,list(data_dict)[0],dd_value)
+            publisher.publish('frontend',from_,session_id,'driver',name,list(data_dict)[0],dd_value)
+            if from_ != session_id:
+                publisher.publish(from_,from_,session_id,'driver',name,list(data_dict)[0],dd_value)
 
-        def positions(name, data_dict):
+        def positions(name, from_, session_id, data_dict):
             """
             """
             print(datetime.datetime.now(),' - driver_client.positions:')
-            print('\tdata_dict: ',data_dict)
+            print('\targs: ',locals())
             dd_name = list(data_dict)[0]
             dd_value = data_dict[dd_name]
-            publisher.publish('frontend','','','driver',name,list(data_dict)[0],dd_value)
+            publisher.publish('frontend',from_,session_id,'driver',name,list(data_dict)[0],dd_value)
+            if from_ != session_id:
+                publisher.publish(from_,from_,session_id,'driver',name,list(data_dict)[0],dd_value)
 
 
         # ADD CALLBACKS VIA HARNESS:
@@ -164,6 +168,27 @@ if __name__ == '__main__':
 
         for d in driver_harness.drivers(publisher.id,'',None,None):
             print(driver_harness.callbacks(publisher.id,'',d, None))
+
+
+        # ADD METACALLBACKS VIA HARNESS:
+        print('*\t*\t* add meta-callbacks via harness\t*\t*\t*')
+        def on_connect(from_,session_id):
+            publisher.publish(from_,from_,session_id,'connect','driver','result','connected')
+
+        def on_disconnect(from_,session_id):
+            publisher.publish(from_,from_,session_id,'connect','driver','result','disconnected')
+
+        def on_empty_queue(from_,session_id):
+            publisher.publish(from_,from_,session_id,'queue','driver','result','empty')
+
+        def on_raw_data(from_,session_id,data):
+            publisher.publish(from_,from_,session_id,'raw','driver','data',data)
+
+
+        labware_harness.set_meta_callback(publisher.id,'','driver',{'on_connect':on_connect})
+        labware_harness.set_meta_callback(publisher.id,'','driver',{'on_disconnect':on_disconnect})
+        labware_harness.set_meta_callback(publisher.id,'','driver',{'on_empty_queue':on_empty_queue})
+        labware_harness.set_meta_callback(publisher.id,'','driver',{'on_raw_data':on_raw_data})
 
         # CONNECT TO DRIVERS:
         print('*\t*\t* connect to drivers\t*\t*\t*')
