@@ -150,6 +150,8 @@ class SmoothieDriver(object):
 			'queue_size':0
 		}
 
+		self.state_dict['simulation'] = simulate
+
 		self.config_dict = {
 			'delimiter':"\n",
 			'message_ender':"\r\n",

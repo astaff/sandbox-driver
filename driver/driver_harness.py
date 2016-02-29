@@ -34,7 +34,8 @@ class Harness(object):
 			'disconnect' : lambda from_,session_id,name,param: self.disconnect(from_,session_id,name,param),
 			'commands' : lambda from_,session_id,name,param: self.commands(from_,session_id,name,param),
 			'configs' : lambda from_,session_id,name,param: self.configs(from_,session_id,name,param),
-			'set_config' : lambda from_,session_id,name,param: self.set_config(from_,session_id,name,param)
+			'set_config' : lambda from_,session_id,name,param: self.set_config(from_,session_id,name,param),
+			'meta_commands' : lambda from_,session_id,name,param: self.meta_commands(from_,session_id,name,param)
 		}
 
 
