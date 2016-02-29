@@ -18,7 +18,8 @@ from autobahn.asyncio.wamp import ApplicationSession, ApplicationRunner
 
 loop = asyncio.get_event_loop()
 
-
+transport = None
+protocoler = None
 
 
 def make_connection():
@@ -201,6 +202,7 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         pass
     finally:
+        transport.close()
         loop.close()
 
 
