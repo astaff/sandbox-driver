@@ -24,7 +24,7 @@ class Harness(object):
 			'add_driver' : lambda from_,session_id,name,param: self.add_driver(from_,session_id,name,param),
 			'remove_driver' : lambda from_,session_id,name,param: self.remove_driver(from_,session_id,name,param),
 			'callbacks' : lambda from_,session_id,name,param: self.callbacks(from_,session_id,name,param),
-			'meta_callbacks' : lambda from_,session_id,name, param: self.meta_callbacks(form_,session_id,name,param),
+			'meta_callbacks' : lambda from_,session_id,name, param: self.meta_callbacks(from_,session_id,name,param),
 			'set_meta_callback' : lambda from_,session_id,name,param: self.set_meta_callback(from_,session_id,name,param),
 			'add_callback' : lambda from_,session_id,name,param: self.add_callback(from_,session_id,name,param),
 			'remove_callback' : lambda from_,session_id,name,param: self.remove_callback(from_,session_id,name,param),
@@ -32,7 +32,7 @@ class Harness(object):
 			'clear_queue' : lambda from_,session_id,name,param: self.clear_queue(from_,session_id,name,param),
 			'connect' : lambda from_,session_id,name,param: self.connect(from_,session_id,name,param),
 			'disconnect' : lambda from_,session_id,name,param: self.disconnect(from_,session_id,name,param),
-			'commands' : lambda from_,session_id,name,param: self.commands(form_,session_id,name,param),
+			'commands' : lambda from_,session_id,name,param: self.commands(from_,session_id,name,param),
 			'configs' : lambda from_,session_id,name,param: self.configs(from_,session_id,name,param),
 			'set_config' : lambda from_,session_id,name,param: self.set_config(from_,session_id,name,param)
 		}
