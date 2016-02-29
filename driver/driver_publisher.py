@@ -75,6 +75,7 @@ class Publisher:
 
 
     def gen_client_id(self):
+
         ret_id = ''
         if len(self.clients) > self.max_clients:
             self.publish( 'frontend', '' , '' , 'handshake' , 'driver' , 'result' , 'fail' )
@@ -87,6 +88,8 @@ class Publisher:
 
 
     def client_check(self, id_, session_id):
+        print(datetime.datetime.now(),' - driver_publisher.client_check:')
+        print('\n\targs: ',locals(),'\n')
         if id_ in self.clients:
             return True
         else:
@@ -94,6 +97,8 @@ class Publisher:
 
 
     def publish_client_ids(self, id_, session_id):
+        print(datetime.datetime.now(),' - driver_publisher.publish_client_ids:')
+        print('\n\targs: ',locals(),'\n')
         if id_ in self.clients:
             self.publish( id_ , id_ , session_id, 'handshake' , 'driver' , 'ids' , list(self.clients) )
         else:
