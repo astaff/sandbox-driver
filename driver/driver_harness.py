@@ -242,7 +242,7 @@ class Harness(object):
 			self._publisher.publish('frontend',from_,session_id,'driver',name,'meta_commands',return_dict)
 		else:
 			self._publisher.publish(from_,from_,session_id,'driver',name,'meta_commands',return_dict)
-		return return_dict
+		return return_list
 
 
 	def configs(self, from_, session_id, name, param):
@@ -252,11 +252,11 @@ class Harness(object):
 		"""
 		print(datetime.datetime.now(),' - driver_harness.configs:')
 		print('\n\targs: ',locals(),'\n')
-		return_list = self.driver_dict.get(name).configs()
+		return_dict = self.driver_dict.get(name).configs()
 		if from_ == "":
-			self._publisher.publish('frontend',from_,session_id,'driver',name,'configs',return_list)
+			self._publisher.publish('frontend',from_,session_id,'driver',name,'configs',return_dict)
 		else:
-			self._publisher.publish(from_,from_,session_id,'driver',name,'configs',return_list)
+			self._publisher.publish(from_,from_,session_id,'driver',name,'configs',return_dict)
 		return return_dict
 
 
