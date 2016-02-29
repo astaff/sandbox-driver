@@ -239,9 +239,9 @@ class Harness(object):
 		print('\n\targs: ',locals(),'\n')
 		return_list = list(self.meta_dict)
 		if from_ == "":
-			self._publisher.publish('frontend',from_,session_id,'driver',name,'meta_commands',return_dict)
+			self._publisher.publish('frontend',from_,session_id,'driver',name,'meta_commands',return_list)
 		else:
-			self._publisher.publish(from_,from_,session_id,'driver',name,'meta_commands',return_dict)
+			self._publisher.publish(from_,from_,session_id,'driver',name,'meta_commands',return_list)
 		return return_list
 
 
