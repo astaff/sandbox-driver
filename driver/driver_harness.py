@@ -252,7 +252,7 @@ class Harness(object):
 		"""
 		print(datetime.datetime.now(),' - driver_harness.configs:')
 		print('\n\targs: ',locals(),'\n')
-		return_dict = self.driver_dict.get(name).configs()
+		return_list = self.driver_dict.get(name).configs()
 		if from_ == "":
 			self._publisher.publish('frontend',from_,session_id,'driver',name,'configs',return_list)
 		else:
