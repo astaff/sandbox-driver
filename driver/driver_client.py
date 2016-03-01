@@ -18,6 +18,7 @@ from autobahn.asyncio.wamp import ApplicationSession, ApplicationRunner
 
 loop = asyncio.get_event_loop()
 
+crossbar_connected = False
 
 
 def make_connection():
@@ -57,6 +58,8 @@ class WampComponent(wamp.ApplicationSession):
         if not self.factory._myAppSession:
             self.factory._myAppSession = self
     
+        crossbar_connected = True
+
         def handshake(client_data):
             """
             """
@@ -90,7 +93,7 @@ class WampComponent(wamp.ApplicationSession):
         """
         print(datetime.datetime.now(),' - driver_client : WampComponent.onDisconnect:')
         asyncio.get_event_loop().stop()
-
+        crossbar_connected = False
     
     
 
@@ -108,6 +111,8 @@ if __name__ == '__main__':
                                                                 debug=False,
                                                                 debug_wamp=False)
         loop = asyncio.get_event_loop()
+
+        print('\nBEGIN INIT...\n')
 
         # TRYING THE FOLLOWING IN INSTANTIATE OBJECTS vs here
         # INITIAL SETUP PUBLISHER, HARNESS, SUBSCRIBER
@@ -195,7 +200,16 @@ if __name__ == '__main__':
 
         print('END INIT')
 
-        make_connection()
+        while (True):
+            while (crossbar_connected == False):
+                try:
+                    print('\nDriver attempting crossbar connection\n')
+                    make_connection()
+                except KeyboardInterrupt:
+                    crossbar_connected = True
+                finally:
+                    print('\nCrossbar connection failed, sleeping for 5 seconds\n')
+                    time.sleep(5)
 
     except KeyboardInterrupt:
         pass
