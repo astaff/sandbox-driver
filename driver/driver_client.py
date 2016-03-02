@@ -764,11 +764,11 @@ if __name__ == '__main__':
 
         # ADD CALLBACKS
         print('*\t*\t* add callbacks via harness\t*\t*\t*')
-        driver_client.add_callback(publisher.id,'','smoothie', {none:['None']})
-        driver_client.add_callback(publisher.id,'','smoothie', {positions:['M114']})
+        driver_client.add_callback(driver_client.id,'','smoothie', {none:['None']})
+        driver_client.add_callback(driver_client.id,'','smoothie', {positions:['M114']})
 
-        for d in driver_harness.drivers(publisher.id,'',None,None):
-            print(driver_harness.callbacks(publisher.id,'',d, None))
+        for d in driver_harness.drivers(driver_client.id,'',None,None):
+            print(driver_harness.callbacks(driver_client.id,'',d, None))
 
 
         # ADD METACALLBACKS
@@ -801,7 +801,7 @@ if __name__ == '__main__':
 
         # CONNECT TO DRIVERS:
         print(datetime.datetime.now(),' - CONNECT TO DRIVERS ','* * '*10)
-        driver_client.driver_connect(publisher.id,'','smoothie',None)
+        driver_client.driver_connect(driver_client.id,'','smoothie',None)
 
         print('END INIT')
 
