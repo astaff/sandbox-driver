@@ -118,7 +118,6 @@ class DriverClient():
         #__init__ VARIABLES FROM HARNESS
         print(datetime.datetime.now(),' - DriverClient.__init__:')
         print('\n\targs: ',locals(),'\n')
-        self._publisher = publisher
         self.driver_dict = {}
         self.meta_dict = {
             'drivers' : lambda from_,session_id,name,param: self.drivers(from_,session_id,name,param),
@@ -483,7 +482,7 @@ class DriverClient():
         print(datetime.datetime.now(),' - DriverClient.commands:')
         print('\n\targs: ',locals(),'\n')
         return_dict = self.driver_dict.get(name).commands()
-        self._publisher.publish(from_,from_,session_id,'driver',name,'commands',return_dict)
+        self.publish(from_,from_,session_id,'driver',name,'commands',return_dict)
         return return_dict
 
 
@@ -496,9 +495,9 @@ class DriverClient():
         print('\n\targs: ',locals(),'\n')
         return_list = list(self.meta_dict)
         if from_ == "":
-            self._publisher.publish('frontend',from_,session_id,'driver',name,'meta_commands',return_list)
+            self.publish('frontend',from_,session_id,'driver',name,'meta_commands',return_list)
         else:
-            self._publisher.publish(from_,from_,session_id,'driver',name,'meta_commands',return_list)
+            self.publish(from_,from_,session_id,'driver',name,'meta_commands',return_list)
         return return_list
 
 
