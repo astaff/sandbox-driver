@@ -171,69 +171,69 @@ class DriverClient():
         self.loop = asyncio.get_event_loop()
 
 
-        # FUNCTIONS FROM SUBSCRIBER
-        def dispatch_message(self, message):
-            print(datetime.datetime.now(),' - DriverClient.dispatch_message:')
-            print('\n\targs: ',locals(),'\n')
-            try:
-                dictum = collections.OrderedDict(json.loads(message.strip(), object_pairs_hook=collections.OrderedDict))
-                if 'type' in dictum and 'from' in dictum and 'sessionID' in dictum and 'data' in dictum:
-                    if dictum['type'] in self.in_dispatcher:
-                        if self.publisher.client_check(dictum['from'],dictum['sessionID']):
-                            #opportunity to filter, not actually used
-                            self.in_dispatcher[dictum['type']](dictum['from'],dictum['sessionID'],dictum['data'])
-                        else:
-                            self.in_dispatcher[doctum['type']](dictum['from'],dictum['sessionID'],dictum['data'])
+    # FUNCTIONS FROM SUBSCRIBER
+    def dispatch_message(self, message):
+        print(datetime.datetime.now(),' - DriverClient.dispatch_message:')
+        print('\n\targs: ',locals(),'\n')
+        try:
+            dictum = collections.OrderedDict(json.loads(message.strip(), object_pairs_hook=collections.OrderedDict))
+            if 'type' in dictum and 'from' in dictum and 'sessionID' in dictum and 'data' in dictum:
+                if dictum['type'] in self.in_dispatcher:
+                    if self.publisher.client_check(dictum['from'],dictum['sessionID']):
+                        #opportunity to filter, not actually used
+                        self.in_dispatcher[dictum['type']](dictum['from'],dictum['sessionID'],dictum['data'])
                     else:
-                        print(datetime.datetime.now(),' - {error:malformed message, type not in in_dispatcher}\n\r',sys.exc_info())
-                        print('type: ',dictum['type'])
-                        return '{error,malformed message, type not in in_dispatcher}'
+                        self.in_dispatcher[doctum['type']](dictum['from'],dictum['sessionID'],dictum['data'])
                 else:
-                    print(datetime.datetime.now(),' - {error:subscriber.dispatch_message type or data error}\n\r',sys.exc_info())
-                    return '{error:subscriber.dispatch_message type or data error}'
-            except:
-                print(datetime.datetime.now(),' - {error:general subscriber.dispatch_message error}\n\r',sys.exc_info())
-                return '{error:general subscriber.dispatch_message error}'
-
-
-        # FUNCTIONS FROM PUBLISHER
-        def handshake(self, data):
-            print(datetime.datetime.now(),' - DriverClient.handshake:')
-            print('\n\targs: ',locals(),'\n')
-
-            data_dict = json.loads(data)
-            if isinstance(data_dict, dict):
-                if 'from' in data:
-                    print('* data has "from"')
-                    client_id = data_dict['from']
-                    print('client_id: ',client_id)
-                    if client_id in self.clients:
-                        print('* from is a client')
-                        if 'data' in data_dict:
-                            if 'message' in data_dict['data']:
-                                if 'extend' in data_dict['data']['message']:
-                                    print('handshake called again on client ',client_id,'. We could have done something here to repopulate data')
-                                    self.publish( client_id , client_id , client_id, 'handshake','driver','result','already_connected')
-                                if 'shake' in data_dict['data']['message']:
-                                    self.publish_client_ids(client_id,client_id)
-                    else:
-                        print('* from is NOT a client')
-                        if len(self.clients) > self.max_clients:
-                            self.publish( 'frontend', '' , '' , 'handshake' , 'driver' , 'result' , 'fail' )
-                        else:
-                            if client_id != "":
-                                self.clients[client_id] = 'com.opentrons.'+client_id
-                                self.publish( 'frontend' , client_id , client_id, 'handshake', 'driver', 'result','success')
-                            else:
-                                self.gen_client_id()
-                else:
-                    print('* data does NOT have "from"')
-                    self.gen_client_id()
-
-                if 'get_ids' in data_dict:
-                    publish_client_ids('','')
+                    print(datetime.datetime.now(),' - {error:malformed message, type not in in_dispatcher}\n\r',sys.exc_info())
+                    print('type: ',dictum['type'])
+                    return '{error,malformed message, type not in in_dispatcher}'
             else:
+                print(datetime.datetime.now(),' - {error:subscriber.dispatch_message type or data error}\n\r',sys.exc_info())
+                return '{error:subscriber.dispatch_message type or data error}'
+        except:
+            print(datetime.datetime.now(),' - {error:general subscriber.dispatch_message error}\n\r',sys.exc_info())
+            return '{error:general subscriber.dispatch_message error}'
+
+
+    # FUNCTIONS FROM PUBLISHER
+    def handshake(self, data):
+        print(datetime.datetime.now(),' - DriverClient.handshake:')
+        print('\n\targs: ',locals(),'\n')
+
+        data_dict = json.loads(data)
+        if isinstance(data_dict, dict):
+            if 'from' in data:
+                print('* data has "from"')
+                client_id = data_dict['from']
+                print('client_id: ',client_id)
+                if client_id in self.clients:
+                    print('* from is a client')
+                    if 'data' in data_dict:
+                        if 'message' in data_dict['data']:
+                            if 'extend' in data_dict['data']['message']:
+                                print('handshake called again on client ',client_id,'. We could have done something here to repopulate data')
+                                self.publish( client_id , client_id , client_id, 'handshake','driver','result','already_connected')
+                            if 'shake' in data_dict['data']['message']:
+                                self.publish_client_ids(client_id,client_id)
+                else:
+                    print('* from is NOT a client')
+                    if len(self.clients) > self.max_clients:
+                        self.publish( 'frontend', '' , '' , 'handshake' , 'driver' , 'result' , 'fail' )
+                    else:
+                        if client_id != "":
+                            self.clients[client_id] = 'com.opentrons.'+client_id
+                            self.publish( 'frontend' , client_id , client_id, 'handshake', 'driver', 'result','success')
+                        else:
+                            self.gen_client_id()
+            else:
+                print('* data does NOT have "from"')
                 self.gen_client_id()
+
+            if 'get_ids' in data_dict:
+                publish_client_ids('','')
+        else:
+            self.gen_client_id()
 
 
     def gen_client_id(self):
