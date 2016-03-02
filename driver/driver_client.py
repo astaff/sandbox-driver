@@ -274,14 +274,14 @@ class DriverClient():
         """
         print(datetime.datetime.now(),' - DriverClient.publish:')
         print('\n\targs: ',locals(),'\n')
-        if self.caller is not None and topic is not None and type_ is not None:
+        if self.session_factory is not None and topic is not None and type_ is not None:
             if name is None:
                 name = 'None'
             if message is None:
                 message = ''
             if param is None:
                 param = ''
-            if self.caller is not None:
+            if self.session_factory is not None:
                 if self.session_factory._myAppSession is not None:
                     msg = {'type':type_,'to':to,'from':self.id,'sessionID':session_id,'data':{'name':name,'message':{message:param}}}
                     try:
