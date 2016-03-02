@@ -383,7 +383,7 @@ class DriverClient():
         name: name of driver
         param: { meta-callback-name : meta-callback-object }
         """
-        print(datetime.datetime.now(),' - driver_harness.set_meta_callback:')
+        print(datetime.datetime.now(),' - DriverClient.set_meta_callback:')
         print('\n\targs: ',locals(),'\n')
         if isinstance(param,dict):
             return_dict = self.driver_dict.get(name).set_meta_callback(list(param)[0],list(param.values())[0])
@@ -506,7 +506,7 @@ class DriverClient():
         name: name of driver
         param: n/a
         """
-        print(datetime.datetime.now(),' - driver_harness.configs:')
+        print(datetime.datetime.now(),' - DriverClient.configs:')
         print('\n\targs: ',locals(),'\n')
         return_dict = self.driver_dict.get(name).configs()
         if from_ == "":
@@ -767,8 +767,8 @@ if __name__ == '__main__':
         driver_client.add_callback(driver_client.id,'','smoothie', {none:['None']})
         driver_client.add_callback(driver_client.id,'','smoothie', {positions:['M114']})
 
-        for d in driver_harness.drivers(driver_client.id,'',None,None):
-            print(driver_harness.callbacks(driver_client.id,'',d, None))
+        for d in driver_client.drivers(driver_client.id,'',None,None):
+            print (driver_client.callbacks(driver_client.id,'',d, None))
 
 
         # ADD METACALLBACKS
