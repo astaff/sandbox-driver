@@ -730,9 +730,9 @@ if __name__ == '__main__':
             print('\n\targs: ',locals(),'\n')
             dd_name = list(data_dict)[0]
             dd_value = data_dict[dd_name]
-            labware_client.publish('frontend',from_,session_id,'driver',name,list(data_dict)[0],dd_value)
+            driver_client.publish('frontend',from_,session_id,'driver',name,list(data_dict)[0],dd_value)
             if from_ != session_id:
-                labware_client.publish(from_,from_,session_id,'driver',name,list(data_dict)[0],dd_value)
+                driver_client.publish(from_,from_,session_id,'driver',name,list(data_dict)[0],dd_value)
 
         def positions(name, from_, session_id, data_dict):
             """
@@ -741,9 +741,9 @@ if __name__ == '__main__':
             print('\n\targs: ',locals(),'\n')
             dd_name = list(data_dict)[0]
             dd_value = data_dict[dd_name]
-            labware_client.publish('frontend',from_,session_id,'driver',name,list(data_dict)[0],dd_value)
+            driver_client.publish('frontend',from_,session_id,'driver',name,list(data_dict)[0],dd_value)
             if from_ != session_id:
-                labware_client.publish(from_,from_,session_id,'driver',name,list(data_dict)[0],dd_value)
+                driver_client.publish(from_,from_,session_id,'driver',name,list(data_dict)[0],dd_value)
 
 
         # ADD CALLBACKS
