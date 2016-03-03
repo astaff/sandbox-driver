@@ -8,27 +8,11 @@ import uuid
 import datetime
 import sys
 
-from driver_subscriber import Subscriber
-from driver_publisher import Publisher
-from driver_harness import Harness
 from driver import SmoothieDriver
 
 from autobahn.asyncio import wamp, websocket
 from autobahn.asyncio.wamp import ApplicationSession, ApplicationRunner 
 
-loop = asyncio.get_event_loop()
-
-crossbar_connected = False
-
-
-def make_connection():
-    if loop.is_running():
-        loop.stop()
-    coro = loop.create_connection(transport_factory, '0.0.0.0', 8080)
-    transport, protocoler = loop.run_until_complete(coro)
-    #protocoler.set_outer(self)
-    if not loop.is_running():
-        loop.run_forever()
 
 
 class WampComponent(wamp.ApplicationSession):
@@ -810,7 +794,7 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         pass
     finally:
-        loop.close()
+        print('ALL DONE!')
 
 
 
