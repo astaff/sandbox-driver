@@ -147,7 +147,10 @@ class SmoothieDriver(object):
 			'locked':False,
 			'ack_received':True,
 			'ack_ready':True,
-			'queue_size':0
+			'queue_size':0,
+			'directions':{'X':0,'Y':0,'Z':0,'A':0,'B':0,'C':0},
+			's_pos':{'X':0,'Y':0,'Z':0,'A':0,'B':0,'C':0},
+			'a_pos':{'X':0,'Y':0,'Z':0,'A':0,'B':0,'C':0}
 		}
 
 		self.state_dict['simulation'] = simulate
@@ -160,7 +163,13 @@ class SmoothieDriver(object):
 			'ack_received_value':None,
 			'ack_ready_message':"None",
 			'ack_ready_parameter':"stat",
-			'ack_ready_value':"0"
+			'ack_ready_value':"0",
+			'x_slack':0.5,
+			'y_slack':0.5,
+			'z_slack':0.0,
+			'a_slack':0.1,
+			'b_slack':0.1,
+			'c_slack':0.0
 		}
 
 		self.callbacks_dict = {}
@@ -542,8 +551,6 @@ class SmoothieDriver(object):
 				this_dict[message] = {}
 				this_dict[message][parameter] = value
 				return_list.append(this_dict)
-
-
 		#
 		#	so, if json_data looks like:
 		#	{ X:<f>, Y:<f>, Z:<f>, A:<f>, B:<f> }
@@ -555,8 +562,6 @@ class SmoothieDriver(object):
 		#	  } 
 		#	]
 		#
-
-
 		return return_list
 
 
@@ -580,9 +585,34 @@ class SmoothieDriver(object):
 		#
 		#
 		for name_message, value in message_dict.items():
+			if name_message == 'None':
+				axis_found = False
+				for axis in list(self.state_dict['s_pos']):
+					if axis in value:
+						axis_found = True
+						self.state_dict['s_pos'][axis] = value[axis]
+						if self.state_dict['directions'][axis] == 1:
+							self.state_dict['a_pos'][axis] = value[axis] - self.config_dict[axis+'_slack']
+						else:
+							self.state_dict['a_pos'][axis] = value[axis]
+
+				if axis_found == True:
+					pos_dict = {'pos':copy.deepcopy(self.state_dict['s_pos'])}
+					adj_pos_dict = {'adj_pos':copy.deepcopy(self.state_dict['a_pos'])}
+					for callback_name, callback in self.callbacks_dict.items():
+						if 's_pos' in callback['messages']:
+							callback['callback'](self.state_dict['name'], self.current_info['from'], self.current_info['session_id'], pos_dict)
+						if 'a_pos' in callback['messages']:
+							callback['callback'](self.state_dict['name'], self.current_info['from'], self.current_info['session_id'], adj_pos_dict)
+				
+
 			for callback_name, callback in self.callbacks_dict.items():
 				if name_message in callback['messages']:
 					callback['callback'](self.state_dict['name'], self.current_info['from'], self.current_info['session_id'], value)
+				
+
+
+
 
 
 		# second, check if ack_received confirmation
@@ -728,6 +758,26 @@ class SmoothieDriver(object):
 				if isinstance(data[command], dict):
 					for param, val in data[command].items():
 						if param in self.commands_dict[command]["parameters"]:
+							if param in self.state_dict['s_pos']:
+								if command == "move_to":
+									float_val = float(val)
+									if float_val > self.state_dict['s_pos'][val] and self.state_dict['direction'][val]==0:
+										self.config_dict['directions'][val] = 1
+										float_val+=self.config_dict[val+'_slack']
+									if float_val < self.state_dict['s_pos'][val] and self.state_dict['direction'][val]==1:
+										self.config_dict['directions'][val] = 0
+										float_val-=self.config_dict[val+'_slack']
+										val = str(float_val)
+								if command == "move":
+									float_val = float(val)
+									if float_val > 0 and self.state_dict['directions'][val]==0:
+										self.config_dict['directions'][val] = 1
+										float_val+=self.config_dict[val+'_slack']
+									if float_val < 0 and self.state_dict['directions'][val]==1:
+										self.config_dict['directions'][val] = 0
+										float_val-=self.config_dict[val+'_slack']
+										val = str(float_val)
+
 							command_text += " "
 							command_text += str(param)
 							command_text += str(val)
@@ -740,9 +790,33 @@ class SmoothieDriver(object):
 					# command is actually a code in the commands dictionary
 					command_text = command
 					if isinstance(data,dict):
-						if isinstance(data[command], dict):			
+						if isinstance(data[command], dict):
 							for param, val in data[command].items():
 								if param in val.parameters:
+									if param in self.state_dict['s_pos']:
+										if command == "G90 G0":
+											float_val = float(val)
+											if float_val > self.state_dict['s_pos'][val] and self.state_dict['direction'][val]==0:
+												self.config_dict['directions'][val] = 1
+												float_val+=self.config_dict[val+'_slack']
+											if float_val < self.state_dict['s_pos'][val] and self.state_dict['direction'][val]==1:
+												self.config_dict['directions'][val] = 0
+												float_val-=self.config_dict[val+'_slack']
+												val = str(float_val)
+										if command == "G91 G0":
+											float_val = float(val)
+											if float_val > 0 and self.state_dict['directions'][val]==0:
+												self.config_dict['directions'][val] = 1
+												float_val+=self.config_dict[val+'_slack']
+											if float_val < 0 and self.state_dict['directions'][val]==1:
+												self.config_dict['directions'][val] = 0
+												float_val-=self.config_dict[val+'_slack']
+												val = str(float_val)
+
+
+
+
+
 									command_text += " "
 									command_text += str(param)
 									command_text += str(val)

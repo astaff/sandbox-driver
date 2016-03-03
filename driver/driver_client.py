@@ -745,11 +745,37 @@ if __name__ == '__main__':
             if from_ != session_id:
                 driver_client.publish(from_,from_,session_id,'driver',name,list(data_dict)[0],dd_value)
 
+        def a_pos(name, from_, session_id, data_dict):
+            """
+            """
+            print(datetime.datetime.now(),' - driver_client.a_pos:')
+            print('\n\targs: ',locals(),'\n')
+            dd_name = list(data_dict)[0]
+            dd_value = data_dict[dd_name]
+            driver_client.publish('frontend',from_,session_id,'driver',name,list(data_dict)[0],dd_value)
+            if from_ != session_id:
+                driver_client.publish(from_,from_,session_id,'driver',name,list(data_dict)[0],dd_value)
+
+        def s_pos(name, from_, session_id, data_dict):
+            """
+            """
+            print(datetime.datetime.now(),' - driver_client.s_pos:')
+            print('\n\targs: ',locals(),'\n')
+            dd_name = list(data_dict)[0]
+            dd_value = data_dict[dd_name]
+            driver_client.publish('frontend',from_,session_id,'driver',name,list(data_dict)[0],dd_value)
+            if from_ != session_id:
+                driver_client.publish(from_,from_,session_id,'driver',name,list(data_dict)[0],dd_value)
+
+
+
 
         # ADD CALLBACKS
         print('*\t*\t* add callbacks via harness\t*\t*\t*')
         driver_client.add_callback(driver_client.id,'','smoothie', {none:['None']})
         driver_client.add_callback(driver_client.id,'','smoothie', {positions:['M114']})
+        driver_client.add_callback(driver_client.id,'','smoothie', {a_pos:['a_pos']})
+        driver_client.add_callback(driver_client.id,'','smoothie', {s_pos:['s_pos']})
 
         for d in driver_client.drivers(driver_client.id,'',None,None):
             print (driver_client.callbacks(driver_client.id,'',d, None))
