@@ -8,7 +8,7 @@ import uuid
 import datetime
 import sys
 
-from driver import SmoothieDriver
+from smoothie_driver import SmoothieDriver
 
 from autobahn.asyncio import wamp, websocket
 from autobahn.asyncio.wamp import ApplicationSession, ApplicationRunner 

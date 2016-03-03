@@ -11,11 +11,11 @@ config = {
 	'install_requires': [
 		'nose',
 		'coverage',
-		'pyserial'
+		'autobahn'
 	],
-	'packages': ['gears'],
-	'scripts': ['./bin/gears-hello'],
-	'name': 'gears'
+	'packages': ['driver'],
+	'scripts': ['./bin/driver-test'],
+	'name': 'driver'
 }
 
 setup(**config)
