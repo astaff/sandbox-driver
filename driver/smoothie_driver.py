@@ -432,7 +432,7 @@ class SmoothieDriver(object):
 		print(datetime.datetime.now(),' - driver.send:')
 		print('\n\targs: ',locals(),'\n')
 		self.state_dict['queue_size'] = len(self.command_queue)
-		message = message + self.config_dict['message_ender']
+		command = message['command'] + self.config_dict['message_ender']
 		if self.simulation:
 			self.simulation_queue.append(message)
 		
@@ -444,7 +444,7 @@ class SmoothieDriver(object):
 			self.state_dict['ack_ready'] = False  # needs to be set here because not ready message from device takes too long, ack_received already received
 			self.lock_check()
 			self.current_info = {'session_id':message['session_id'],'from':message['from']}
-			self.smoothie_transport.write(message['command'].encode())
+			self.smoothie_transport.write(command.encode())
 			#self.smoothie_streamwriter.drain()
 		else:
 			print(datetime.datetime.now(),' - smoothie_transport is None????')
