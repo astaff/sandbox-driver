@@ -791,17 +791,17 @@ if __name__ == '__main__':
             driver_client.publish(from_,from_,session_id,'connect','driver','result','connected')
 
         def on_disconnect(from_,session_id):
-            print(datetime.datetime.now(),' - driver_client.on_connect')
+            print(datetime.datetime.now(),' - driver_client.on_disconnect')
             print('\n\targs: ',locals(),'\n')
             driver_client.publish(from_,from_,session_id,'connect','driver','result','disconnected')
 
         def on_empty_queue(from_,session_id):
-            print(datetime.datetime.now(),' - driver_client.on_connect')
+            print(datetime.datetime.now(),' - driver_client.on_empty_queue')
             print('\n\targs: ',locals(),'\n')
             driver_client.publish(from_,from_,session_id,'queue','driver','result','empty')
 
         def on_raw_data(from_,session_id,data):
-            print(datetime.datetime.now(),' - driver_client.on_connect')
+            print(datetime.datetime.now(),' - driver_client.on_raw_data')
             print('\n\targs: ',locals(),'\n')
             driver_client.publish(from_,from_,session_id,'raw','driver','data',data)
 
