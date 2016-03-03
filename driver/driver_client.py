@@ -165,7 +165,7 @@ class DriverClient():
             dictum = collections.OrderedDict(json.loads(message.strip(), object_pairs_hook=collections.OrderedDict))
             if 'type' in dictum and 'from' in dictum and 'sessionID' in dictum and 'data' in dictum:
                 if dictum['type'] in self.in_dispatcher:
-                    if self.publisher.client_check(dictum['from'],dictum['sessionID']):
+                    if self.client_check(dictum['from'],dictum['sessionID']):
                         #opportunity to filter, not actually used
                         self.in_dispatcher[dictum['type']](dictum['from'],dictum['sessionID'],dictum['data'])
                     else:
