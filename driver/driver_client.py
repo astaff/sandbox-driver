@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-
 import asyncio
 import time
 import json
@@ -36,7 +35,7 @@ class WampComponent(wamp.ApplicationSession):
         Starts instatiation of robot objects by calling :meth:`otone_client.instantiate_objects`.
         """
         print(datetime.datetime.now(),' - driver_client : WampComponent.onJoin:')
-        print('\tdetails: ',str(details))
+        print('\n\targs: ',locals(),'\n')
         if not self.factory._myAppSession:
             self.factory._myAppSession = self
         try:
@@ -46,7 +45,7 @@ class WampComponent(wamp.ApplicationSession):
 
 
         def handshake(client_data):
-            """ FACTORY STUB
+            """Hook for factory to call _handshake()
             """
             print(datetime.datetime.now(),' - driver_client : WampComponent.handshake:')
             print('\n\targs: ',locals(),'\n')
@@ -57,7 +56,7 @@ class WampComponent(wamp.ApplicationSession):
 
 
         def dispatch_message(client_data):
-            """ FACTORY STUB
+            """Hook for factory to call dispatch_message()
             """
             print(datetime.datetime.now(),' - driver_client : WampComponent.dispatch_message:')
             print('\n\targs: ',locals(),'\n')
@@ -77,7 +76,7 @@ class WampComponent(wamp.ApplicationSession):
         :param details: Close information.
         """
         print('driver_client : WampComponent.onLeave:')
-        print('\tdetails: ',details)
+        print('\n\targs: ',locals(),'\n')
         if self.factory._myAppSession == self:
             self.factory._myAppSession = None
         try:
@@ -124,13 +123,11 @@ class DriverClient():
             'meta_commands' : lambda from_,session_id,name,param: self.meta_commands(from_,session_id,name,param)
         }
 
-        #__init__ VARIABLES FROM SUBSCRIBER
         self.in_dispatcher = {
             'command': lambda from_,session_id,data: self.send_command(from_,session_id,data),
             'meta': lambda from_,session_id,data: self.meta_command(from_,session_id,data)
         }
 
-        #__init__ VARIABLES FROM PUBLISHER
         self.topic = {
             'frontend' : 'com.opentrons.frontend',
             'driver' : 'com.opentrons.driver',
@@ -157,7 +154,6 @@ class DriverClient():
         self.loop = asyncio.get_event_loop()
 
 
-    # FUNCTIONS FROM SUBSCRIBER
     def dispatch_message(self, message):
         print(datetime.datetime.now(),' - DriverClient.dispatch_message:')
         print('\n\targs: ',locals(),'\n')
@@ -171,18 +167,15 @@ class DriverClient():
                     else:
                         self.in_dispatcher[doctum['type']](dictum['from'],dictum['sessionID'],dictum['data'])
                 else:
-                    print(datetime.datetime.now(),' - {error:malformed message, type not in in_dispatcher}\n\r',sys.exc_info())
+                    print(datetime.datetime.now(),' - ERROR:\n\r',sys.exc_info())
                     print('type: ',dictum['type'])
-                    return '{error,malformed message, type not in in_dispatcher}'
             else:
-                print(datetime.datetime.now(),' - {error:subscriber.dispatch_message type or data error}\n\r',sys.exc_info())
-                return '{error:subscriber.dispatch_message type or data error}'
+                print(datetime.datetime.now(),' - ERROR:\n\r',sys.exc_info())
+                
         except:
-            print(datetime.datetime.now(),' - {error:general subscriber.dispatch_message error}\n\r',sys.exc_info())
-            return '{error:general subscriber.dispatch_message error}'
+            print(datetime.datetime.now(),' - ERROR:\n\r',sys.exc_info())
 
 
-    # FUNCTIONS FROM PUBLISHER
     def handshake(self, data):
         print(datetime.datetime.now(),' - DriverClient.handshake:')
         print('\n\targs: ',locals(),'\n')
@@ -281,11 +274,11 @@ class DriverClient():
                             print(datetime.datetime.now(),'url topic: ',url_topic)
                             self.session_factory._myAppSession.publish(self.clients.get(topic),json.dumps(msg))
                     except:
-                        print(datetime.datetime.now(),' - publisher.py - publish - error:\n\r',sys.exc_info())
+                        print(datetime.datetime.now(),' - Error:\n\r',sys.exc_info())
             else:
-                print(datetime.datetime.now(),' - publisher.py - publish - error: caller._myAppSession is None')
+                print(datetime.datetime.now(),' - Error: caller._myAppSession is None')
         else:
-            print(datetime.datetime.now(),' - publisher.py - publish - error: calller, topic, or type_ is None')
+            print(datetime.datetime.now(),' - Error: calller, topic, or type_ is None')
 
 
     # FUNCTIONS FROM HARNESS
@@ -595,8 +588,8 @@ class DriverClient():
         """
         data:
         {
-            'name': <name-of-driver>
-            'message': <string> or { message : {param:values} } <--- the part the driver cares about
+            'name': name of driver
+            'message': string or { message : {param:values} } <--- the part the driver cares about
         }
         """
         print(datetime.datetime.now(),' - DriverClient.send_command:')

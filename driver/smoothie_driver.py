@@ -148,7 +148,7 @@ class SmoothieDriver(object):
 			'ack_received':True,
 			'ack_ready':True,
 			'queue_size':0,
-			'directions':{'X':0,'Y':0,'Z':0,'A':0,'B':0,'C':0},
+			'direction':{'X':0,'Y':0,'Z':0,'A':0,'B':0,'C':0},
 			's_pos':{'X':0,'Y':0,'Z':0,'A':0,'B':0,'C':0},
 			'a_pos':{'X':0,'Y':0,'Z':0,'A':0,'B':0,'C':0}
 		}
@@ -164,12 +164,7 @@ class SmoothieDriver(object):
 			'ack_ready_message':"None",
 			'ack_ready_parameter':"stat",
 			'ack_ready_value':"0",
-			'x_slack':0.5,
-			'y_slack':0.5,
-			'z_slack':0.0,
-			'a_slack':0.1,
-			'b_slack':0.1,
-			'c_slack':0.0
+			'slack':{'X':0.5,'Y':0.5,'Z':0.0,'A':0.1,'B':0.1,'C':0.0}
 		}
 
 		self.callbacks_dict = {}
@@ -591,10 +586,10 @@ class SmoothieDriver(object):
 					if axis in value:
 						axis_found = True
 						self.state_dict['s_pos'][axis] = value[axis]
-						if self.state_dict['directions'][axis] == 1:
-							self.state_dict['a_pos'][axis] = value[axis] - self.config_dict[axis+'_slack']
-						else:
+						if self.state_dict['direction'][axis] == 1:
 							self.state_dict['a_pos'][axis] = value[axis]
+						else:
+							self.state_dict['a_pos'][axis] = value[axis] + self.config_dict['slack'][axis]
 
 				if axis_found == True:
 					pos_dict = {'pos':copy.deepcopy(self.state_dict['s_pos'])}
@@ -762,19 +757,19 @@ class SmoothieDriver(object):
 								if command == "move_to":
 									float_val = float(val)
 									if float_val > self.state_dict['s_pos'][val] and self.state_dict['direction'][val]==0:
-										self.config_dict['directions'][val] = 1
+										self.config_dict['direction'][val] = 1
 										float_val+=self.config_dict[val+'_slack']
 									if float_val < self.state_dict['s_pos'][val] and self.state_dict['direction'][val]==1:
-										self.config_dict['directions'][val] = 0
+										self.config_dict['direction'][val] = 0
 										float_val-=self.config_dict[val+'_slack']
 										val = str(float_val)
 								if command == "move":
 									float_val = float(val)
-									if float_val > 0 and self.state_dict['directions'][val]==0:
-										self.config_dict['directions'][val] = 1
+									if float_val > 0 and self.state_dict['direction'][val]==0:
+										self.config_dict['direction'][val] = 1
 										float_val+=self.config_dict[val+'_slack']
-									if float_val < 0 and self.state_dict['directions'][val]==1:
-										self.config_dict['directions'][val] = 0
+									if float_val < 0 and self.state_dict['direction'][val]==1:
+										self.config_dict['direction'][val] = 0
 										float_val-=self.config_dict[val+'_slack']
 										val = str(float_val)
 
@@ -797,19 +792,19 @@ class SmoothieDriver(object):
 										if command == "G90 G0":
 											float_val = float(val)
 											if float_val > self.state_dict['s_pos'][val] and self.state_dict['direction'][val]==0:
-												self.config_dict['directions'][val] = 1
+												self.config_dict['direction'][val] = 1
 												float_val+=self.config_dict[val+'_slack']
 											if float_val < self.state_dict['s_pos'][val] and self.state_dict['direction'][val]==1:
-												self.config_dict['directions'][val] = 0
+												self.config_dict['direction'][val] = 0
 												float_val-=self.config_dict[val+'_slack']
 												val = str(float_val)
 										if command == "G91 G0":
 											float_val = float(val)
-											if float_val > 0 and self.state_dict['directions'][val]==0:
-												self.config_dict['directions'][val] = 1
+											if float_val > 0 and self.state_dict['direction'][val]==0:
+												self.config_dict['direction'][val] = 1
 												float_val+=self.config_dict[val+'_slack']
-											if float_val < 0 and self.state_dict['directions'][val]==1:
-												self.config_dict['directions'][val] = 0
+											if float_val < 0 and self.state_dict['direction'][val]==1:
+												self.config_dict['direction'][val] = 0
 												float_val-=self.config_dict[val+'_slack']
 												val = str(float_val)
 
