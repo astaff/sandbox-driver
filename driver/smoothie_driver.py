@@ -759,7 +759,9 @@ class SmoothieDriver(object):
 							if param in list(self.state_dict['s_pos']):
 								if command == "move_to":
 									print('(1)')
+									print(val)
 									float_val = float(val)
+									print(float_val)
 									if float_val > self.state_dict['s_pos'][val] and self.state_dict['direction'][val]==0:
 										print('(2)')
 										self.config_dict['direction'][val] = 1
