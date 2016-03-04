@@ -764,7 +764,7 @@ class SmoothieDriver(object):
 									print(float_val)
 									if float_val > self.state_dict['s_pos'][param] and self.state_dict['direction'][param]==0:
 										print('(2)')
-										self.config_dict['direction'][param] = 1
+										self.state_dict['direction'][param] = 1
 										float_val+=self.config_dict['slack'][param]
 									if float_val < self.state_dict['s_pos'][param] and self.state_dict['direction'][param]==1:
 										print('(3)')
@@ -774,10 +774,10 @@ class SmoothieDriver(object):
 								if command == "move":
 									float_val = float(val)
 									if float_val > 0 and self.state_dict['direction'][param]==0:
-										self.config_dict['direction'][param] = 1
+										self.state_dict['direction'][param] = 1
 										float_val+=self.config_dict['slack'][param]
 									if float_val < 0 and self.state_dict['direction'][param]==1:
-										self.config_dict['direction'][param] = 0
+										self.state_dict['direction'][param] = 0
 										float_val-=self.config_dict['slack'][param]
 										val = str(float_val)
 
@@ -800,19 +800,19 @@ class SmoothieDriver(object):
 										if command == "G90 G0":
 											float_val = float(val)
 											if float_val > self.state_dict['s_pos'][param] and self.state_dict['direction'][param]==0:
-												self.config_dict['direction'][param] = 1
+												self.state_dict['direction'][param] = 1
 												float_val+=self.config_dict['slack'][param]
 											if float_val < self.state_dict['s_pos'][val] and self.state_dict['direction'][param]==1:
-												self.config_dict['direction'][param] = 0
+												self.state_dict['direction'][param] = 0
 												float_val-=self.config_dict['slack'][param]
 												val = str(float_val)
 										if command == "G91 G0":
 											float_val = float(val)
 											if float_val > 0 and self.state_dict['direction'][param]==0:
-												self.config_dict['direction'][param] = 1
+												self.state_dict['direction'][param] = 1
 												float_val+=self.config_dict['slack'][param]
 											if float_val < 0 and self.state_dict['direction'][param]==1:
-												self.config_dict['direction'][param] = 0
+												self.state_dict['direction'][param] = 0
 												float_val-=self.config_dict['slack'][param]
 												val = str(float_val)
 
