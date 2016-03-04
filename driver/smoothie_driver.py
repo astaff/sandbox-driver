@@ -749,17 +749,23 @@ class SmoothieDriver(object):
 		# check if command is in commands dictionary
 		if command in list(self.commands_dict):
 			command_text = self.commands_dict[command]["code"]
+			print('command_text: ',command_text)
 			if isinstance(data, dict):
+				print('data is dict')
 				if isinstance(data[command], dict):
+					print('data[',command,'] is dict')
 					for param, val in data[command].items():
 						if param in self.commands_dict[command]["parameters"]:
-							if param in self.state_dict['s_pos']:
+							if param in list(self.state_dict['s_pos']):
 								if command == "move_to":
+									print('(1)')
 									float_val = float(val)
 									if float_val > self.state_dict['s_pos'][val] and self.state_dict['direction'][val]==0:
+										print('(2)')
 										self.config_dict['direction'][val] = 1
 										float_val+=self.config_dict[val+'_slack']
 									if float_val < self.state_dict['s_pos'][val] and self.state_dict['direction'][val]==1:
+										print('(3)')
 										self.config_dict['direction'][val] = 0
 										float_val-=self.config_dict['slack'][val]
 										val = str(float_val)
