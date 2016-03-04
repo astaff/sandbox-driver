@@ -165,7 +165,7 @@ class DriverClient():
                         #opportunity to filter, not actually used
                         self.in_dispatcher[dictum['type']](dictum['from'],dictum['sessionID'],dictum['data'])
                     else:
-                        self.in_dispatcher[doctum['type']](dictum['from'],dictum['sessionID'],dictum['data'])
+                        self.in_dispatcher[dictum['type']](dictum['from'],dictum['sessionID'],dictum['data'])
                 else:
                     print(datetime.datetime.now(),' - ERROR:\n\r',sys.exc_info())
                     print('type: ',dictum['type'])
