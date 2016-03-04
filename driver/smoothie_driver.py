@@ -763,7 +763,7 @@ class SmoothieDriver(object):
 									if float_val > self.state_dict['s_pos'][val] and self.state_dict['direction'][val]==0:
 										print('(2)')
 										self.config_dict['direction'][val] = 1
-										float_val+=self.config_dict[val+'_slack']
+										float_val+=self.config_dict['slack'][val]
 									if float_val < self.state_dict['s_pos'][val] and self.state_dict['direction'][val]==1:
 										print('(3)')
 										self.config_dict['direction'][val] = 0
