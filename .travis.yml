@@ -7,7 +7,7 @@ services:
 
 before_install:
 - docker pull $REPO/common-build-x86
-- docker docker tag $REPO/common-build-x86 common-build
+- docker tag $REPO/common-build-x86 common-build
 - docker build -t $REPO/driver-x86 - < Dockerfile-build
 - docker run $REPO/driver-x86 > root.tar.gz
 - docker build -t $REPO/driver-x86 - < Dockerfile-dist
