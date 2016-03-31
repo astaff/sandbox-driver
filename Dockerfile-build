@@ -17,8 +17,6 @@ WORKDIR /home/sandbox-driver-master
 COPY patch.diff driver/patch.diff
 COPY smoothie.diff driver/smoothie.diff
 RUN cd driver \
-    && patch driver_client.py < patch.diff \
-    && patch smoothie_driver.py < smoothie.diff \
     && pip3 install autobahn==0.10.3
 
 RUN rm -rf /var/cache/apk/*
