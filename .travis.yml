@@ -1,0 +1,13 @@
+sudo: required
+
+language: python
+
+services:
+  - docker
+
+before_install:
+- docker build -t $REPO/driver-x86 - < Dockerfile-build
+- docker run $REPO/driver-x86 > root.tar.gz
+- docker build -t $REPO/driver-x86 - < Dockerfile-dist
+- docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+- docker push $REPO/driver-x86
