@@ -14,8 +14,6 @@ FROM common-build
 WORKDIR /home
 RUN wget https://github.com/OpenTrons/sandbox-driver/archive/master.zip -O temp.zip && unzip temp.zip && rm temp.zip
 WORKDIR /home/sandbox-driver-master
-COPY patch.diff driver/patch.diff
-COPY smoothie.diff driver/smoothie.diff
 RUN cd driver \
     && pip3 install autobahn==0.10.3
 
