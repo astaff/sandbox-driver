@@ -11,12 +11,9 @@
 #
 FROM common-build
 
-WORKDIR /home
-RUN wget https://github.com/OpenTrons/sandbox-driver/archive/master.zip -O temp.zip && unzip temp.zip && rm temp.zip
-WORKDIR /home/sandbox-driver-master
-RUN cd driver \
-    && pip3 install autobahn==0.10.3
+COPY * /home/sandbox-driver/
+WORKDIR /home/sandbox-driver
+RUN pip3 install autobahn==0.10.3
 
 RUN rm -rf /var/cache/apk/*
-ENTRYPOINT ["tar", "-cvz", "/usr/lib/python3.5/site-packages/", "/home/sandbox-driver-master"]
-# ENTRYPOINT ["python3","driver/driver_client.py"]
+ENTRYPOINT ["tar", "-cvz", "/usr/lib/python3.5/site-packages/", "/home/sandbox-driver"]

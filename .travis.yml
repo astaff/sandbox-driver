@@ -6,12 +6,4 @@ services:
   - docker
 
 before_install:
-- docker pull $REPO/common-build-x86
-- docker tag $REPO/common-build-x86 common-build
-- docker pull $REPO/common-x86
-- docker tag $REPO/common-x86 common
-- docker build -t $REPO/driver-x86 -f Dockerfile-build .
-- docker run $REPO/driver-x86 > root.tar.gz
-- docker build -t $REPO/driver-x86 -f Dockerfile-dist .
-- docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
-- docker push $REPO/driver-x86
+- ./build.sh

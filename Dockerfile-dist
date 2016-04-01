@@ -13,6 +13,6 @@ FROM common
 
 COPY root.tar.gz root.tar.gz
 RUN tar -xvzf root.tar.gz -C / && rm root.tar.gz
-WORKDIR /home/sandbox-driver-master
+WORKDIR /home/sandbox-driver
 
 ENTRYPOINT ["python3", "driver/driver_client.py"]
