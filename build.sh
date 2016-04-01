@@ -18,4 +18,6 @@ done
 docker build -t $REPO/$NAME-$ARCH -f Dockerfile-build . \
 && docker run $REPO/$NAME-$ARCH > root.tar.gz \
 && docker build -t $REPO/$NAME-$ARCH -f Dockerfile-dist . \
-&& docker save $REPO/$NAME-$ARCH | gzip | aws s3 cp - s3://$AWS_BUCKET/builds/$NAME-$ARCH/$TRAVIS_BUILD_NUMBER/$REPO-$NAME-$ARCH.tar.gz
+&& docker save $REPO/$NAME-$ARCH | gzip | aws s3 cp - s3://$AWS_BUCKET/builds/$NAME-$ARCH/$TRAVIS_BUILD_NUMBER/$REPO-$NAME-$ARCH.tar.gz \
+&& aws s3 rm s3://$AWS_BUCKET/builds/$NAME-$ARCH/latest --recursive \
+&& aws s3 cp s3://$AWS_BUCKET/builds/$NAME-$ARCH/$BUILD_NUMBER s3://$AWS_BUCKET/builds/$NAME-$ARCH/latest/ --recursive
