@@ -8,6 +8,11 @@
 # REPO : name of dockerhub repo
 # NAME : name of the component to be used in container name and s3 file
 
+# exit on first error to avoid
+# errors snowballing
+set -o errexit
+
+# Install AWS cli
 pip install awscli
 
 for n in common common-build
