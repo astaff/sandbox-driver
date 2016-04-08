@@ -5,6 +5,9 @@ language: python
 services:
   - docker
 
+before_script:
+- docker -v
+
 install: true
 script: true
 after_script:
