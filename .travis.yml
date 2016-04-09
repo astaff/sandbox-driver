@@ -9,6 +9,4 @@ before_script:
 - docker -v
 
 install: true
-script: true
-after_script:
-- ./build.sh
+script: ./build.sh
